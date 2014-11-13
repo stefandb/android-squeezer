@@ -61,7 +61,7 @@ for the implementation.
         android:layout_marginTop="13dp" />
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center_vertical"
@@ -74,7 +74,7 @@ for the implementation.
             android:id="@+id/text1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/SqueezerTextItem"/>
+            android:textAppearance="@style/SqueezerTextItem" />
 
         <TextView
             android:id="@+id/text2"
