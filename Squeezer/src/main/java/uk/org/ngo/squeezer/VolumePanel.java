@@ -84,7 +84,7 @@ public class VolumePanel extends Handler implements SeekBar.OnSeekBarChangeListe
             }
         });
 
-        mMessage = (TextView) mView.findViewById(R.id.message);
+//        mMessage = (TextView) mView.findViewById(R.id.message);
         mAdditionalMessage = (TextView) mView.findViewById(R.id.additional_message);
         mSeekbar = (SeekBar) mView.findViewById(R.id.level);
         mLargeStreamIcon = (ImageView) mView.findViewById(R.id.ringer_stream_icon);
@@ -164,8 +164,6 @@ public class VolumePanel extends Handler implements SeekBar.OnSeekBarChangeListe
         mSeekbar.setMax(100);
         mSeekbar.setProgress(newVolume);
 
-        mMessage.setText(
-                mActivity.getString(R.string.volume, mActivity.getString(R.string.app_name)));
         mAdditionalMessage.setText(additionalMessage);
 
         mLargeStreamIcon.setImageResource(newVolume == 0
