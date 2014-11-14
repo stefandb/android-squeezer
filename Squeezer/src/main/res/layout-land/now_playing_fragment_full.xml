@@ -92,7 +92,7 @@
         android:background="@drawable/list_selector_holo_dark"
         android:contentDescription="@string/app_name"
         android:minWidth="48dp"
-        android:src="@drawable/dropdown_ic_arrow_normal_holo_dark"/>
+        android:src="@drawable/ic_action_overflow"/>
 
     <LinearLayout
         android:id="@+id/media_buttons"

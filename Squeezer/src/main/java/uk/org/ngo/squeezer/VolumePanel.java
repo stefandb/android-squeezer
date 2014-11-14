@@ -62,8 +62,6 @@ public class VolumePanel extends Handler implements SeekBar.OnSeekBarChangeListe
      */
     private final View mView;
 
-    private final TextView mMessage;
-
     private final TextView mAdditionalMessage;
 
     private final ImageView mLargeStreamIcon;
