@@ -45,7 +45,7 @@ for the implementation.
     android:orientation="horizontal"
     android:paddingBottom="4dp"
     android:paddingLeft="16dp"
-    android:paddingRight="32dp"
+    android:paddingRight="16dp"
     android:paddingTop="0dp">
 
     <uk.org.ngo.squeezer.widget.SquareImageView
@@ -61,7 +61,7 @@ for the implementation.
         android:layout_marginTop="13dp" />
 
     <LinearLayout
-        android:layout_width="50dp"
+        android:layout_width="48dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center_vertical"
@@ -72,7 +72,7 @@ for the implementation.
 
         <TextView
             android:id="@+id/text1"
-            android:layout_width="fill_parent"
+            android:layout_width="219dp"
             android:layout_height="wrap_content"
             android:textAppearance="@style/SqueezerTextItem" />
 

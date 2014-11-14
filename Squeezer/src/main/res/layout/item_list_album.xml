@@ -100,11 +100,11 @@
             android:contentDescription="@string/app_name"
             android:minWidth="48dp"
             android:paddingRight="0dp"
-            android:src="@drawable/dropdown_ic_arrow_normal_holo_dark"
+            android:src="@drawable/ic_action_overflow"
             android:layout_alignWithParentIfMissing="true"
-            android:layout_alignParentRight="true"
             android:layout_below="@+id/artistname"
-            android:layout_marginRight="16dp"/>
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
     </RelativeLayout>
 
     <ListView
