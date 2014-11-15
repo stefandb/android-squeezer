@@ -117,16 +117,15 @@ public class PhoneService  extends WearableListenerService implements
     @Override
     public void onCreate() {
         super.onCreate();
+
+        Log.d("mobile:squeezer", "ListenerService:onCreate");
+
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
                 .build();
         mGoogleApiClient.connect();
 
-        mActivity.bindService(new Intent(mActivity, SqueezeService.class), serviceConnection,
-                Context.BIND_AUTO_CREATE);
         Log.d(TAG, "did bindService; serviceStub = " + mService);
-
-        Log.d("mobile:squeezer", "ListenerService:onCreate");
     }
 
     @Override
@@ -254,9 +253,9 @@ public class PhoneService  extends WearableListenerService implements
             Log.d("mobile:squeezer", numberinfo.toString());
             //Requires a new thread to avoid blocking the UI
             new SendToDataLayerThread(DATA_CURRENT_SONG, numberinfo.toString()).start();
-
-
         }else if (messageEvent.getPath().equals("/squeezer_action/play")) {
+            //TODO Moet nog geschreven worden
+
             if (mService == null) {
                 return;
             }
@@ -269,22 +268,22 @@ public class PhoneService  extends WearableListenerService implements
 //                onUserInitiatesConnect();
             }
 
-            JSONObject numberinfo = new JSONObject();
-            try {
-                numberinfo.put("title", "GET CURRENT");
-                numberinfo.put("artist", "Hozier");
-                numberinfo.put("album", "Hozier");
-                if(message == "play"){
-                    numberinfo.put("status","stop");
-                }else{
-                    numberinfo.put("status","play");
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            Log.d("mobile:squeezer", numberinfo.toString());
-            //Requires a new thread to avoid blocking the UI
-            new SendToDataLayerThread(DATA_CURRENT_SONG, numberinfo.toString()).start();
+//            JSONObject numberinfo = new JSONObject();
+//            try {
+//                numberinfo.put("title", "GET CURRENT");
+//                numberinfo.put("artist", "Hozier");
+//                numberinfo.put("album", "Hozier");
+//                if(message == "play"){
+//                    numberinfo.put("status","stop");
+//                }else{
+//                    numberinfo.put("status","play");
+//                }
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//            Log.d("mobile:squeezer", numberinfo.toString());
+//            //Requires a new thread to avoid blocking the UI
+//            new SendToDataLayerThread(DATA_CURRENT_SONG, numberinfo.toString()).start();
         }
 
         Log.d("path", messageEvent.getPath());

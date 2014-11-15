@@ -58,10 +58,24 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 
 import uk.org.ngo.squeezer.dialog.AboutDialog;
 import uk.org.ngo.squeezer.dialog.AuthenticationDialog;
@@ -90,8 +104,15 @@ import uk.org.ngo.squeezer.service.SqueezeService;
 import uk.org.ngo.squeezer.util.ImageCache.ImageCacheParams;
 import uk.org.ngo.squeezer.util.ImageFetcher;
 
+
 public class NowPlayingFragment extends Fragment implements
-        HasUiThread, View.OnCreateContextMenuListener {
+        HasUiThread, View.OnCreateContextMenuListener, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
+
+    public static final String DATA_CURRENT_SONG = "/squeezer_current";
+    public static final String DATA_ACTION = "/squeezer_action";
+
+    GoogleApiClient mGoogleApiClient;
 
     private final String TAG = "NowPlayingFragment";
 
@@ -171,6 +192,21 @@ public class NowPlayingFragment extends Fragment implements
     private ImageCacheParams mImageCacheParams;
 
     private final Handler uiThreadHandler = new UiThreadHandler(this);
+
+    @Override
+    public void onConnected(Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
 
     private final static class UiThreadHandler extends Handler {
 
@@ -255,6 +291,14 @@ public class NowPlayingFragment extends Fragment implements
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mActivity = (BaseActivity) activity;
+
+        mGoogleApiClient = new GoogleApiClient.Builder(activity)
+                .addApi(Wearable.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+
+        mGoogleApiClient.connect();
     }
 
     @Override
@@ -270,6 +314,7 @@ public class NowPlayingFragment extends Fragment implements
         mActivity.bindService(new Intent(mActivity, SqueezeService.class), serviceConnection,
                 Context.BIND_AUTO_CREATE);
         Log.d(TAG, "did bindService; serviceStub = " + mService);
+
     }
 
     @Override
@@ -441,6 +486,14 @@ public class NowPlayingFragment extends Fragment implements
         return uiThreadHandler;
     }
 
+    @Override
+    public void onStop() {
+        if (null != mGoogleApiClient && mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+        super.onStop();
+    }
+
     // Should only be called the UI thread.
     private void setConnected(boolean connected, boolean postConnect, boolean loginFailure) {
         Log.v(TAG, "setConnected(" + connected + ", " + postConnect + ", " + loginFailure + ")");
@@ -484,7 +537,7 @@ public class NowPlayingFragment extends Fragment implements
         }
 
         if (!connected) {
-            updateSongInfo(null);
+            updateSongInfo(null, null);
 
             playPauseButton.setImageResource(R.drawable.presence_online); // green circle
 
@@ -707,7 +760,7 @@ public class NowPlayingFragment extends Fragment implements
         setConnected(connected, false, false);
         if (connected) {
             PlayerState playerState = getPlayerState();
-            updateSongInfo(playerState.getCurrentSong());
+            updateSongInfo(playerState.getCurrentSong(), playerState.getPlayStatus());
             updatePlayPauseIcon(playerState.getPlayStatus());
             updateTimeDisplayTo(playerState.getCurrentTimeSecond(),
                     playerState.getCurrentSongDuration());
@@ -735,7 +788,7 @@ public class NowPlayingFragment extends Fragment implements
     }
 
     // Should only be called from the UI thread.
-    private void updateSongInfo(Song song) {
+    private void updateSongInfo(Song song, PlayerState.PlayStatus playStatus) {
         Log.v(TAG, "updateSongInfo " + song);
         if (song != null) {
             albumText.setText(song.getAlbumName());
@@ -756,6 +809,33 @@ public class NowPlayingFragment extends Fragment implements
                     btnContextMenu.setVisibility(View.VISIBLE);
                 }
             }
+
+            JSONObject numberinfo = new JSONObject();
+            try {
+                numberinfo.put("title", song.getName());
+                numberinfo.put("artist", song.getArtist());
+                numberinfo.put("album", song.getAlbumName());
+                if(playStatus == PlayerState.PlayStatus.play && playStatus != null){
+                    //pauze
+                    numberinfo.put("status","pause");
+                }else if(playStatus != PlayerState.PlayStatus.play && playStatus != null){
+                    //play
+                    numberinfo.put("status","play");
+                }else{
+                    numberinfo.put("status","null");
+                }
+
+                numberinfo.put("btnnext", song.isRemote() ? false: true);
+                numberinfo.put("btnprevious", song.isRemote() ? false: true);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            Log.d("squeezer-json-object", numberinfo.toString());
+            //Requires a new thread to avoid blocking the UI
+            new SendToDataLayerThread(DATA_CURRENT_SONG, numberinfo.toString()).start();
+
         } else {
             albumText.setText("");
             trackText.setText("");
@@ -1200,7 +1280,7 @@ public class NowPlayingFragment extends Fragment implements
         public void onMusicChanged(final PlayerState playerState) {
             uiThreadHandler.post(new Runnable() {
                 public void run() {
-                    updateSongInfo(playerState.getCurrentSong());
+                    updateSongInfo(playerState.getCurrentSong(), playerState.getPlayStatus());
                 }
             });
         }
@@ -1267,5 +1347,33 @@ public class NowPlayingFragment extends Fragment implements
 
     public void setIgnoreVolumeChange(boolean ignoreVolumeChange) {
         this.ignoreVolumeChange = ignoreVolumeChange;
+    }
+
+    class SendToDataLayerThread extends Thread {
+        String path;
+        String message;
+
+        // Constructor to send a message to the data layer
+        SendToDataLayerThread(String p, String msg) {
+            path = p;
+            message = msg;
+        }
+
+        public void run() {
+            NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
+            Log.d("mobile:squeezer", nodes.getNodes().toString());
+            for (Node node : nodes.getNodes()) {
+                Log.d("mobile:squeezer-node", node.toString());
+                MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(), path, message.getBytes()).await();
+
+                if (result.getStatus().isSuccess()) {
+                    Log.d("mobile:squeezer-run", "Message: {" + message + "} sent to: " + node.getDisplayName());
+                }
+                else {
+                    // Log an error
+                    Log.d("mobile:squeezer-run", "ERROR: failed to send Message");
+                }
+            }
+        }
     }
 }

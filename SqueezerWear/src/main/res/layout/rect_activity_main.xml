@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:orientation="vertical"
-    tools:context=".MainActivity" tools:deviceIds="wear_square">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity"
+    tools:deviceIds="wear_square"
+    android:background="#2196F3">
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -52,4 +57,21 @@
         android:layout_above="@+id/txtatrist"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="10dp" />
-</LinearLayout>
+</RelativeLayout>
+
+<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"  android:orientation="vertical"-->
+    <!--tools:context=".MainActivity" tools:deviceIds="wear_square"-->
+    <!--android:background="#2196F3">-->
+
+
+
+
+
+
+
+
+
+
+<!--</LinearLayout>-->

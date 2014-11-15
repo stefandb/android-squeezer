@@ -1,4 +1,4 @@
-package debruin.stefan.squeezer;
+package uk.org.ngo.SqueezerWear;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -88,7 +88,8 @@ public class ListenerService extends WearableListenerService {
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         LOGD("wear:squeezer", "onMessageReceived: " + messageEvent);
-
+        Log.d("path", messageEvent.getPath());
+        Log.d("mobile:squeezer-data", String.valueOf(messageEvent.getPath()));
         final String message = new String(messageEvent.getData());
         Log.d("wear:squeezer-message-service", "Message path received on watch is: " + messageEvent.getPath());
         Log.d("wear:squeezer-message-service", "Message received on watch is: " + message);
@@ -101,8 +102,7 @@ public class ListenerService extends WearableListenerService {
             messageIntent.putExtra("message", message);
             LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
         }
-        Log.d("path", messageEvent.getPath());
-        Log.d("mobile:squeezer-data", String.valueOf(messageEvent.getPath()));
+
         super.onMessageReceived(messageEvent);
     }
 

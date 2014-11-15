@@ -16,12 +16,12 @@ android {
     compileSdkVersion 20
     buildToolsVersion '20.0.0'
     defaultConfig {
-        applicationId 'uk.org.ngo.squeezer'
+        applicationId 'uk.org.ngo.SqueezerWear'
         minSdkVersion 20
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
-        testApplicationId 'uk.org.ngo.squeezer'
+        testApplicationId 'uk.org.ngo.SqueezerWear'
     }
     buildTypes {
         release {
