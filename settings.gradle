@@ -1,1 +1,1 @@
-include ':Squeezer', ':SqueezerWear', ':Squeezer Wear'
+include ':Squeezer'

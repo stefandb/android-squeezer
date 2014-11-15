@@ -25,7 +25,7 @@ dependencies {
 
     compile 'com.google.android.gms:play-services-wearable:+'
 
-    wearApp project(':SqueezerWear')
+//    wearApp project(':SqueezerWear')
 
     compile 'com.android.support:support-v4:20.0.0'
     compile 'com.android.support:appcompat-v7:20.0.0'
