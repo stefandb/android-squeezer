@@ -141,6 +141,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
     protected Drawer navigationDrawer = null;
 
     protected String getTag() {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : getTag");
         return getClass().getSimpleName();
     }
 
@@ -151,6 +152,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
      */
     @Nullable
     public ISqueezeService getService() {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : getService");
         return mService;
     }
 
@@ -171,24 +173,29 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
      */
     @Override
     public Handler getUIThreadHandler() {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : getUIThreadHandler");
         return uiThreadHandler;
     }
 
     private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
+            Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity - ServiceConnection : onServiceConnected");
             mService = (ISqueezeService) binder;
             BaseActivity.this.onServiceConnected(mService);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity - ServiceConnection : onServiceDisconnected");
             mService = null;
         }
     };
 
     @Override
     protected void onCreate(android.os.Bundle savedInstanceState) {
+
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : onCreate");
         _savedInstanceState = savedInstanceState;
         super.onCreate(savedInstanceState);
 
@@ -205,12 +212,14 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
 
     @Override
     public void setTheme(int resId) {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : setTheme");
         super.setTheme(resId);
         mThemeId = resId;
     }
 
     @Override
     public void onResume() {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : onResume");
         super.onResume();
 
         mTheme.onResume(this);
@@ -233,6 +242,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
 
     @Override
     public void onPause() {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : onPause");
         // At least some Samsung devices call onPause without ensuring that onResume is called
         // first, per https://code.google.com/p/android/issues/detail?id=74464, so mVolumePanel
         // may be null on those devices.
@@ -269,11 +279,13 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
      */
     @Override
     public void onLowMemory() {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : onLowMemory");
         ImageFetcher.onLowMemory();
     }
 
     @Override
     public void onDestroy() {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : onDestroy");
         super.onDestroy();
         unbindService(serviceConnection);
     }
@@ -283,6 +295,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
 
     @Override
     protected void onNewIntent(Intent intent) {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : onNewIntent");
         super.onNewIntent(intent);
         if ((intent.getFlags() | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT) > 0) {
             mIsRestoredToTop = true;
@@ -292,6 +305,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
     @Override
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public void finish() {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : finish");
         super.finish();
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT && !isTaskRoot()
                 && mIsRestoredToTop) {
@@ -316,6 +330,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
      */
     @CallSuper
     protected void onServiceConnected(@NonNull ISqueezeService service) {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : onServiceConnected");
         supportInvalidateOptionsMenu();
         maybeRegisterOnEventBus(service);
         addPlayersToMenu(service);
@@ -331,6 +346,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
      * @param service The connection to the bound service.
      */
     private void maybeRegisterOnEventBus(@NonNull ISqueezeService service) {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : maybeRegisterOnEventBus");
         if (!mRegisteredOnEventBus) {
             service.getEventBus().registerSticky(this);
             mRegisteredOnEventBus = true;
@@ -339,6 +355,8 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : onCreateOptionsMenu");
+
         Log.d("onCreateOptionsMenu", "1");
         MenuInflater inflater = getMenuInflater();
         Log.d("onCreateOptionsMenu", "2");
@@ -351,6 +369,9 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : onPrepareOptionsMenu");
+
+
         Log.d("onPrepareOptionsMenu", "1");
         boolean haveConnectedPlayers = isConnected() && mService != null
                 && !mService.getConnectedPlayers().isEmpty();
@@ -366,6 +387,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : onOptionsItemSelected");
         switch (item.getItemId()) {
             case android.R.id.home:
                 Intent upIntent = NavUtils.getParentActivityIntent(this);
@@ -406,6 +428,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
      */
     @Override
     public boolean onSearchRequested() {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : onSearchRequested");
         if (!isConnected()) {
             return false;
         }
@@ -423,6 +446,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
     @Override
     @CallSuper
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : onKeyDown");
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
                 return changeVolumeBy(+5);
@@ -436,6 +460,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
     @Override
     @CallSuper
     public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : onKeyUp");
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
             case KeyEvent.KEYCODE_VOLUME_DOWN:
@@ -446,6 +471,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
     }
 
     private boolean changeVolumeBy(int delta) {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : changeVolumeBy");
         ISqueezeService service = getService();
         if (service == null) {
             return false;
@@ -456,45 +482,53 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
     }
 
     public void onEvent(PlayerVolume event) {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : onEvent");
         if (!mIgnoreVolumeChange && mVolumePanel != null && event.player == mService.getActivePlayer()) {
             mVolumePanel.postVolumeChanged(event.volume, event.player.getName());
         }
     }
 
     public void setIgnoreVolumeChange(boolean ignoreVolumeChange) {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : setIgnoreVolumeChange");
         mIgnoreVolumeChange = ignoreVolumeChange;
     }
 
     // Safe accessors
 
     public boolean canDownload() {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : canDownload");
         return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD);
     }
 
     public boolean isConnected() {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : isConnected");
         return mService != null && mService.isConnected();
     }
 
     public String getServerString(ServerString stringToken) {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : getServerString");
         return ServerString.values()[stringToken.ordinal()].getLocalizedString();
     }
 
     // This section is just an easier way to call squeeze service
 
     public void play(PlaylistItem item) {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : play");
         playlistControl(PLAYLIST_PLAY_NOW, item, R.string.ITEM_PLAYING);
     }
 
     public void add(PlaylistItem item) {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : add");
         playlistControl(PLAYLIST_ADD_TO_END, item, R.string.ITEM_ADDED);
     }
 
     public void insert(PlaylistItem item) {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : insert");
         playlistControl(PLAYLIST_PLAY_AFTER_CURRENT, item, R.string.ITEM_INSERTED);
     }
 
-    private void playlistControl(@PlaylistControlCmd String cmd, PlaylistItem item, int resId)
-            {
+    private void playlistControl(@PlaylistControlCmd String cmd, PlaylistItem item, int resId){
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : playlistControl");
         if (mService == null) {
             return;
         }
@@ -510,6 +544,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
      * @see ISqueezeService#downloadItem(FilterItem)
      */
     public void downloadItem(FilterItem item) {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : downloadItem");
         if (canDownload())
             mService.downloadItem(item);
         else
@@ -530,12 +565,14 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
      * @return The resource identifier for the given attribute.
      */
     public int getAttributeValue(int attribute) {
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : getAttributeValue");
         TypedValue v = new TypedValue();
         getTheme().resolveAttribute(attribute, v, true);
         return v.resourceId;
     }
 
     public void NavigationDrawer(Bundle savedInstanceState){
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : NavigationDrawer");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -652,6 +689,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
     private OnCheckedChangeListener onCheckedChangeListener = new OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
+            Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : onCheckedChanged");
             if (drawerItem instanceof Nameable) {
                 Log.i("material-drawer", "DrawerItem: " + ((Nameable) drawerItem).getName() + " - toggleChecked: " + isChecked);
             } else {
@@ -661,7 +699,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
     };
 
     public void onEventMainThread(HandshakeComplete event) {
-
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : onEventMainThread");
         /**
         int[] icons = new int[]{
                 R.drawable.ic_artists,
@@ -727,6 +765,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
     }
 
     private void createPlayerHeader(){
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : createPlayerHeader");
         navigationDrawerHeader = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.header)
@@ -761,6 +800,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
     }
 
     private void addPlayersToMenu(@NonNull ISqueezeService service){
+        Log.d("function-debug", "uk.org.ngo.squeezer BaseActivity : addPlayersToMenu");
         // Create the AccountHeader
 
          Log.d("players", String.valueOf(service.getPlayers()));

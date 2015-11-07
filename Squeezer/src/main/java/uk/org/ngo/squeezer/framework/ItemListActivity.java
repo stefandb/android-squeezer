@@ -20,6 +20,8 @@ package uk.org.ngo.squeezer.framework;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -83,6 +85,7 @@ public abstract class ItemListActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework ItemListActivity : onCreate");
         super.onCreate(savedInstanceState);
 
         mPageSize = getResources().getInteger(R.integer.PageSize);
@@ -99,6 +102,7 @@ public abstract class ItemListActivity extends BaseActivity {
 
     @Override
     public void onPause() {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework ItemListActivity : onPause");
         super.onPause();
 
         // Any items coming in after callbacks have been unregistered are discarded.
@@ -132,24 +136,47 @@ public abstract class ItemListActivity extends BaseActivity {
      * @return True if the page needed to be ordered (even if the order failed), false otherwise.
      */
     public boolean maybeOrderPage(int pagePosition) {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework ItemListActivity : maybeOrderPage");
+
+        Log.d("function-debug", "boolean-maybeOrderPage ife " + String.valueOf(!mListScrolling && !mReceivedPages.contains(pagePosition) && !mOrderedPages
+                .contains(pagePosition) && !mOrderedPagesBeforeHandshake.contains(pagePosition)));
+        Log.d("function-debug", "boolean-maybeOrderPage mListScrolling " + String.valueOf(!mListScrolling));
+        Log.d("function-debug", "boolean-maybeOrderPage mReceivedPages " + String.valueOf(!mReceivedPages.contains(pagePosition)));
+        Log.d("function-debug", "boolean-maybeOrderPage mOrderedPages " + String.valueOf(!mOrderedPages.contains(pagePosition)));
+        Log.d("function-debug", "boolean-maybeOrderPage mOrderedPagesBeforeHandshake " + String.valueOf(!mOrderedPagesBeforeHandshake.contains(pagePosition)));
+
+
+//        Log.d("function-debug", "boolean-maybeOrderPage mListScrolling " + String.valueOf(mListScrolling));
+//        Log.d("function-debug", "boolean-maybeOrderPage mReceivedPages string " + mReceivedPages.toString());
+//        Log.d("function-debug", "boolean-maybeOrderPage mReceivedPages " + mReceivedPages);
+//        Log.d("function-debug", "boolean-maybeOrderPage mOrderedPages " + mOrderedPages);
+//        Log.d("function-debug", "boolean-maybeOrderPage mOrderedPagesBeforeHandshake " + mOrderedPagesBeforeHandshake);
+//
+
         if (!mListScrolling && !mReceivedPages.contains(pagePosition) && !mOrderedPages
                 .contains(pagePosition) && !mOrderedPagesBeforeHandshake.contains(pagePosition)) {
+            Log.d("function-debug", "boolean-maybeOrderPage IF 1");
             ISqueezeService service = getService();
 
             // If the service connection hasn't happened yet then store the page
             // request where it can be used in mHandshakeComplete.
             if (service == null) {
+                Log.d("function-debug", "boolean-maybeOrderPage IF 2");
                 mOrderedPagesBeforeHandshake.push(pagePosition);
             } else {
+                Log.d("function-debug", "boolean-maybeOrderPage IF 3");
                 try {
+                    Log.d("function-debug", "boolean-maybeOrderPage IF 4");
                     orderPage(service, pagePosition);
                     mOrderedPages.add(pagePosition);
                 } catch (SqueezeService.HandshakeNotCompleteException e) {
+                    Log.d("function-debug", "boolean-maybeOrderPage IF 5");
                     mOrderedPagesBeforeHandshake.push(pagePosition);
                 }
             }
             return true;
         } else {
+            Log.d("function-debug", "boolean-maybeOrderPage IF 6");
             return false;
         }
     }
@@ -158,6 +185,7 @@ public abstract class ItemListActivity extends BaseActivity {
      * Orders any pages requested before the handshake completed.
      */
     public void onEvent(HandshakeComplete event) {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework ItemListActivity : onEvent");
         // Order any pages that were requested before the handshake complete.
         while (!mOrderedPagesBeforeHandshake.empty()) {
             maybeOrderPage(mOrderedPagesBeforeHandshake.pop());
@@ -172,11 +200,20 @@ public abstract class ItemListActivity extends BaseActivity {
      *
      * @param listView The listview with visible rows.
      */
-    public void maybeOrderVisiblePages(AbsListView listView) {
-        int pos = (listView.getFirstVisiblePosition() / mPageSize) * mPageSize;
-        int end = listView.getFirstVisiblePosition() + listView.getChildCount();
+    public void maybeOrderVisiblePages(RecyclerView listView) {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework ItemListActivity : maybeOrderVisiblePages");
+
+        LinearLayoutManager layoutManager = ((LinearLayoutManager)listView.getLayoutManager());
+
+        int pos = (layoutManager.findFirstVisibleItemPosition() / mPageSize) * mPageSize;
+        int end = layoutManager.findFirstVisibleItemPosition() + 20;
+
+        Log.d("function-debug", "voidmaybeOrderVisiblePages pos " + String.valueOf(pos));
+        Log.d("function-debug", "voidmaybeOrderVisiblePages end " + String.valueOf(end));
+        Log.d("function-debug", "voidmaybeOrderVisiblePages mPageSize " + String.valueOf(mPageSize));
 
         while (pos <= end) {
+            Log.d("function-debug", " while loop " + String.valueOf(pos));
             maybeOrderPage(pos);
             pos += mPageSize;
         }
@@ -193,6 +230,7 @@ public abstract class ItemListActivity extends BaseActivity {
      * @param size The number of items in this update
      */
     protected void onItemsReceived(final int count, final int start, int size) {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework ItemListActivity : onItemsReceived");
         Log.d(getTag(), "onItemsReceived(" + count + ", " + start + ", " + size + ")");
 
         // Add this page of data to mReceivedPages and remove from mOrderedPages.
@@ -209,12 +247,14 @@ public abstract class ItemListActivity extends BaseActivity {
      * Empties the variables that track which pages have been requested, and orders page 0.
      */
     public void clearAndReOrderItems() {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework ItemListActivity : clearAndReOrderItems");
         clearItems();
         maybeOrderPage(0);
     }
 
     /** Empty the variables that track which pages have been requested. */
     public void clearItems() {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework ItemListActivity : clearItems");
         mOrderedPagesBeforeHandshake.clear();
         mOrderedPages.clear();
         mReceivedPages.clear();
@@ -225,6 +265,7 @@ public abstract class ItemListActivity extends BaseActivity {
      * Removes any outstanding requests from mOrderedPages.
      */
     private void cancelOrders() {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework ItemListActivity : cancelOrders");
         mOrderedPages.clear();
     }
 
@@ -250,6 +291,7 @@ public abstract class ItemListActivity extends BaseActivity {
          * Subclasses must call this.
          */
         public ScrollListener() {
+            Log.d("function-debug", "uk.org.ngo.squeezer.framework ItemListActivity - ScrollListener : ScrollListener");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR &&
                     Build.VERSION.SDK_INT <= Build.VERSION_CODES.FROYO) {
                 mTouchListener = new TouchListener(this);
@@ -258,6 +300,7 @@ public abstract class ItemListActivity extends BaseActivity {
 
         @Override
         public void onScrollStateChanged(AbsListView listView, int scrollState) {
+            Log.d("function-debug", "uk.org.ngo.squeezer.framework ItemListActivity - ScrollListener : onScrollStateChanged");
             if (scrollState == mPrevScrollState) {
                 return;
             }
@@ -272,7 +315,7 @@ public abstract class ItemListActivity extends BaseActivity {
             switch (scrollState) {
                 case OnScrollListener.SCROLL_STATE_IDLE:
                     mListScrolling = false;
-                    maybeOrderVisiblePages(listView);
+//                    maybeOrderVisiblePages(listView);
                     break;
 
                 case OnScrollListener.SCROLL_STATE_FLING:
@@ -289,6 +332,7 @@ public abstract class ItemListActivity extends BaseActivity {
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
                 int totalItemCount) {
+            Log.d("function-debug", "uk.org.ngo.squeezer.framework ItemListActivity - ScrollListener : onScroll");
         }
 
         /**
@@ -312,11 +356,13 @@ public abstract class ItemListActivity extends BaseActivity {
             private final OnScrollListener mOnScrollListener;
 
             public TouchListener(OnScrollListener onScrollListener) {
+                Log.d("function-debug", "uk.org.ngo.squeezer.framework ItemListActivity - ScrollListener - TouchListener : TouchListener");
                 mOnScrollListener = onScrollListener;
             }
 
             @Override
             public boolean onTouch(View view, MotionEvent event) {
+                Log.d("function-debug", "uk.org.ngo.squeezer.framework ItemListActivity - ScrollListener - TouchListener : onTouch");
                 final int action = event.getAction();
                 boolean mFingerUp = action == MotionEvent.ACTION_UP
                         || action == MotionEvent.ACTION_CANCEL;
@@ -325,6 +371,100 @@ public abstract class ItemListActivity extends BaseActivity {
                     mOnScrollListener.onScrollStateChanged((AbsListView) view,
                             OnScrollListener.SCROLL_STATE_FLING);
                     mOnScrollListener.onScrollStateChanged((AbsListView) view,
+                            OnScrollListener.SCROLL_STATE_IDLE);
+                }
+                return false;
+            }
+        }
+    }
+
+    protected class RecyclerScrollListener extends RecyclerView.OnScrollListener {
+        private TouchListener mTouchListener = null;
+
+        private boolean mAttachedTouchListener = false;
+
+        private int mPrevScrollState = OnScrollListener.SCROLL_STATE_IDLE;
+
+        public RecyclerScrollListener(){
+            Log.d("function-debug", "uk.org.ngo.squeezer.framework ItemListActivity - RecyclerScrollListener : RecyclerScrollListener");
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR && Build.VERSION.SDK_INT <= Build.VERSION_CODES.FROYO) {
+                mTouchListener = new TouchListener(this);
+//            }
+        }
+
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            Log.d("function-debug", "uk.org.ngo.squeezer.framework ItemListActivity - RecyclerScrollListener : onScrollStateChanged");
+
+            Log.d("function-debug", "void-onScrollStateChanged 1");
+
+            if (newState == mPrevScrollState) {
+                return;
+            }
+
+            Log.d("function-debug", "void-onScrollStateChanged 2");
+
+            if (mAttachedTouchListener == false) {
+                if (mTouchListener != null) {
+                    recyclerView.setOnTouchListener(mTouchListener);
+                }
+                mAttachedTouchListener = true;
+            }
+            Log.d("function-debug", "void-onScrollStateChanged 3");
+            switch (newState) {
+                case OnScrollListener.SCROLL_STATE_IDLE:
+                    Log.d("function-debug", "void-onScrollStateChanged 4");
+                    mListScrolling = false;
+                    maybeOrderVisiblePages(recyclerView);
+                    break;
+                case OnScrollListener.SCROLL_STATE_FLING:
+                    Log.d("function-debug", "void-onScrollStateChanged 5");
+                    break;
+                case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
+                    Log.d("function-debug", "void-onScrollStateChanged 6");
+                    mListScrolling = true;
+                    break;
+            }
+
+            mPrevScrollState = newState;
+        }
+
+        /**
+         * Work around a bug in (at least) API levels 7 and 8.
+         * <p>
+         * The bug manifests itself like so: after completing a TOUCH_SCROLL the system does not
+         * deliver a SCROLL_STATE_IDLE message to any attached listeners.
+         * <p>
+         * In addition, if the user does TOUCH_SCROLL, IDLE, TOUCH_SCROLL you would expect to
+         * receive three messages. You don't -- you get the first TOUCH_SCROLL, no IDLE message, and
+         * then the second touch doesn't generate a second TOUCH_SCROLL message.
+         * <p>
+         * This state clears when the user flings the list.
+         * <p>
+         * The simplest work around for this app is to track the user's finger, and if the previous
+         * state was TOUCH_SCROLL then pretend that they finished with a FLING and an IDLE event was
+         * triggered. This serves to unstick the message pipeline.
+         */
+        protected class TouchListener implements View.OnTouchListener {
+
+            private final RecyclerView.OnScrollListener mOnScrollListener;
+
+            public TouchListener(RecyclerView.OnScrollListener onScrollListener) {
+                Log.d("function-debug", "uk.org.ngo.squeezer.framework ItemListActivity - RecyclerScrollListener - TouchListener : TouchListener");
+                mOnScrollListener = onScrollListener;
+            }
+
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                Log.d("function-debug", "uk.org.ngo.squeezer.framework ItemListActivity - RecyclerScrollListener - TouchListener : onTouch");
+                final int action = event.getAction();
+                boolean mFingerUp = action == MotionEvent.ACTION_UP
+                        || action == MotionEvent.ACTION_CANCEL;
+                if (mFingerUp && mPrevScrollState == OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                    Log.v(TAG, "Sending special scroll state bump");
+                    mOnScrollListener.onScrollStateChanged((RecyclerView) view,
+                            OnScrollListener.SCROLL_STATE_FLING);
+                    mOnScrollListener.onScrollStateChanged((RecyclerView) view,
                             OnScrollListener.SCROLL_STATE_IDLE);
                 }
                 return false;

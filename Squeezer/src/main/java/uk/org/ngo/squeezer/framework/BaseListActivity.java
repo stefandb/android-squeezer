@@ -18,6 +18,8 @@ package uk.org.ngo.squeezer.framework;
 
 
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -72,10 +74,11 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
      */
     public static final String TAG_ADAPTER = "adapter";
 
-    private AbsListView mListView;
+//    private AbsListView mListView;
+    private RecyclerView mrecyclerView;
 
     private ItemAdapter<T> itemAdapter;
-
+    private recyclerViewListAdapter recycleritemAdapter;
     /**
      * Progress bar (spinning) while items are loading.
      */
@@ -88,49 +91,62 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : onCreate");
         super.onCreate(savedInstanceState);
 
         mRetainFragment = RetainFragment.getInstance(TAG, getSupportFragmentManager());
 
         setContentView(getContentView());
-        mListView = checkNotNull((AbsListView) findViewById(R.id.item_list),
+//        mListView = checkNotNull((AbsListView) findViewById(R.id.item_list),
+//                "getContentView() did not return a view containing R.id.item_list");
+
+         mrecyclerView = checkNotNull((RecyclerView) findViewById(R.id.item_list),
                 "getContentView() did not return a view containing R.id.item_list");
 
         loadingProgress = checkNotNull((ProgressBar) findViewById(R.id.loading_progress),
                 "getContentView() did not return a view containing R.id.loading_progress");
 
-        mListView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                getItemAdapter().onItemSelected(position);
-            }
-        });
+        recycleritemAdapter = new recyclerViewListAdapter(this);
+        mrecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mrecyclerView.setAdapter(recycleritemAdapter);
 
-        mListView.setOnScrollListener(new ScrollListener());
 
-        mListView.setRecyclerListener(new RecyclerListener() {
-            @Override
-            public void onMovedToScrapHeap(View view) {
-                // Release strong reference when a view is recycled
-                final ImageView imageView = (ImageView) view.findViewById(R.id.icon);
-                if (imageView != null) {
-                    imageView.setImageBitmap(null);
-                }
-            }
-        });
+//        mrecyclerView.addOnItemTouchListener();
 
-        mListView.setLongClickable(true);
+//        mListView.setOnItemClickListener(new OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                getItemAdapter().onItemSelected(position);
+//            }
+//        });
+
+
+        mrecyclerView.setOnScrollListener(new RecyclerScrollListener());
+
+
+//        mListView.setRecyclerListener(new RecyclerListener() {
+//            @Override
+//            public void onMovedToScrapHeap(View view) {
+//                 Release strong reference when a view is recycled
+//                final ImageView imageView = (ImageView) view.findViewById(R.id.icon);
+//                if (imageView != null) {
+//                    imageView.setImageBitmap(null);
+//                }
+//            }
+//        });
+
+//        mListView.setLongClickable(true);
 
         // Delegate context menu creation to the adapter.
-        mListView.setOnCreateContextMenuListener(getItemAdapter());
-
-        mListView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                v.showContextMenu();
-                return false;
-            }
-        });
+//        mListView.setOnCreateContextMenuListener(getItemAdapter());
+//
+//        mListView.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+//                v.showContextMenu();
+//                return false;
+//            }
+//        });
 
 //        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 //
@@ -146,7 +162,8 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
     }
 
     public void onEventMainThread(HandshakeComplete event) {
-        maybeOrderVisiblePages(mListView);
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : onEventMainThread");
+        maybeOrderVisiblePages(mrecyclerView);
         setAdapter();
     }
 
@@ -159,6 +176,7 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
      * @return The ID
      */
     protected int getContentView() {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : getContentView");
         return R.layout.item_list;
     }
 
@@ -169,6 +187,7 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
 
     @Override
     public boolean onContextItemSelected(MenuItem menuItem) {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : onContextItemSelected");
         AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) menuItem.getMenuInfo();
 
         // If menuInfo is null we have a sub menu, we expect the adapter to have stored the position
@@ -190,27 +209,29 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
      * Call this method after the handshake is complete.
      */
     private void setAdapter() {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : setAdapter");
         // setAdapter is not defined for AbsListView before API level 11, but
         // it is for concrete implementations, so we call it by reflection
-        try {
-            Method method = mListView.getClass().getMethod("setAdapter", ListAdapter.class);
-            method.invoke(mListView, getItemAdapter());
-        } catch (Exception e) {
-            Log.e(getTag(), "Error calling 'setAdapter'", e);
-        }
+//        try {
+//            Method method = mrecyclerView.getClass().getMethod("setAdapter", ListAdapter.class);
+//            method.invoke(mrecyclerView, getItemAdapter());
+//        } catch (Exception e) {
+//            Log.e(getTag(), "Error calling 'setAdapter'", e);
+//        }
 
-        Integer position = (Integer) mRetainFragment.get(TAG_POSITION);
-        if (position != null) {
-            if (mListView instanceof ListView) {
-                ((ListView) mListView).setSelectionFromTop(position, 0);
-            } else {
-                mListView.setSelection(position);
-            }
-        }
+//        Integer position = (Integer) mRetainFragment.get(TAG_POSITION);
+//        if (position != null) {
+//            if (mListView instanceof ListView) {
+//                ((ListView) mListView).setSelectionFromTop(position, 0);
+//            } else {
+//                mListView.setSelection(position);
+//            }
+//        }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : onSaveInstanceState");
         super.onSaveInstanceState(outState);
         saveVisiblePosition();
     }
@@ -222,13 +243,15 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
      * @see android.widget.AbsListView#getFirstVisiblePosition()
      */
     private void saveVisiblePosition() {
-        mRetainFragment.put(TAG_POSITION, mListView.getFirstVisiblePosition());
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : saveVisiblePosition");
+        mRetainFragment.put(TAG_POSITION, mrecyclerView.getVerticalScrollbarPosition());
     }
 
     /**
      * @return The current {@link ItemAdapter}'s {@link ItemView}
      */
     public ItemView<T> getItemView() {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : getItemView");
         return getItemAdapter().getItemView();
     }
 
@@ -236,6 +259,7 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
      * @return The current {@link ItemAdapter}, creating it if necessary.
      */
     public ItemAdapter<T> getItemAdapter() {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : getItemAdapter");
         if (itemAdapter == null) {
             //noinspection unchecked
             itemAdapter = (ItemAdapter<T>) mRetainFragment.get(TAG_ADAPTER);
@@ -256,8 +280,9 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
 
     @Override
     protected void clearItemAdapter() {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : clearItemAdapter");
         // TODO: This should be removed in favour of showing a progress spinner in the actionbar.
-        mListView.setVisibility(View.GONE);
+        mrecyclerView.setVisibility(View.GONE);
         loadingProgress.setVisibility(View.VISIBLE);
 
         getItemAdapter().clear();
@@ -266,36 +291,50 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
     /**
      * @return The {@link AbsListView} used by this activity
      */
-    public AbsListView getListView() {
-        return mListView;
+    public RecyclerView getListView() {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : getListView");
+        return mrecyclerView;
     }
 
     protected ItemAdapter<T> createItemListAdapter(ItemView<T> itemView) {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : createItemListAdapter");
         return new ItemAdapter<T>(itemView);
     }
 
     public void onItemsReceived(final int count, final int start, final List<T> items) {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : onItemsReceived");
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : onItemsReceived parameters");
+        Log.d("function-debug", "onItemsReceived items " + items.toString());
+        Log.d("function-debug", "onItemsReceived start " + start);
+        Log.d("function-debug", "onItemsReceived count " + count);
+
         super.onItemsReceived(count, start, items.size());
 
         getUIThreadHandler().post(new Runnable() {
             @Override
             public void run() {
-                mListView.setVisibility(View.VISIBLE);
+                mrecyclerView.setVisibility(View.VISIBLE);
                 loadingProgress.setVisibility(View.GONE);
                 getItemAdapter().update(count, start, items);
+
+                recycleritemAdapter.additems(count, start, items);
             }
         });
     }
 
     @Override
     public void onItemsReceived(int count, int start, Map<String, String> parameters, List<T> items, Class<T> dataType) {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : onItemsReceived");
         onItemsReceived(count, start, items);
     }
 
     @Override
     public Object getClient() {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : getClient");
         return this;
     }
+
+
 
     protected class ScrollListener extends ItemListActivity.ScrollListener {
 
@@ -318,5 +357,28 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
                 ImageFetcher.getInstance(BaseListActivity.this).setPauseWork(false);
             }
         }
+    }
+
+    protected class RecyclerScrollListener extends ItemListActivity.RecyclerScrollListener{
+
+        public RecyclerScrollListener(){
+            super();
+        }
+
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+
+            if (newState == AbsListView.OnScrollListener.SCROLL_STATE_FLING ||
+                    newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                ImageFetcher.getInstance(BaseListActivity.this).setPauseWork(true);
+            } else {
+                ImageFetcher.getInstance(BaseListActivity.this).setPauseWork(false);
+            }
+        }
+    }
+
+    public BaseListActivity<T> getActivity(){
+        return BaseListActivity.this;
     }
 }

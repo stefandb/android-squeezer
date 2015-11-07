@@ -327,6 +327,7 @@ public class SongListActivity extends BaseListActivity<Song>
 
     @Override
     protected void orderPage(@NonNull ISqueezeService service, int start) {
+        Log.d("function-debug", "uk.org.ngo.squeezer.itemlist SongListActivity : orderPage start");
         service.songs(this, start, sortOrder.name(), searchString, album, artist, year, genre);
 
         boolean canPlay = (getCurrentPlaylistItem() != null);

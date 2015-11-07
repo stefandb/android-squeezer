@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -325,7 +326,7 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
             @Override
             public void run() {
                 // TODO: this doesn't work if the current playlist is displayed in a grid
-                ((ListView) getListView()).setSelectionFromTop(currentPlaylistIndex, 0);
+//                ((RecyclerView) getListView()).setSelectionFromTop(currentPlaylistIndex, 0);
             }
         });
     }
