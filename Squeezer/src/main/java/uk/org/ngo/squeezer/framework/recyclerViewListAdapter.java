@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import uk.org.ngo.squeezer.framework.Item;
 import uk.org.ngo.squeezer.R;
 
 //import com.bignerdranch.android.materialcoordination.R;
@@ -355,5 +354,11 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
                 (position == 0 && mEmptyItem ? "" : loadingText));
     }
 
+    public void onItemSelected(int position) {
+        T item = getItem(position);
+        if (item != null && item.getId() != null) {
+            mItemView.onItemSelected(position, item);
+        }
+    }
 
 }
