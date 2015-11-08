@@ -78,6 +78,14 @@ for the implementation.
             android:layout_height="wrap_content"
             android:textAppearance="@style/SqueezerTextAppearance.ListItem.Secondary"
             android:visibility="visible"/>
+
+        <TextView
+            android:id="@+id/texdt2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/SqueezerTextAppearance.ListItem.Secondary"
+            android:text="ffdscx"
+            android:visibility="visible"/>
     </LinearLayout>
 
 </LinearLayout>
