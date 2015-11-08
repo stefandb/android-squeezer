@@ -18,6 +18,7 @@ package uk.org.ngo.squeezer.itemlist;
 
 
 import android.support.annotation.IntDef;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.View;
 
@@ -98,6 +99,7 @@ public class SongView extends PlaylistItemView<Song> {
 
     @Override
     public void bindView(View view, Song item) {
+        Log.d("function-debug", "uk.org.ngo.squeezer.itemlist - Songview : bindView 101");
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         viewHolder.text1.setText(item.getName());
@@ -122,6 +124,7 @@ public class SongView extends PlaylistItemView<Song> {
      */
     @Override
     public void bindView(View view, String label) {
+        Log.d("function-debug", "uk.org.ngo.squeezer.itemlist - Songview : bindView 126");
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         viewHolder.text1.setText(label);

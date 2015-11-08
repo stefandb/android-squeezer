@@ -16,6 +16,7 @@
 
 package uk.org.ngo.squeezer.itemlist;
 
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -213,6 +214,7 @@ class PlayerListAdapter extends BaseExpandableListAdapter implements View.OnCrea
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+        Log.d("function-debug", "uk.org.ngo.squeezer.itemlist - PlayerListAdapter : getGroupView");
         View row = mActivity.getLayoutInflater().inflate(R.layout.group_player, parent, false);
 
         TextView text1 = (TextView) row.findViewById(R.id.text1);

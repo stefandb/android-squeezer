@@ -18,6 +18,7 @@ package uk.org.ngo.squeezer.itemlist;
 
 import android.net.Uri;
 import android.support.annotation.IntDef;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -74,6 +75,7 @@ public class AlbumView extends AlbumArtView<Album> {
 
     @Override
     public void bindView(View view, Album item) {
+        Log.d("function-debug", "uk.org.ngo.squeezer.itemlist - AlbumView : bindView 78");
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         viewHolder.text1.setText(item.getName());

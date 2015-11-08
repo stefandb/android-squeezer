@@ -221,6 +221,7 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
      * @param item The item to be bound
      */
     public void bindView(View view, T item) {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework - BaseItemView : bindView 223");
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         viewHolder.text1.setText(item.getName());
@@ -249,6 +250,7 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
      * @param text The text to set in the view.
      */
     public void bindView(View view, String text) {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework - BaseItemView : bindView 251");
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         viewHolder.text1.setText(text);
@@ -278,8 +280,8 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
      *
      * @return convertView if it can be reused, or a new view
      */
-    public View getAdapterView(View convertView, ViewGroup parent, @ViewParam int viewParams,
-            int layoutResource) {
+    public View getAdapterView(View convertView, ViewGroup parent, @ViewParam int viewParams, int layoutResource) {
+        Log.d("function-debug", "uk.org.ngo.squeezer.framework - baseItemView : getAdapterView");
         ViewHolder viewHolder =
                 (convertView != null && convertView.getTag() instanceof ViewHolder)
                         ? (ViewHolder) convertView.getTag()

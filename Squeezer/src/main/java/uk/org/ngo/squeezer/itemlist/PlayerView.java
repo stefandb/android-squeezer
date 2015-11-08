@@ -16,6 +16,7 @@
 
 package uk.org.ngo.squeezer.itemlist;
 
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,6 +63,7 @@ public class PlayerView extends BaseItemView<Player> {
 
     @Override
     public void bindView(View view, Player item) {
+        Log.d("function-debug", "uk.org.ngo.squeezer.itemlist - PlayerView : bindView 66");
         final PlayerListActivity activity = (PlayerListActivity) getActivity();
         PlayerState playerState = activity.getPlayerState(item.getId());
         PlayerViewHolder viewHolder = (PlayerViewHolder) view.getTag();

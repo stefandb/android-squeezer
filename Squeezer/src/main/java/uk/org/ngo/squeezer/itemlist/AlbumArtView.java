@@ -17,6 +17,7 @@
 package uk.org.ngo.squeezer.itemlist;
 
 
+import android.util.Log;
 import android.view.View;
 
 import uk.org.ngo.squeezer.R;
@@ -49,6 +50,7 @@ public abstract class AlbumArtView<T extends ArtworkItem> extends
      */
     @Override
     public void bindView(View view, String text) {
+        Log.d("function-debug", "uk.org.ngo.squeezer.itemlist - AlbumArtView : bindView 53");
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         viewHolder.icon.setImageResource(R.drawable.icon_pending_artwork);
