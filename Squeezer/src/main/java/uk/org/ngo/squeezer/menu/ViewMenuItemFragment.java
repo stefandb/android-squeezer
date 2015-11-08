@@ -9,7 +9,9 @@ import android.view.MenuItem;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.Item;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
+import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.itemlist.dialog.BaseViewDialog;
+import uk.org.ngo.squeezer.model.Album;
 
 /**
  * A fragment that implements a "View" menu.
@@ -82,7 +84,7 @@ public class ViewMenuItemFragment extends BaseMenuFragment {
         /**
          * Ensure that the activity that hosts this fragment derives from BaseListActivity.
          */
-        ItemAdapter<T> getItemAdapter();
+        recyclerViewListAdapter<T> getItemAdapter();
 
     }
 }

@@ -31,6 +31,7 @@ import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.BaseListActivity;
 import uk.org.ngo.squeezer.framework.Item;
 import uk.org.ngo.squeezer.framework.ItemView;
+import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.itemlist.GenreSpinner.GenreSpinnerCallback;
 import uk.org.ngo.squeezer.itemlist.YearSpinner.YearSpinnerCallback;
 import uk.org.ngo.squeezer.itemlist.dialog.AlbumFilterDialog;
@@ -288,4 +289,8 @@ public class AlbumListActivity extends BaseListActivity<Album>
         context.startActivity(intent);
     }
 
+    @Override
+    public recyclerViewListAdapter<Album> getItemAdapter() {
+        return super.getItemAdapter();
+    }
 }

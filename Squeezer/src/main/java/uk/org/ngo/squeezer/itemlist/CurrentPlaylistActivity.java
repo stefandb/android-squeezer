@@ -37,6 +37,7 @@ import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.BaseListActivity;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.framework.ItemView;
+import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.itemlist.dialog.PlaylistItemMoveDialog;
 import uk.org.ngo.squeezer.itemlist.dialog.PlaylistSaveDialog;
 import uk.org.ngo.squeezer.model.Player;
@@ -83,7 +84,7 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
     /**
      * A list adapter that highlights the view that's currently playing.
      */
-    private class HighlightingListAdapter extends ItemAdapter<Song> {
+    private class HighlightingListAdapter extends recyclerViewListAdapter<Song> {
 
         public HighlightingListAdapter(ItemView<Song> itemView) {
             super(itemView);
@@ -123,7 +124,7 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
     }
 
     @Override
-    protected ItemAdapter<Song> createItemListAdapter(
+    protected recyclerViewListAdapter<Song> createItemListAdapter(
             ItemView<Song> itemView) {
         return new HighlightingListAdapter(itemView);
     }

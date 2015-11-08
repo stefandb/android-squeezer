@@ -29,6 +29,7 @@ import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.BaseListActivity;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.framework.ItemView;
+import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.model.MusicFolderItem;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 
@@ -58,9 +59,8 @@ public class MusicFolderListActivity extends BaseListActivity<MusicFolderItem> {
     }
 
     @Override
-    protected ItemAdapter<MusicFolderItem> createItemListAdapter(
-            ItemView<MusicFolderItem> itemView) {
-        return new ItemAdapter<MusicFolderItem>(itemView);
+    protected recyclerViewListAdapter<MusicFolderItem> createItemListAdapter(ItemView<MusicFolderItem> itemView) {
+        return new recyclerViewListAdapter<MusicFolderItem>(itemView);
     }
 
     /**

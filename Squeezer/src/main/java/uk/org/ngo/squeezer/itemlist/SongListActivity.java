@@ -47,6 +47,7 @@ import uk.org.ngo.squeezer.framework.BaseListActivity;
 import uk.org.ngo.squeezer.framework.Item;
 import uk.org.ngo.squeezer.framework.ItemView;
 import uk.org.ngo.squeezer.framework.PlaylistItem;
+import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.itemlist.GenreSpinner.GenreSpinnerCallback;
 import uk.org.ngo.squeezer.itemlist.YearSpinner.YearSpinnerCallback;
 import uk.org.ngo.squeezer.itemlist.dialog.SongFilterDialog;
@@ -514,4 +515,9 @@ public class SongListActivity extends BaseListActivity<Song>
         }
     }
 
+
+    @Override
+    public recyclerViewListAdapter<Song> getItemAdapter() {
+        return super.getItemAdapter();
+    }
 }

@@ -142,6 +142,7 @@ public abstract class ItemListActivity extends BaseActivity {
                 .contains(pagePosition) && !mOrderedPagesBeforeHandshake.contains(pagePosition)));
         Log.d("function-debug", "boolean-maybeOrderPage mListScrolling " + String.valueOf(!mListScrolling));
         Log.d("function-debug", "boolean-maybeOrderPage mReceivedPages " + String.valueOf(!mReceivedPages.contains(pagePosition)));
+        Log.d("function-debug", "boolean-maybeOrderPage mReceivedPages string " + mReceivedPages.toString());
         Log.d("function-debug", "boolean-maybeOrderPage mOrderedPages " + String.valueOf(!mOrderedPages.contains(pagePosition)));
         Log.d("function-debug", "boolean-maybeOrderPage mOrderedPagesBeforeHandshake " + String.valueOf(!mOrderedPagesBeforeHandshake.contains(pagePosition)));
 
