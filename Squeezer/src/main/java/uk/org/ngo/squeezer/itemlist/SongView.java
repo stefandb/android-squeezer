@@ -102,7 +102,7 @@ public class SongView extends PlaylistItemView<Song> {
         Log.d("function-debug", "uk.org.ngo.squeezer.itemlist - Songview : bindView 101");
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
-        viewHolder.text1.setText(item.getName());
+        viewHolder.text1.setText(item.getName() + " II");
 
         viewHolder.text2.setText(mJoiner.join(
                 (mDetails & DETAILS_TRACK_NO) > 0 ? item.getTrackNum() : null,
@@ -127,7 +127,7 @@ public class SongView extends PlaylistItemView<Song> {
         Log.d("function-debug", "uk.org.ngo.squeezer.itemlist - Songview : bindView 126");
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
-        viewHolder.text1.setText(label);
+        viewHolder.text1.setText(label + " JJ");
         viewHolder.text2.setText("");
     }
 

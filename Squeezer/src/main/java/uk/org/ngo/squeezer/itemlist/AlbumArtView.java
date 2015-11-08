@@ -54,7 +54,7 @@ public abstract class AlbumArtView<T extends ArtworkItem> extends
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         viewHolder.icon.setImageResource(R.drawable.icon_pending_artwork);
-        viewHolder.text1.setText(text);
+        viewHolder.text1.setText(text  + " CC");
         viewHolder.text2.setText("");
     }
 }

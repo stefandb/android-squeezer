@@ -52,7 +52,7 @@ public class MusicFolderView extends PlaylistItemView<MusicFolderItem> {
     public void bindView(View view, MusicFolderItem item) {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
-        viewHolder.text1.setText(item.getName());
+        viewHolder.text1.setText(item.getName() + " EE");
 
         String type = item.getType();
         int icon_resource = R.drawable.ic_unknown;

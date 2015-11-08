@@ -68,7 +68,7 @@ public class PlayerView extends BaseItemView<Player> {
         PlayerState playerState = activity.getPlayerState(item.getId());
         PlayerViewHolder viewHolder = (PlayerViewHolder) view.getTag();
 
-        viewHolder.text1.setText(item.getName());
+        viewHolder.text1.setText(item.getName() + " FF");
         viewHolder.icon.setImageResource(getModelIcon(item.getModel()));
 
         if (viewHolder.volumeBar == null) {

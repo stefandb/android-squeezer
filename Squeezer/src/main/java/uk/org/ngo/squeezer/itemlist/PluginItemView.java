@@ -47,7 +47,7 @@ public class PluginItemView extends BaseItemView<PluginItem> {
     @Override
     public void bindView(View view, PluginItem item) {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
-        viewHolder.text1.setText(item.getName());
+        viewHolder.text1.setText(item.getName() + " GG");
         // Show/hide the context menu if this item is playable.
 //        viewHolder.btnContextMenu.setVisibility(item.isAudio() ? View.VISIBLE : View.GONE);
 

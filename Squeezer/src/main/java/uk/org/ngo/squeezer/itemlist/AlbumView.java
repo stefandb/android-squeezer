@@ -78,7 +78,7 @@ public class AlbumView extends AlbumArtView<Album> {
         Log.d("function-debug", "uk.org.ngo.squeezer.itemlist - AlbumView : bindView 78");
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
-        viewHolder.text1.setText(item.getName());
+        viewHolder.text1.setText(item.getName() + " DD");
 
         String text2 = "";
         if (item.getId() != null) {

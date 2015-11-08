@@ -224,7 +224,7 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
         Log.d("function-debug", "uk.org.ngo.squeezer.framework - BaseItemView : bindView 223");
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
-        viewHolder.text1.setText(item.getName());
+        viewHolder.text1.setText(item.getName()  + " BB");
     }
 
     /**
@@ -253,7 +253,7 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
         Log.d("function-debug", "uk.org.ngo.squeezer.framework - BaseItemView : bindView 251");
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
-        viewHolder.text1.setText(text);
+        viewHolder.text1.setText(text + " AA");
     }
 
     /**
