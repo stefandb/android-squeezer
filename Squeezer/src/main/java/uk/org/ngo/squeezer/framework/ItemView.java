@@ -17,6 +17,7 @@
 package uk.org.ngo.squeezer.framework;
 
 import android.os.Parcelable.Creator;
+import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -54,26 +55,28 @@ public interface ItemView<T extends Item> {
      * Gets a {@link android.view.View} that displays the data at the specified position in the data
      * set. See {@link ItemAdapter#getView(int, View, android.view.ViewGroup)}
      *
-     * @param convertView the old view to reuse, per {@link android.widget.Adapter#getView(int, View,
+     * @param viewHolder the old view to reuse, per {@link android.widget.Adapter#getView(int, View,
      * android.view.ViewGroup)}
      * @param position Position of item in adapter
      * @param item the item to display.
      *
      * @return the view to display.
      */
-    View getAdapterView(View convertView, ViewGroup parent, int position, T item);
+    recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder viewHolder, int position, T item);
+
+    RecyclerView.ViewHolder getViewHolder();
 
     /**
      * Gets a {@link android.view.View} suitable for displaying the supplied (static) text. See
      * {@link ItemAdapter#getView(int, View, android.view.ViewGroup)}
      *
-     * @param convertView The old view to reuse, per {@link android.widget.Adapter#getView(int,
+     * @param viewHolder The old view to reuse, per {@link android.widget.Adapter#getView(int,
      * View, android.view.ViewGroup)}
      * @param text text to display
      *
      * @return the view to display.
      */
-    View getAdapterView(View convertView, ViewGroup parent, String text);
+    recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder viewHolder, String text);
 
     /**
      * @return The generic argument of the implementation

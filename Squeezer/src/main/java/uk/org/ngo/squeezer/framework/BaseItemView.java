@@ -18,6 +18,7 @@ package uk.org.ngo.squeezer.framework;
 
 import android.os.Parcelable.Creator;
 import android.support.annotation.IntDef;
+import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -60,11 +61,10 @@ import uk.org.ngo.squeezer.widget.SquareImageView;
  * if the primary state should show a context button you may not want to show that button while
  * waiting for data to arrive.
  * <p>
- * Override {@link #bindView(View, Item)} and {@link #bindView(View, String)} to
+ * Override {@link #bindView(recyclerViewListAdapter.SimpleHolder, Item)} and {@link #bindView(recyclerViewListAdapter.SimpleHolder, String)} to
  * control how data from the item is inserted in to the view.
  * <p>
- * If you need a completely custom view hierarchy then override {@link #getAdapterView(View,
- * ViewGroup, int)} and {@link #getAdapterView(View, ViewGroup, String)}.
+ * If you need a completely custom view hierarchy then override {@link #getAdapterView(recyclerViewListAdapter.SimpleHolder, int)} and {@link #getAdapterView(recyclerViewListAdapter.SimpleHolder, String)}.
  *
  * @param <T> the Item subclass this view represents.
  */
@@ -112,17 +112,39 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
     /**
      * A ViewHolder for the views that make up a complete list item.
      */
-    public static class ViewHolder {
-
-        public ImageView icon;
-
-        public TextView text1;
-
-        public TextView text2;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public ImageButton btnContextMenu;
 
         public @ViewParam int viewParams;
+
+
+        private TextView text1;
+        private TextView text2;
+        private ImageView icon;
+
+        public ViewHolder(){
+            super(null);
+        }
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            text1 = (TextView) itemView.findViewById(R.id.text1);
+            text2 = (TextView) itemView.findViewById(R.id.text2);
+            icon = (ImageView) itemView.findViewById(R.id.icon);
+        }
+
+        public ImageView getIcon() {
+            return icon;
+        }
+
+        public TextView getText1() {
+            return text1;
+        }
+
+        public TextView getText2() {
+            return text2;
+        }
     }
 
     /**
@@ -199,12 +221,12 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
     /**
      * Returns a view suitable for displaying the data of item in a list. Item may not be null.
      * <p>
-     * Override this method and {@link #getAdapterView(View, ViewGroup, String)} if your subclass
+     * Override this method and {@link #getAdapterView(recyclerViewListAdapter.SimpleHolder, String)} if your subclass
      * uses a different layout.
      */
     @Override
-    public View getAdapterView(View convertView, ViewGroup parent, int position, T item) {
-        View view = getAdapterView(convertView, parent, mViewParams);
+    public recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder viewHolder, int position, T item) {
+        recyclerViewListAdapter.SimpleHolder view = getAdapterView(viewHolder, mViewParams);
         bindView(view, item);
         return view;
     }
@@ -212,93 +234,86 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
     /**
      * Binds the item's name to {@link ViewHolder#text1}.
      * <p>
-     * OVerride this instead of {@link #getAdapterView(View, ViewGroup, Item)} if the
+     * OVerride this instead of {@link #getAdapterView(recyclerViewListAdapter.SimpleHolder, Item)} if the
      * default layouts are sufficient.
      *
-     * @param view The view that contains the {@link ViewHolder}
+     * @param viewHolder The view that contains the {@link ViewHolder}
      * @param item The item to be bound
      */
-    public void bindView(View view, T item) {
-        ViewHolder viewHolder = (ViewHolder) view.getTag();
-
-        viewHolder.text1.setText(item.getName());
+    public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, T item) {
+        viewHolder.getText1().setText(item.getName());
     }
 
     /**
      * Returns a view suitable for displaying the "Loading..." text.
      * <p>
-     * Override this method and {@link #getAdapterView(View, ViewGroup, Item)} if your
+     * Override this method and {@link #getAdapterView(recyclerViewListAdapter.SimpleHolder, String)} if your
      * extension uses a different layout.
      */
     @Override
-    public View getAdapterView(View convertView, ViewGroup parent, String text) {
-        View view = getAdapterView(convertView, parent, mLoadingViewParams);
-        bindView(view, text);
+    public recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder viewHolder, String text) {
+        recyclerViewListAdapter.SimpleHolder view = getAdapterView(viewHolder, mLoadingViewParams);
+        bindView(viewHolder, text);
         return view;
     }
 
     /**
      * Binds the text to {@link ViewHolder#text1}.
      * <p>
-     * Override this instead of {@link #getAdapterView(View, ViewGroup, String)} if the default
+     * Override this instead of {@link #getAdapterView(recyclerViewListAdapter.SimpleHolder, String)} if the default
      * layout is sufficient.
      *
-     * @param view The view that contains the {@link ViewHolder}
+     * @param viewHolder The view that contains the {@link ViewHolder}
      * @param text The text to set in the view.
      */
-    public void bindView(View view, String text) {
-        ViewHolder viewHolder = (ViewHolder) view.getTag();
-
-        viewHolder.text1.setText(text);
+    public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, String text) {
+        viewHolder.getText1().setText(text);
     }
 
     /**
      * Creates a view from {@code convertView} and the {@code viewParams} using the default layout
      * {@link R.layout#list_item}
      *
-     * @param convertView View to reuse if possible.
-     * @param parent The {@link ViewGroup} to inherit properties from.
+     * @param viewHolder View to reuse if possible.
      * @param viewParams A set of 0 or more {@link ViewParam} to customise the view.
      *
      * @return convertView if it can be reused, or a new view
      */
-    public View getAdapterView(View convertView, ViewGroup parent, @ViewParam int viewParams) {
-        return getAdapterView(convertView, parent, viewParams, R.layout.list_item);
+    public recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder viewHolder, @ViewParam int viewParams) {
+        return getAdapterView(viewHolder, viewParams, R.layout.list_item);
     }
 
     /**
      * Creates a view from {@code convertView} and the {@code viewParams}.
      *
-     * @param convertView View to reuse if possible.
-     * @param parent The {@link ViewGroup} to inherit properties from.
+     * @param viewHolder View to reuse if possible.
      * @param viewParams A set of 0 or more {@link ViewParam} to customise the view.
      * @param layoutResource The layout resource defining the item view
      *
      * @return convertView if it can be reused, or a new view
      */
-    public View getAdapterView(View convertView, ViewGroup parent, @ViewParam int viewParams,
-            int layoutResource) {
-        ViewHolder viewHolder =
-                (convertView != null && convertView.getTag() instanceof ViewHolder)
-                        ? (ViewHolder) convertView.getTag()
-                        : null;
-
-        if (viewHolder == null) {
-            convertView = getLayoutInflater().inflate(layoutResource, parent, false);
-            viewHolder = createViewHolder();
-            viewHolder.text1 = (TextView) convertView.findViewById(R.id.text1);
-            viewHolder.text2 = (TextView) convertView.findViewById(R.id.text2);
-            viewHolder.icon = (ImageView) convertView.findViewById(R.id.icon);
-            viewHolder.btnContextMenu = (ImageButton) convertView.findViewById(R.id.context_menu);
-            convertView.setTag(viewHolder);
-        }
+    public recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder viewHolder, @ViewParam int viewParams, int layoutResource) {
+//        ViewHolder viewHolder =
+//                (convertView != null && convertView.getTag() instanceof ViewHolder)
+//                        ? (ViewHolder) convertView.getTag()
+//                        : null;
+//
+//        if (viewHolder == null) {
+//            convertView = getLayoutInflater().inflate(layoutResource, parent, false);
+//            viewHolder = createViewHolder();
+//            viewHolder.text1 = (TextView) convertView.findViewById(R.id.text1);
+//            viewHolder.text2 = (TextView) convertView.findViewById(R.id.text2);
+//            viewHolder.icon = (ImageView) convertView.findViewById(R.id.icon);
+//            viewHolder.btnContextMenu = (ImageButton) convertView.findViewById(R.id.context_menu);
+//            convertView.setTag(viewHolder);
+//        }
 
         // If the view parameters are different then reset the visibility of child views and hook
         // up any standard behaviours.
-        if (viewParams != viewHolder.viewParams) {
-            viewHolder.icon.setVisibility(
+//        if (viewParams != viewHolder.viewParams) {
+            viewHolder.getIcon().setVisibility(
                     (viewParams & VIEW_PARAM_ICON) != 0 ? View.VISIBLE : View.GONE);
-            viewHolder.text2.setVisibility(
+            viewHolder.getText2().setVisibility(
                     (viewParams & VIEW_PARAM_TWO_LINE) != 0 ? View.VISIBLE : View.GONE);
 
 //            if ((viewParams & VIEW_PARAM_CONTEXT_BUTTON) != 0) {
@@ -317,10 +332,10 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
 //                viewHolder.btnContextMenu.setVisibility(View.GONE);
 //            }
 
-            viewHolder.viewParams = viewParams;
-        }
+//            viewHolder.viewParams = viewParams;
+//        }
 
-        return convertView;
+        return viewHolder;
     }
 
     public ViewHolder createViewHolder() {

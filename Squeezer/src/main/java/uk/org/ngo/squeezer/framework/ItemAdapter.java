@@ -16,6 +16,7 @@
 
 package uk.org.ngo.squeezer.framework;
 
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -115,13 +116,15 @@ public class ItemAdapter<T extends Item> extends BaseAdapter implements
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
+        //TODO-stefan tijdelijke oplossing
         T item = getItem(position);
         if (item != null) {
-            return mItemView.getAdapterView(convertView, parent, position, item);
+//            return mItemView.getAdapterView(convertView, parent, position, item);
         }
 
-        return mItemView.getAdapterView(convertView, parent,
-                (position == 0 && mEmptyItem ? "" : loadingText));
+        return convertView;
+//        return mItemView.getAdapterView(convertView, parent, (position == 0 && mEmptyItem ? "" : loadingText));
     }
 
     public String getQuantityString(int size) {

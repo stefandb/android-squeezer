@@ -127,13 +127,21 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
     }
 
     @Override
-    public void onBindViewHolder(final SimpleHolder viewHolder, int i) {
-        Item item = mItems.get(i);
-        viewHolder.getTextView().setText(item.getName());
-
-        if (!mShowIcon) {
-            viewHolder.getImageView().setVisibility(View.GONE);
+    public void onBindViewHolder(final SimpleHolder viewHolder, int position) {
+        T item = getItem(position);
+        if (item != null) {
+            mItemView.getAdapterView(viewHolder, position, item);
         }
+
+        mItemView.getAdapterView(viewHolder, (position == 0 && mEmptyItem ? "" : loadingText));
+
+
+//        Item item = mItems.get(i);
+//        viewHolder.getTextView().setText(item.getName());
+//
+//        if (!mShowIcon) {
+//            viewHolder.getImageView().setVisibility(View.GONE);
+//        }
 
 //        Context context = viewHolder.itemView.getContext();
 //        Picasso.with(context)
@@ -149,23 +157,37 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
        return 0;
     }
 
+    /**
+     * Dit op een zelfde techniek als de itemview logica met het override van verschillende functies in de klas.
+     * Waardoor dit opeens heel dynamisch word. en anders geimplementeerd kan worden. (hoop ik)
+     */
     public static class SimpleHolder extends RecyclerView.ViewHolder {
 
-        private TextView mTextView;
-        private ImageView mImageView;
+        private TextView text1;
+        private TextView text2;
+        private ImageView icon;
+
+        public SimpleHolder(){
+            super(null);
+        }
 
         public SimpleHolder(View itemView) {
             super(itemView);
-            mTextView = (TextView) itemView.findViewById(R.id.text1);
-            mImageView = (ImageView) itemView.findViewById(R.id.icon);
+            text1 = (TextView) itemView.findViewById(R.id.text1);
+            text2 = (TextView) itemView.findViewById(R.id.text2);
+            icon = (ImageView) itemView.findViewById(R.id.icon);
         }
 
-        public TextView getTextView() {
-            return mTextView;
+        public ImageView getIcon() {
+            return icon;
         }
 
-        public ImageView getImageView() {
-            return mImageView;
+        public TextView getText1() {
+            return text1;
+        }
+
+        public TextView getText2() {
+            return text2;
         }
     }
 
@@ -347,11 +369,10 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
     public View getView(int position, View convertView, ViewGroup parent) {
         T item = getItem(position);
         if (item != null) {
-            return mItemView.getAdapterView(convertView, parent, position, item);
+            return mItemView.getAdapterView(convertView, position, item);
         }
 
-        return mItemView.getAdapterView(convertView, parent,
-                (position == 0 && mEmptyItem ? "" : loadingText));
+        return mItemView.getAdapterView(convertView, (position == 0 && mEmptyItem ? "" : loadingText));
     }
 
     public void onItemSelected(int position) {

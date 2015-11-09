@@ -22,6 +22,7 @@ import android.view.View;
 
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
+import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.model.Song;
 import uk.org.ngo.squeezer.util.ImageFetcher;
 

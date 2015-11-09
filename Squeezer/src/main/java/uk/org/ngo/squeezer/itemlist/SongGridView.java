@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
+import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 
 /**
  * Shows a single album with its artwork, and a context menu.
@@ -31,9 +32,9 @@ public class SongGridView extends SongViewWithArt {
     }
 
     @Override
-    public View getAdapterView(View convertView, ViewGroup parent, @ViewParam int viewParams) {
+    public recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder convertView, @ViewParam int viewParams) {
         mIconWidth = getActivity().getResources().getDimensionPixelSize(R.dimen.album_art_icon_grid_width);
         mIconHeight = getActivity().getResources().getDimensionPixelSize(R.dimen.album_art_icon_grid_height);
-        return getAdapterView(convertView, parent, viewParams, R.layout.grid_item);
+        return getAdapterView(convertView, viewParams, R.layout.grid_item);
     }
 }

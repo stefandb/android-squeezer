@@ -28,6 +28,7 @@ import java.lang.annotation.RetentionPolicy;
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
+import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.itemlist.action.PlayableItemAction;
 import uk.org.ngo.squeezer.model.Album;
 import uk.org.ngo.squeezer.model.Artist;
@@ -73,9 +74,7 @@ public class AlbumView extends AlbumArtView<Album> {
     }
 
     @Override
-    public void bindView(View view, Album item) {
-        ViewHolder viewHolder = (ViewHolder) view.getTag();
-
+    public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, Album item) {
         viewHolder.text1.setText(item.getName());
 
         String text2 = "";

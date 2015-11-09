@@ -58,6 +58,7 @@ import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Util;
 import uk.org.ngo.squeezer.framework.BaseItemView;
 import uk.org.ngo.squeezer.framework.BaseListActivity;
+import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.model.Alarm;
 import uk.org.ngo.squeezer.model.AlarmPlaylist;
 import uk.org.ngo.squeezer.service.ServerString;
@@ -87,13 +88,13 @@ public class AlarmView extends BaseItemView<Alarm> {
     }
 
     @Override
-    public View getAdapterView(View convertView, ViewGroup parent, int position, Alarm item) {
-        View view = getAdapterView(convertView, parent);
+    public recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder Simpleholder, int position, Alarm item) {
+        recyclerViewListAdapter.SimpleHolder view = getAdapterView(Simpleholder);
         bindView((AlarmViewHolder) view.getTag(), position, item);
         return view;
     }
 
-    private View getAdapterView(View convertView, final ViewGroup parent) {
+    private View getAdapterView(recyclerViewListAdapter.SimpleHolder convertView, final ViewGroup parent) {
         AlarmViewHolder currentViewHolder =
                 (convertView != null && convertView.getTag() instanceof AlarmViewHolder)
                         ? (AlarmViewHolder) convertView.getTag()
@@ -103,16 +104,16 @@ public class AlarmView extends BaseItemView<Alarm> {
             convertView = getLayoutInflater().inflate(R.layout.list_item_alarm, parent, false);
             final View alarmView = convertView;
             final AlarmViewHolder viewHolder = new AlarmViewHolder();
-            viewHolder.is24HourFormat = DateFormat.is24HourFormat(getActivity());
-            viewHolder.timeFormat = viewHolder.is24HourFormat ? "%02d:%02d" : "%d:%02d";
+            viewHolder.setIs24HourFormat(DateFormat.is24HourFormat(getActivity()));
+            viewHolder.setTimeFormat(viewHolder.is24HourFormat ? "%02d:%02d" : "%d:%02d");
             String[] amPmStrings = new DateFormatSymbols().getAmPmStrings();
-            viewHolder.am = amPmStrings[0];
-            viewHolder.pm = amPmStrings[1];
-            viewHolder.time = (TextView) convertView.findViewById(R.id.time);
-            viewHolder.amPm = (TextView) convertView.findViewById(R.id.am_pm);
-            viewHolder.amPm.setVisibility(viewHolder.is24HourFormat ? View.GONE : View.VISIBLE);
-            viewHolder.enabled = new CompoundButtonWrapper((CompoundButton) convertView.findViewById(R.id.enabled));
-            viewHolder.enabled.setOncheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            viewHolder.setAm(amPmStrings[0]);
+            viewHolder.setPm(amPmStrings[1]);
+            viewHolder.setTime(R.id.time); //   .time = (TextView) convertView.findViewById();
+            viewHolder.setAmPm(R.id.am_pm); //.amPm = (TextView) convertView.findViewById();
+            viewHolder.getAmPm().setVisibility(viewHolder.is24HourFormat ? View.GONE : View.VISIBLE);
+            viewHolder.setEnabled(R.id.enabled); //.enabled = new CompoundButtonWrapper((CompoundButton) convertView.findViewById());
+            viewHolder.getEnabled().setOncheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     if (getActivity().getService() != null) {
@@ -121,8 +122,8 @@ public class AlarmView extends BaseItemView<Alarm> {
                     }
                 }
             });
-            viewHolder.repeat = new CompoundButtonWrapper((CompoundButton) convertView.findViewById(R.id.repeat));
-            viewHolder.repeat.setOncheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            viewHolder.setRepeat(R.id.repeat); //.repeat = new CompoundButtonWrapper((CompoundButton) convertView.findViewById());
+            viewHolder.getRepeat().setOncheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     if (getActivity().getService() != null) {
@@ -132,10 +133,10 @@ public class AlarmView extends BaseItemView<Alarm> {
                     }
                 }
             });
-            viewHolder.repeat.getButton().setText(ServerString.ALARM_ALARM_REPEAT.getLocalizedString());
-            viewHolder.delete = (ImageView) convertView.findViewById(R.id.delete);
-            viewHolder.playlist = (Spinner) convertView.findViewById(R.id.playlist);
-            viewHolder.dowHolder = (LinearLayout) convertView.findViewById(R.id.dow);
+            viewHolder.getRepeat().getButton().setText(ServerString.ALARM_ALARM_REPEAT.getLocalizedString());
+            viewHolder.setDelete(R.id.delete); //.delete = (ImageView) convertView.findViewById();
+            viewHolder.setPlaylist(R.id.playlist); //.playlist = (Spinner) convertView.findViewById();
+            viewHolder.setDowHolder(R.id.dow); //.dowHolder = (LinearLayout) convertView.findViewById();
             for (int day = 0; day < 7; day++) {
                 ViewGroup dowButton = (ViewGroup) viewHolder.dowHolder.getChildAt(day);
                 final int finalDay = day;
@@ -143,7 +144,7 @@ public class AlarmView extends BaseItemView<Alarm> {
                     @Override
                     public void onClick(View v) {
                         if (getActivity().getService() != null) {
-                            final Alarm alarm = viewHolder.alarm;
+                            final Alarm alarm = viewHolder.getAlarm();
                             boolean wasChecked = alarm.isDayActive(finalDay);
                             if (wasChecked) {
                                 alarm.clearDay(finalDay);
@@ -158,7 +159,7 @@ public class AlarmView extends BaseItemView<Alarm> {
                 });
                 viewHolder.dowTexts[day] = (TextView) dowButton.getChildAt(0);
             }
-            viewHolder.delete.setOnClickListener(new View.OnClickListener() {
+            viewHolder.getDelete().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View view) {
                     final AnimationSet animationSet = new AnimationSet(true);
@@ -281,21 +282,131 @@ public class AlarmView extends BaseItemView<Alarm> {
         }
     }
 
-    private static class AlarmViewHolder {
+    private static class AlarmViewHolder extends ViewHolder{
         int position;
-        public boolean is24HourFormat;
-        String timeFormat;
-        String am;
-        String pm;
-        Alarm alarm;
-        TextView time;
-        TextView amPm;
-        CompoundButtonWrapper enabled;
-        CompoundButtonWrapper repeat;
-        ImageView delete;
-        Spinner playlist;
-        LinearLayout dowHolder;
+        private boolean is24HourFormat;
+        private String timeFormat;
+        private String am;
+        private String pm;
+        private Alarm alarm;
+        private TextView time;
+        private TextView amPm;
+        private CompoundButtonWrapper enabled;
+        private CompoundButtonWrapper repeat;
+        private ImageView delete;
+        private Spinner playlist;
+        private LinearLayout dowHolder;
         final TextView[] dowTexts = new TextView[7];
+
+        public AlarmViewHolder(){
+            super();
+        }
+
+        public AlarmViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        public TextView[] getDowTexts() {
+            return dowTexts;
+        }
+
+        public LinearLayout getDowHolder() {
+            return dowHolder;
+        }
+
+        public void setDowHolder(LinearLayout dowHolder) {
+            this.dowHolder = dowHolder;
+        }
+
+        public Spinner getPlaylist() {
+            return playlist;
+        }
+
+        public void setPlaylist(Spinner playlist) {
+            this.playlist = playlist;
+        }
+
+        public ImageView getDelete() {
+            return delete;
+        }
+
+        public void setDelete(ImageView delete) {
+            this.delete = delete;
+        }
+
+        public CompoundButtonWrapper getRepeat() {
+            return repeat;
+        }
+
+        public void setRepeat(CompoundButtonWrapper repeat) {
+            this.repeat = repeat;
+        }
+
+        public CompoundButtonWrapper getEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(CompoundButtonWrapper enabled) {
+            this.enabled = enabled;
+        }
+
+        public TextView getAmPm() {
+            return amPm;
+        }
+
+        public void setAmPm(TextView amPm) {
+            this.amPm = amPm;
+        }
+
+        public TextView getTime() {
+            return time;
+        }
+
+        public void setTime(TextView time) {
+            this.time = time;
+        }
+
+        public Alarm getAlarm() {
+            return alarm;
+        }
+
+        public void setAlarm(Alarm alarm) {
+            this.alarm = alarm;
+        }
+
+        public boolean is24HourFormat() {
+            return is24HourFormat;
+        }
+
+        public void setIs24HourFormat(boolean is24HourFormat) {
+            this.is24HourFormat = is24HourFormat;
+        }
+
+        public String getTimeFormat() {
+            return timeFormat;
+        }
+
+        public void setTimeFormat(String timeFormat) {
+            this.timeFormat = timeFormat;
+        }
+
+        public String getAm() {
+            return am;
+        }
+
+        public void setAm(String am) {
+            this.am = am;
+        }
+
+        public String getPm() {
+            return pm;
+        }
+
+        public void setPm(String pm) {
+            this.pm = pm;
+        }
+
+
     }
 
     public static class TimePickerFragment extends TimePickerDialog implements TimePickerDialog.OnTimeSetListener {

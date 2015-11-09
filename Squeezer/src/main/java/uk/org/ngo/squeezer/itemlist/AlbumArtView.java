@@ -23,6 +23,7 @@ import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.ArtworkItem;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
 import uk.org.ngo.squeezer.framework.PlaylistItemView;
+import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 
 /**
  * Represents the view hierarchy for a single {@link uk.org.ngo.squeezer.framework.Item} subclass.
@@ -44,15 +45,13 @@ public abstract class AlbumArtView<T extends ArtworkItem> extends
      * Binds the label to {@link ViewHolder#text1}. Sets {@link ViewHolder#icon} to the generic
      * pending icon, and clears {@link ViewHolder#text2}.
      *
-     * @param view The view that contains the {@link ViewHolder}
+     * @param ViewHolder The view that contains the {@link ViewHolder}
      * @param text The text to bind to {@link ViewHolder#text1}
      */
     @Override
-    public void bindView(View view, String text) {
-        ViewHolder viewHolder = (ViewHolder) view.getTag();
-
-        viewHolder.icon.setImageResource(R.drawable.icon_pending_artwork);
-        viewHolder.text1.setText(text);
-        viewHolder.text2.setText("");
+    public void bindView(recyclerViewListAdapter.SimpleHolder ViewHolder, String text) {
+        ViewHolder.getIcon().setImageResource(R.drawable.icon_pending_artwork);
+        ViewHolder.getText1().setText(text);
+        ViewHolder.getText2().setText("");
     }
 }
