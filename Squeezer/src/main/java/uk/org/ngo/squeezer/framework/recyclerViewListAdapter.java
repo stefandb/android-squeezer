@@ -549,7 +549,10 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
     }
 
     public void onItemSelected(int position) {
-        T item = getItem(position);
+        T item = mItems.get(position);
+
+        Log.d("debug-klik", "adapter klik item " + item.toString());
+
         if (item != null && item.getId() != null) {
             mItemView.onItemSelected(position, item);
         }

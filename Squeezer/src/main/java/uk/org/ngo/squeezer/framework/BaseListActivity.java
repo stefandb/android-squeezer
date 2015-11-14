@@ -116,17 +116,22 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
 
         registerForContextMenu(mrecyclerView);
 
-        mrecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), mrecyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                getItemAdapter().onItemSelected(position);
-            }
+        mrecyclerView.setLongClickable(true);
 
-            @Override
-            public void onItemLongClick(View view, int position) {
-                view.showContextMenu();
-            }
-        }));
+        mrecyclerView.addOnItemTouchListener(
+            new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    Log.d("debug", "klik position " + String.valueOf(position));
+                    getItemAdapter().onItemSelected(position);
+                }
+
+                @Override
+                public void onItemLongClick(View view, int position) {
+                    Log.d("debug", "LONG klik position " + String.valueOf(position));
+                }
+            })
+        );
 
 //        mListView.setOnItemClickListener(new OnItemClickListener() {
 //            @Override

@@ -18,6 +18,7 @@ package uk.org.ngo.squeezer.itemlist;
 
 import android.net.Uri;
 import android.support.annotation.IntDef;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -130,5 +131,10 @@ public class AlbumView extends AlbumArtView<Album> {
     @Override
     public String getQuantityString(int quantity) {
         return getActivity().getResources().getQuantityString(R.plurals.album, quantity);
+    }
+
+    @Override
+    public void onItemSelected(int index, Album item) {
+        Log.d("DEBUG-click", "ALBUM VIEW");
     }
 }
