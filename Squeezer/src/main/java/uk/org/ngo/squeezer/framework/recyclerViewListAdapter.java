@@ -4,10 +4,13 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -34,7 +37,7 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
     /**
      * View logic for this adapter
      */
-    private ItemView<T> mItemView;
+    private ItemView<T> mItemView = null;
 
     /**
      * List of items, possibly headed with an empty item.
@@ -67,6 +70,15 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
     private boolean mShowIcon;
     private OnItemClickListener mOnItemClickListener;
 
+    private int position;
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
 
     public interface OnItemClickListener {
         void onItemClicked(Item simpleItem);
@@ -135,16 +147,27 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
     @Override
     public void onBindViewHolder(final SimpleHolder viewHolder, int position) {
 
+        viewHolder.setPosition(position);
+
         Log.d("item-debug", "position " + String.valueOf(position));
         Log.d("item-debug", "mItems " + mItems.get(position).toString());
 
 
         T item = mItems.get(position);
-//        Log.d("item-debug", "item " + String.valueOf(item));
-//        if (!mItems.equals(null)) {
+        Log.d("item-debug", "item " + String.valueOf(item));
+//        if (mItems.) {
             mItemView.getAdapterView(viewHolder, position, item);
 //        }
-//
+
+
+        viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                setPosition(viewHolder.getPosition());
+                return false;
+            }
+        });
+
 //        mItemView.getAdapterView(viewHolder, (position == 0 && mEmptyItem ? "" : loadingText));
 
 
@@ -173,7 +196,7 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
      * Dit op een zelfde techniek als de itemview logica met het override van verschillende functies in de klas.
      * Waardoor dit opeens heel dynamisch word. en anders geimplementeerd kan worden. (hoop ik)
      */
-    public static class SimpleHolder extends RecyclerView.ViewHolder {
+    public class SimpleHolder<T extends Item> extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
 
         private TextView text1;
         private TextView text2;
@@ -202,12 +225,15 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
             super(null);
         }
 
-        public SimpleHolder(View itemView) {
-            super(itemView);
+        public SimpleHolder(View v) {
+            super(v);
 
-            text1 = (TextView) itemView.findViewById(R.id.text1);
-            text2 = (TextView) itemView.findViewById(R.id.text2);
-            icon = (ImageView) itemView.findViewById(R.id.icon);
+            itemView = v;
+            text1 = (TextView) v.findViewById(R.id.text1);
+            text2 = (TextView) v.findViewById(R.id.text2);
+            icon = (ImageView) v.findViewById(R.id.icon);
+
+            v.setOnCreateContextMenuListener(this);
         }
 
         public ImageView getIcon() {
@@ -360,6 +386,28 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
 
         public int getPositionInt(){
             return position;
+        }
+
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            //menuInfo is null
+            AdapterView.AdapterContextMenuInfo adapterMenuInfo = (AdapterView.AdapterContextMenuInfo) menuInfo;
+            final T selectedItem = (T) mItems.get(position);
+
+            ItemView.ContextMenuInfo c = new ItemView.ContextMenuInfo(position, selectedItem, recyclerViewListAdapter.this, getActivity().getMenuInflater());
+
+            if (selectedItem != null && selectedItem.getId() != null) {
+                mItemView.onCreateContextMenu(menu, v, c);
+            }
+        }
+
+        public boolean doItemContext(MenuItem menuItem, int position) {
+            return mItemView.doItemContext(menuItem, position, getItem(position));
+        }
+
+        public boolean doItemContext(MenuItem menuItem) {
+            return mItemView.doItemContext(menuItem);
         }
     }
 
@@ -550,9 +598,6 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
 
     public void onItemSelected(int position) {
         T item = mItems.get(position);
-
-        Log.d("debug-klik", "adapter klik item " + item.toString());
-
         if (item != null && item.getId() != null) {
             mItemView.onItemSelected(position, item);
         }

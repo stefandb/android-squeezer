@@ -115,7 +115,6 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
         mrecyclerView.setOnScrollListener(new RecyclerScrollListener());
 
         registerForContextMenu(mrecyclerView);
-
         mrecyclerView.setLongClickable(true);
 
         mrecyclerView.addOnItemTouchListener(
@@ -125,13 +124,11 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
                     Log.d("debug", "klik position " + String.valueOf(position));
                     getItemAdapter().onItemSelected(position);
                 }
-
-                @Override
-                public void onItemLongClick(View view, int position) {
-                    Log.d("debug", "LONG klik position " + String.valueOf(position));
-                }
             })
         );
+
+
+
 
 //        mListView.setOnItemClickListener(new OnItemClickListener() {
 //            @Override

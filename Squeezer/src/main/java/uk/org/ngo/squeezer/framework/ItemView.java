@@ -161,14 +161,14 @@ public interface ItemView<T extends Item> {
         /**
          * The {@link ItemAdapter} that is bridging the content to the list view.
          */
-        public final ItemAdapter<?> adapter;
+        public final recyclerViewListAdapter<?> adapter;
 
         /**
          * A {@link android.view.MenuInflater} that can be used to inflate a menu resource.
          */
         public final MenuInflater menuInflater;
 
-        public ContextMenuInfo(int position, Item item, ItemAdapter<?> adapter,
+        public ContextMenuInfo(int position, Item item, recyclerViewListAdapter<?> adapter,
                 MenuInflater menuInflater) {
             this.position = position;
             this.item = item;
