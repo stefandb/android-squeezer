@@ -207,7 +207,7 @@ public abstract class ItemListActivity extends BaseActivity {
         LinearLayoutManager layoutManager = ((LinearLayoutManager)listView.getLayoutManager());
 
         int pos = (layoutManager.findFirstVisibleItemPosition() / mPageSize) * mPageSize;
-        int end = layoutManager.findFirstVisibleItemPosition() + 20;
+        int end = layoutManager.findFirstVisibleItemPosition() + 8;
 
         Log.d("function-debug", "voidmaybeOrderVisiblePages pos " + String.valueOf(pos));
         Log.d("function-debug", "voidmaybeOrderVisiblePages end " + String.valueOf(end));
