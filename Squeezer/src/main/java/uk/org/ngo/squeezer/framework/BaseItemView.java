@@ -241,7 +241,7 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
      * @param item The item to be bound
      */
     public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, T item) {
-        viewHolder.getText1().setText(item.getName());
+        viewHolder.getText1().setText(item.getName() + " CC");
     }
 
     /**
@@ -267,7 +267,7 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
      * @param text The text to set in the view.
      */
     public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, String text) {
-        viewHolder.getText1().setText(text);
+        viewHolder.getText1().setText(text + " BB");
     }
 
     /**

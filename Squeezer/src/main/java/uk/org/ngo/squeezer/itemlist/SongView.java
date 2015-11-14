@@ -28,6 +28,7 @@ import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
 import uk.org.ngo.squeezer.framework.PlaylistItemView;
+import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.itemlist.action.PlayableItemAction;
 import uk.org.ngo.squeezer.model.Artist;
 import uk.org.ngo.squeezer.model.Song;
@@ -97,12 +98,10 @@ public class SongView extends PlaylistItemView<Song> {
     }
 
     @Override
-    public void bindView(View view, Song item) {
-        ViewHolder viewHolder = (ViewHolder) view.getTag();
+    public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, Song item) {
+        viewHolder.getText1().setText(item.getName() + " JJ");
 
-        viewHolder.text1.setText(item.getName());
-
-        viewHolder.text2.setText(mJoiner.join(
+        viewHolder.getText2().setText(mJoiner.join(
                 (mDetails & DETAILS_TRACK_NO) > 0 ? item.getTrackNum() : null,
                 (mDetails & DETAILS_DURATION) > 0 ? formatElapsedTime(item.getDuration()) : null,
                 (mDetails & DETAILS_ARTIST) > 0 ? item.getArtist() : null,
@@ -117,15 +116,13 @@ public class SongView extends PlaylistItemView<Song> {
      * Binds the label to {@link ViewHolder#text1}. Hides the {@link ViewHolder#btnContextMenu} and
      * clears {@link ViewHolder#text2}.
      *
-     * @param view The view that contains the {@link ViewHolder}
+     * @param viewHolder The view that contains the {@link ViewHolder}
      * @param label The text to bind to {@link ViewHolder#text1}
      */
     @Override
-    public void bindView(View view, String label) {
-        ViewHolder viewHolder = (ViewHolder) view.getTag();
-
-        viewHolder.text1.setText(label);
-        viewHolder.text2.setText("");
+    public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, String label) {
+        viewHolder.getText1().setText(label + " LL");
+        viewHolder.getText2().setText("");
     }
 
     @Override

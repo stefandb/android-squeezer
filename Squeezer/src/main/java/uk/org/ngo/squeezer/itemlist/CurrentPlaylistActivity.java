@@ -90,37 +90,37 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
             super(itemView);
         }
 
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View view = super.getView(position, convertView, parent);
-            Object viewTag = view.getTag();
-
-            // This test because the view tag wont be set until the album is received from the server
-            if (viewTag instanceof ViewHolder) {
-                ViewHolder viewHolder = (ViewHolder) viewTag;
-                if (position == currentPlaylistIndex) {
-                    viewHolder.text1
-                            .setTextAppearance(getActivity(), R.style.SqueezerTextAppearance_ListItem_Primary);
-
-                    // Changing the background resource to a 9-patch drawable causes the padding
-                    // to be reset. See http://www.mail-archive.com/android-developers@googlegroups.com/msg09595.html
-                    // for details. Save the current padding before setting the drawable, and
-                    // restore afterwards.
-                    int paddingLeft = view.getPaddingLeft();
-                    int paddingTop = view.getPaddingTop();
-                    int paddingRight = view.getPaddingRight();
-                    int paddingBottom = view.getPaddingBottom();
-
-                    view.setBackgroundResource(getAttributeValue(R.attr.playing_item));
-
-                    view.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
-                } else {
-                    viewHolder.text1.setTextAppearance(getActivity(), R.style.SqueezerTextAppearance_ListItem_Primary);
-                    view.setBackgroundColor(getAttributeValue(R.attr.background));
-                }
-            }
-            return view;
-        }
+//        @Override
+//        public recyclerViewListAdapter.SimpleHolder getView(int position, recyclerViewListAdapter.SimpleHolder viewHolder) {
+////            View view = super.getView(position, convertView, parent);
+////            Object viewTag = view.getTag();
+////
+////            // This test because the view tag wont be set until the album is received from the server
+////            if (viewTag instanceof ViewHolder) {
+////                ViewHolder viewHolder = (ViewHolder) viewTag;
+//                if (position == currentPlaylistIndex) {
+//                    viewHolder.getText1()
+//                            .setTextAppearance(getActivity(), R.style.SqueezerTextAppearance_ListItem_Primary);
+//
+//                    // Changing the background resource to a 9-patch drawable causes the padding
+//                    // to be reset. See http://www.mail-archive.com/android-developers@googlegroups.com/msg09595.html
+//                    // for details. Save the current padding before setting the drawable, and
+//                    // restore afterwards.
+//                    int paddingLeft = viewHolder.getItemView().getPaddingLeft();
+//                    int paddingTop = viewHolder.getItemView().getPaddingTop();
+//                    int paddingRight = viewHolder.getItemView().getPaddingRight();
+//                    int paddingBottom = viewHolder.getItemView().getPaddingBottom();
+//
+//                    viewHolder.getItemView().setBackgroundResource(getAttributeValue(R.attr.playing_item));
+//
+//                    viewHolder.getItemView().setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+//                } else {
+//                    viewHolder.getText1().setTextAppearance(getActivity(), R.style.SqueezerTextAppearance_ListItem_Primary);
+//                    viewHolder.getItemView().setBackgroundColor(getAttributeValue(R.attr.background));
+//                }
+////            }
+//            return viewHolder;
+//        }
     }
 
     @Override

@@ -15,6 +15,7 @@
  */
 package uk.org.ngo.squeezer.itemlist;
 
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 

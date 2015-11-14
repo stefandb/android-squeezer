@@ -75,7 +75,7 @@ public class AlbumView extends AlbumArtView<Album> {
 
     @Override
     public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, Album item) {
-        viewHolder.text1.setText(item.getName());
+        viewHolder.getText1().setText(item.getName()  + " EE");
 
         String text2 = "";
         if (item.getId() != null) {
@@ -84,13 +84,13 @@ public class AlbumView extends AlbumArtView<Album> {
                     (mDetails & DETAILS_YEAR) != 0 && item.getYear() != 0 ? item.getYear() : null
             );
         }
-        viewHolder.text2.setText(text2);
+        viewHolder.getText2().setText(text2);
 
         Uri artworkUrl = item.getArtworkUrl();
         if (artworkUrl.equals(Uri.EMPTY)) {
-            viewHolder.icon.setImageResource(R.drawable.icon_album_noart);
+            viewHolder.getIcon().setImageResource(R.drawable.icon_album_noart);
         } else {
-            ImageFetcher.getInstance(getActivity()).loadImage(artworkUrl, viewHolder.icon,
+            ImageFetcher.getInstance(getActivity()).loadImage(artworkUrl, viewHolder.getIcon(),
                     mIconWidth, mIconHeight);
         }
     }

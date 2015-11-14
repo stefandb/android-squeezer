@@ -64,8 +64,6 @@ public interface ItemView<T extends Item> {
      */
     recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder viewHolder, int position, T item);
 
-    RecyclerView.ViewHolder getViewHolder();
-
     /**
      * Gets a {@link android.view.View} suitable for displaying the supplied (static) text. See
      * {@link ItemAdapter#getView(int, View, android.view.ViewGroup)}

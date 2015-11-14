@@ -2,15 +2,21 @@ package uk.org.ngo.squeezer.framework;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.model.Alarm;
+import uk.org.ngo.squeezer.util.CompoundButtonWrapper;
 
 //import com.bignerdranch.android.materialcoordination.R;
 //import com.bignerdranch.android.materialcoordination.model.SimpleItem;
@@ -113,27 +119,33 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
     public SimpleHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
         final SimpleHolder viewHolder = new SimpleHolder(inflater.inflate(R.layout.list_item, viewGroup, false));
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mOnItemClickListener == null) {
-                    return;
-                }
-
-                mOnItemClickListener.onItemClicked(mItems.get(viewHolder.getAdapterPosition()));
-            }
-        });
+//        viewHolder.getItemView().setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (mOnItemClickListener == null) {
+//                    return;
+//                }
+//
+//                mOnItemClickListener.onItemClicked(mItems.get(viewHolder.getAdapterPosition()));
+//            }
+//        });
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(final SimpleHolder viewHolder, int position) {
-        T item = getItem(position);
-        if (item != null) {
-            mItemView.getAdapterView(viewHolder, position, item);
-        }
 
-        mItemView.getAdapterView(viewHolder, (position == 0 && mEmptyItem ? "" : loadingText));
+        Log.d("item-debug", "position " + String.valueOf(position));
+        Log.d("item-debug", "mItems " + mItems.get(position).toString());
+
+
+        T item = mItems.get(position);
+//        Log.d("item-debug", "item " + String.valueOf(item));
+//        if (!mItems.equals(null)) {
+            mItemView.getAdapterView(viewHolder, position, item);
+//        }
+//
+//        mItemView.getAdapterView(viewHolder, (position == 0 && mEmptyItem ? "" : loadingText));
 
 
 //        Item item = mItems.get(i);
@@ -166,6 +178,25 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
         private TextView text1;
         private TextView text2;
         private ImageView icon;
+        private SeekBar volumeBar;
+
+        private View itemView;
+        private TextView volumeValue;
+
+        int position;
+        public boolean is24HourFormat;
+        String timeFormat;
+        String am;
+        String pm;
+        Alarm alarm;
+        TextView time;
+        TextView amPm;
+        CompoundButtonWrapper enabled;
+        CompoundButtonWrapper repeat;
+        ImageView delete;
+        Spinner playlist;
+        LinearLayout dowHolder;
+        final TextView[] dowTexts = new TextView[7];
 
         public SimpleHolder(){
             super(null);
@@ -173,6 +204,7 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
 
         public SimpleHolder(View itemView) {
             super(itemView);
+
             text1 = (TextView) itemView.findViewById(R.id.text1);
             text2 = (TextView) itemView.findViewById(R.id.text2);
             icon = (ImageView) itemView.findViewById(R.id.icon);
@@ -188,6 +220,146 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
 
         public TextView getText2() {
             return text2;
+        }
+
+        //TODO-stefan als tijdelijke oplossing hier alle noldijke velden van de templates zetten
+
+        public SeekBar getVolumeBar() {
+            return volumeBar;
+        }
+
+        public void setVolumeBar(int volumeBar) {
+            this.volumeBar = (SeekBar) itemView.findViewById(volumeBar);
+        }
+
+        public TextView getVolumeValue() {
+            return volumeValue;
+        }
+
+        public void setVolumeValue(int volumeValue) {
+            this.volumeValue = (TextView) itemView.findViewById(volumeValue);
+        }
+
+        public View getItemView() {
+            return itemView;
+        }
+
+        public boolean is24HourFormat() {
+            return is24HourFormat;
+        }
+
+        public void setIs24HourFormat(boolean is24HourFormat) {
+            this.is24HourFormat = is24HourFormat;
+        }
+
+        public String getTimeFormat() {
+            return timeFormat;
+        }
+
+        public void setTimeFormat(String timeFormat) {
+            this.timeFormat = timeFormat;
+        }
+
+        public String getAm() {
+            return am;
+        }
+
+        public void setAm(String am) {
+            this.am = am;
+        }
+
+        public String getPm() {
+            return pm;
+        }
+
+        public void setPm(String pm) {
+            this.pm = pm;
+        }
+
+        public Alarm getAlarm() {
+            return alarm;
+        }
+
+        public void setAlarm(Alarm alarm) {
+            this.alarm = alarm;
+        }
+
+        public TextView getTime() {
+            return time;
+        }
+
+        public void setTime(int time) {
+            this.time = (TextView) itemView.findViewById(time);
+        }
+
+        public TextView getAmPm() {
+            return amPm;
+        }
+
+        public void setAmPm(int amPm) {
+            this.amPm = (TextView) itemView.findViewById(amPm);
+        }
+
+        public CompoundButtonWrapper getEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(CompoundButtonWrapper enabled) {
+            this.enabled = enabled;
+        }
+
+        public CompoundButtonWrapper getRepeat() {
+            return repeat;
+        }
+
+        public void setRepeat(CompoundButtonWrapper repeat) {
+            this.repeat = repeat;
+        }
+
+        public ImageView getDelete() {
+            return delete;
+        }
+
+        public void setDelete(int delete) {
+            this.delete = (ImageView) itemView.findViewById(delete);
+        }
+
+        public Spinner getPlaylist() {
+            return playlist;
+        }
+
+        public void setPlaylist(int playlist) {
+            this.playlist = (Spinner) itemView.findViewById(playlist);
+        }
+
+        public LinearLayout getDowHolder() {
+            return dowHolder;
+        }
+
+        public void setDowHolder(int dowHolder) {
+            this.dowHolder = (LinearLayout) itemView.findViewById(dowHolder);
+        }
+
+        public TextView[] getDowTexts() {
+            return dowTexts;
+        }
+
+        public void setDowTexts(int position, TextView text) {
+            this.dowTexts[position] = text;
+        }
+
+
+
+        public void setDowHolder(LinearLayout dowHolder) {
+            this.dowHolder = dowHolder;
+        }
+
+        public void setPosition(int position) {
+            this.position = position;
+        }
+
+        public int getPositionInt(){
+            return position;
         }
     }
 
@@ -367,12 +539,13 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        T item = getItem(position);
-        if (item != null) {
-            return mItemView.getAdapterView(convertView, position, item);
-        }
+        return convertView;
+//        T item = getItem(position);
+//        if (item != null) {
+//            return mItemView.getAdapterView(convertView, position, item);
+//        }
 
-        return mItemView.getAdapterView(convertView, (position == 0 && mEmptyItem ? "" : loadingText));
+//        return mItemView.getAdapterView(convertView, (position == 0 && mEmptyItem ? "" : loadingText));
     }
 
     public void onItemSelected(int position) {

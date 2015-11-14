@@ -42,17 +42,15 @@ public class SongViewWithArt extends SongView {
     }
 
     @Override
-    public void bindView(View view, Song item) {
-        super.bindView(view, item);
+    public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, Song item) {
+        super.bindView(viewHolder, item);
 
-        ViewHolder viewHolder = (ViewHolder) view.getTag();
         Uri artworkUrl = item.getArtworkUrl();
         if (artworkUrl.equals(Uri.EMPTY)) {
-            viewHolder.icon.setImageResource(
+            viewHolder.getIcon().setImageResource(
                     item.isRemote() ? R.drawable.icon_iradio_noart : R.drawable.icon_album_noart);
         } else {
-            ImageFetcher.getInstance(getActivity()).loadImage(artworkUrl, viewHolder.icon,
-                    mIconWidth, mIconHeight);
+            ImageFetcher.getInstance(getActivity()).loadImage(artworkUrl, viewHolder.getIcon(), mIconWidth, mIconHeight);
         }
     }
 
@@ -60,14 +58,13 @@ public class SongViewWithArt extends SongView {
      * Binds the label to {@link ViewHolder#text1}. Sets {@link ViewHolder#icon} to the generic
      * pending icon, and clears {@link ViewHolder#text2}.
      *
-     * @param view The view that contains the {@link ViewHolder}
+     * @param viewHolder The view that contains the {@link ViewHolder}
      * @param label The text to bind to {@link ViewHolder#text1}
      */
     @Override
-    public void bindView(View view, String label) {
-        super.bindView(view, label);
+    public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, String label) {
+        super.bindView(viewHolder, label);
 
-        ViewHolder viewHolder = (ViewHolder) view.getTag();
-        viewHolder.icon.setImageResource(R.drawable.icon_pending_artwork);
+        viewHolder.getIcon().setImageResource(R.drawable.icon_pending_artwork);
     }
 }

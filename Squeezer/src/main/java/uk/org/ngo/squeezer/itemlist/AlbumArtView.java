@@ -45,13 +45,13 @@ public abstract class AlbumArtView<T extends ArtworkItem> extends
      * Binds the label to {@link ViewHolder#text1}. Sets {@link ViewHolder#icon} to the generic
      * pending icon, and clears {@link ViewHolder#text2}.
      *
-     * @param ViewHolder The view that contains the {@link ViewHolder}
+     * @param view The view that contains the {@link ViewHolder}
      * @param text The text to bind to {@link ViewHolder#text1}
      */
     @Override
-    public void bindView(recyclerViewListAdapter.SimpleHolder ViewHolder, String text) {
-        ViewHolder.getIcon().setImageResource(R.drawable.icon_pending_artwork);
-        ViewHolder.getText1().setText(text);
-        ViewHolder.getText2().setText("");
+    public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, String text) {
+        viewHolder.getIcon().setImageResource(R.drawable.icon_pending_artwork);
+        viewHolder.getText1().setText(text + " DD");
+        viewHolder.getText2().setText("");
     }
 }

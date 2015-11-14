@@ -28,6 +28,7 @@ import uk.org.ngo.squeezer.Util;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
 import uk.org.ngo.squeezer.framework.SpinnerItemAdapter;
+import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.model.Year;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 
@@ -63,17 +64,13 @@ public class YearSpinner {
                     if (adapter == null) {
                         YearView itemView = new YearView(activity) {
                             @Override
-                            public View getAdapterView(View convertView, ViewGroup parent,
-                                    int position, Year item) {
-                                return Util.getSpinnerItemView(getActivity(), convertView, parent,
-                                        item.getName());
+                            public recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder viewHolder,  int position, Year item) {
+                                return Util.getSpinnerItemView(getActivity(), viewHolder, item.getName());
                             }
 
                             @Override
-                            public View getAdapterView(View convertView, ViewGroup parent,
-                                    String label) {
-                                return Util.getSpinnerItemView(getActivity(), convertView, parent,
-                                        label);
+                            public recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder viewHolder,  String label) {
+                                return Util.getSpinnerItemView(getActivity(), viewHolder, label);
                             }
                         };
                         adapter = new SpinnerItemAdapter<Year>(itemView, true);

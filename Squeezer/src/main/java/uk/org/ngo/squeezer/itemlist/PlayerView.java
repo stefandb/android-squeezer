@@ -29,6 +29,7 @@ import java.util.Map;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Util;
 import uk.org.ngo.squeezer.framework.BaseItemView;
+import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.itemlist.dialog.PlayerRenameDialog;
 import uk.org.ngo.squeezer.itemlist.dialog.PlayerSyncDialog;
 import uk.org.ngo.squeezer.model.Player;
@@ -51,8 +52,8 @@ public class PlayerView extends BaseItemView<Player> {
     }
 
     @Override
-    public View getAdapterView(View convertView, ViewGroup parent, @ViewParam int viewParams) {
-        return getAdapterView(convertView, parent, viewParams, R.layout.list_item_player);
+    public recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder viewHolder, @ViewParam int viewParams) {
+        return getAdapterView(viewHolder, viewParams, R.layout.list_item_player);
     }
 
     @Override
@@ -61,32 +62,31 @@ public class PlayerView extends BaseItemView<Player> {
     }
 
     @Override
-    public void bindView(View view, Player item) {
+    public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, Player item) {
         final PlayerListActivity activity = (PlayerListActivity) getActivity();
         PlayerState playerState = activity.getPlayerState(item.getId());
-        PlayerViewHolder viewHolder = (PlayerViewHolder) view.getTag();
 
-        viewHolder.text1.setText(item.getName());
-        viewHolder.icon.setImageResource(getModelIcon(item.getModel()));
+        viewHolder.getText1().setText(item.getName()  + " GG");
+        viewHolder.getIcon().setImageResource(getModelIcon(item.getModel()));
 
-        if (viewHolder.volumeBar == null) {
-            viewHolder.volumeBar = (SeekBar) view.findViewById(R.id.volume_slider);
-            viewHolder.volumeBar.setOnSeekBarChangeListener(new VolumeSeekBarChangeListener(item, viewHolder.volumeValue));
+        if (viewHolder.getVolumeBar() == null) {
+            viewHolder.setVolumeBar(R.id.volume_slider); // = (SeekBar) view.findViewById();
+            viewHolder.getVolumeBar().setOnSeekBarChangeListener(new VolumeSeekBarChangeListener(item, viewHolder.getVolumeValue()));
         }
 
-        viewHolder.volumeBar.setVisibility(playerState != null ? View.VISIBLE : View.GONE);
+        viewHolder.getVolumeBar().setVisibility(playerState != null ? View.VISIBLE : View.GONE);
 
         if (playerState != null) {
             if (playerState.isPoweredOn()) {
-                Util.setAlpha(viewHolder.text1, 1.0f);
+                Util.setAlpha(viewHolder.getText1(), 1.0f);
             } else {
-                Util.setAlpha(viewHolder.text1, 0.25f);
+                Util.setAlpha(viewHolder.getText1(), 0.25f);
             }
 
-            viewHolder.volumeBar.setProgress(playerState.getCurrentVolume());
+            viewHolder.getVolumeBar().setProgress(playerState.getCurrentVolume());
 
-            viewHolder.text2.setVisibility(playerState.getSleepDuration() > 0 ? View.VISIBLE : View.INVISIBLE);
-            viewHolder.text2.setText(activity.getServerString(ServerString.SLEEPING_IN)
+            viewHolder.getText2().setVisibility(playerState.getSleepDuration() > 0 ? View.VISIBLE : View.INVISIBLE);
+            viewHolder.getText2().setText(activity.getServerString(ServerString.SLEEPING_IN)
                     + " " + Util.formatElapsedTime(playerState.getSleep()));
         }
     }

@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.BaseItemView;
+import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.model.PluginItem;
 import uk.org.ngo.squeezer.util.ImageFetcher;
 
@@ -45,16 +46,14 @@ public class PluginItemView extends BaseItemView<PluginItem> {
     }
 
     @Override
-    public void bindView(View view, PluginItem item) {
-        ViewHolder viewHolder = (ViewHolder) view.getTag();
-        viewHolder.text1.setText(item.getName());
+    public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, PluginItem item) {
+        viewHolder.getText1().setText(item.getName() + " HH");
         // Show/hide the context menu if this item is playable.
 //        viewHolder.btnContextMenu.setVisibility(item.isAudio() ? View.VISIBLE : View.GONE);
 
         // If the item has an image, then fetch and display it
         if (item.getImage() != null) {
-            ImageFetcher.getInstance(getActivity()).loadImage(item.getImage(), viewHolder.icon,
-                    mIconWidth, mIconHeight);
+            ImageFetcher.getInstance(getActivity()).loadImage(item.getImage(), viewHolder.getIcon(), mIconWidth, mIconHeight);
         } else {
             // Otherwise we will revert to some other icon. This is not an exact approach, more
             // like a best effort.
@@ -62,15 +61,15 @@ public class PluginItemView extends BaseItemView<PluginItem> {
                 // If this item has sub-items we use the icon of the parent and if that fails,
                 // the current plugin.
                 if (mActivity.getPlugin().getIconResource() != 0) {
-                    viewHolder.icon.setImageResource(mActivity.getPlugin().getIconResource());
+                    viewHolder.getIcon().setImageResource(mActivity.getPlugin().getIconResource());
                 } else {
                     ImageFetcher.getInstance(getActivity()).loadImage(mActivity.getPlugin().getIcon(),
-                            viewHolder.icon, mIconWidth, mIconHeight);
+                            viewHolder.getIcon(), mIconWidth, mIconHeight);
                 }
             } else {
                 // Finally we assume it is an item that can be played. This is consistent with
                 // onItemSelected and onCreateContextMenu.
-                viewHolder.icon.setImageResource(R.drawable.ic_songs);
+                viewHolder.getIcon().setImageResource(R.drawable.ic_songs);
             }
         }
     }
