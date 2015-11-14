@@ -17,12 +17,17 @@
 package uk.org.ngo.squeezer.framework;
 
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListAdapter;
@@ -33,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.behavior.TransformingToolbarBehavior;
 import uk.org.ngo.squeezer.itemlist.IServiceItemListCallback;
 import uk.org.ngo.squeezer.model.Album;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
@@ -79,6 +85,8 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
      * Progress bar (spinning) while items are loading.
      */
     private ProgressBar loadingProgress;
+
+    private View controls_container;
 
     /**
      * Fragment to retain information across the activity lifecycle.
@@ -162,7 +170,107 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
 //            }
 //
 //        });
+
+
+
+        controls_container = findViewById(R.id.controls_container);
+        CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) controls_container.getLayoutParams();
+        TransformingToolbarBehavior transformingToolbarBehavior = (TransformingToolbarBehavior) layoutParams.getBehavior();
+        transformingToolbarBehavior.setToolbarChangeListener(new TransformingToolbarBehavior.ToolbarChangeListener() {
+            @Override
+            public void onToolbarCollapse() {
+                hideToolbar();
+            }
+
+            @Override
+            public void onToolbarShown() {
+                showToolbar();
+            }
+        });
     }
+
+    private void hideToolbar() {
+
+        if (controls_container.getVisibility() == View.INVISIBLE) {
+            return;
+        }
+
+        controls_container.setVisibility(View.INVISIBLE);
+
+//        int cx = controls_container.getWidth() / 2;
+//        int cy = controls_container.getHeight() / 2;
+//
+////        mFloatingActionButton.setVisibility(View.INVISIBLE);
+////        mFloatingActionButton.setX(mBottomToolbar.getX() + (mBottomToolbar.getWidth() / 2) - (mFloatingActionButton.getWidth() / 2));
+////        mFloatingActionButton.setY(mBottomToolbar.getY() + (mBottomToolbar.getHeight() / 2) - (mFloatingActionButton.getHeight() / 2));
+//
+//        int initialRadius = controls_container.getWidth();
+////        int endRadius = mFloatingActionButton.getWidth();
+//
+//        Animator anim = ViewAnimationUtils.createCircularReveal(controls_container, cx, cy, initialRadius, initialRadius);
+//
+//        anim.addListener(new AnimatorListenerAdapter() {
+//            @Override
+//            public void onAnimationEnd(Animator animation) {
+//                super.onAnimationEnd(animation);
+//                controls_container.setVisibility(View.INVISIBLE);
+//
+//                mFloatingActionButton.setVisibility(View.VISIBLE);
+//                mFloatingActionButton.animate()
+//                        .x(mInitialFabX)
+//                        .y(mInitialFabY)
+//                        .setInterpolator(new LinearOutSlowInInterpolator())
+//                        .start();
+//            }
+//        });
+//
+//        anim.start();
+    }
+
+    private void showToolbar() {
+
+        if (controls_container.getVisibility() != View.INVISIBLE) {
+            return;
+        }
+
+
+        controls_container.setVisibility(View.VISIBLE);
+
+
+//        float x = controls_container.getX() + (controls_container.getWidth() / 2) - (mFloatingActionButton.getWidth() / 2);
+//        float y = controls_container.getY() + (controls_container.getHeight() / 2) - (mFloatingActionButton.getHeight() / 2);
+
+//        mFloatingActionButton.animate()
+//                .x(x)
+//                .y(y)
+//                .setInterpolator(new LinearOutSlowInInterpolator())
+//                .withEndAction(new Runnable() {
+//                    @Override
+//                    public void run() {
+//
+//                        int initialRadius = mFloatingActionButton.getWidth();
+//                        int endRadius = mBottomToolbar.getWidth();
+//
+//                        mBottomToolbar.setVisibility(View.VISIBLE);
+//                        mFloatingActionButton.setVisibility(View.INVISIBLE);
+//
+//                        int cx = mBottomToolbar.getWidth() / 2;
+//                        int cy = mBottomToolbar.getHeight() / 2;
+//                        Animator anim = ViewAnimationUtils.createCircularReveal(mBottomToolbar, cx, cy, initialRadius, endRadius);
+//                        anim.addListener(new AnimatorListenerAdapter() {
+//                            @Override
+//                            public void onAnimationEnd(Animator animation) {
+//                                super.onAnimationEnd(animation);
+//                            }
+//                        });
+//
+//                        anim.start();
+//                    }
+//                })
+//                .start();
+    }
+
+
 
     public void onEventMainThread(HandshakeComplete event) {
         Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : onEventMainThread");

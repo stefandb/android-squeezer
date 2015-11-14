@@ -169,7 +169,8 @@
         android:layout_gravity="bottom"
         android:background="?attr/colorAccent"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_behavior=".behavior.TransformingToolbarBehavior">
 
         <fragment
             android:id="@+id/now_playing_fragment"
