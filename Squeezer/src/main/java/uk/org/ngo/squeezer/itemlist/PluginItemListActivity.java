@@ -87,8 +87,7 @@ public class PluginItemListActivity extends BaseListActivity<PluginItem>
                 clearAndReOrderItems(extras.getString(TAG_search));
             }
 
-            findViewById(R.id.search_view).setVisibility(
-                    plugin.isSearchable() ? View.VISIBLE : View.GONE);
+            findViewById(R.id.search_view).setVisibility(plugin.isSearchable() ? View.VISIBLE : View.GONE);
 
             ImageButton searchButton = (ImageButton) findViewById(R.id.search_button);
             final EditText searchCriteriaText = (EditText) findViewById(R.id.search_input);

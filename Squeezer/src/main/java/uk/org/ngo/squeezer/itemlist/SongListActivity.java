@@ -191,32 +191,33 @@ public class SongListActivity extends BaseListActivity<Song>
             ImageView artwork = (ImageView) findViewById(R.id.album);
             TextView albumView = (TextView) findViewById(R.id.albumname);
             TextView artistView = (TextView) findViewById(R.id.artistname);
-            TextView yearView = (TextView) findViewById(R.id.yearname);
+//            TextView yearView = (TextView) findViewById(R.id.yearname);
             ImageView btnContextMenu = (ImageView) findViewById(R.id.context_menu);
 
-            albumView.setText(album.getName());
-            artistView.setText(album.getArtist());
+//            albumView.setText(album.getName());
+//            artistView.setText(album.getArtist());
             if (album.getYear() != 0) {
-                yearView.setText(Integer.toString(album.getYear()));
+//                yearView.setText(Integer.toString(album.getYear()));
             }
 
-            Uri artworkUrl = album.getArtworkUrl();
+//            Uri artworkUrl = album.getArtworkUrl();
+//
+//            if (artworkUrl.equals(Uri.EMPTY)) {
+//                artwork.setImageResource(R.drawable.icon_album_noart);
+//            } else {
+//                ImageFetcher.getInstance(this).loadImage(artworkUrl, artwork);
+//            }
 
-            if (artworkUrl.equals(Uri.EMPTY)) {
-                artwork.setImageResource(R.drawable.icon_album_noart);
-            } else {
-                ImageFetcher.getInstance(this).loadImage(artworkUrl, artwork);
-            }
+//            btnContextMenu.setOnCreateContextMenuListener(this);
 
-            btnContextMenu.setOnCreateContextMenuListener(this);
-
-            btnContextMenu.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    v.showContextMenu();
-                }
-            });
-            getSupportActionBar().setTitle(R.string.home_item_album);
+//            btnContextMenu.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    v.showContextMenu();
+//                }
+//            });
+            getSupportActionBar().setTitle(album.getName());
+            getSupportActionBar().setSubtitle(album.getArtist());
         } else if (artist != null) {
             getSupportActionBar().setTitle( artist.getName());
         }else if (genre != null) {
@@ -408,11 +409,22 @@ public class SongListActivity extends BaseListActivity<Song>
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
-                .getMenuInfo();
+        Log.d("context-item", "songlistactivity : onContextItemSelected (item)");
+        Log.d("context-item", "songlistactivity : onContextItemSelected (item)" + String.valueOf(item.getItemId()));
+        Log.d("context-item", "songlistactivity : onContextItemSelected (item)" + item.toString());
+        Log.d("context-item", "songlistactivity : onContextItemSelected (item)" + item);
 
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+//        Object listItem = getItemAdapter().getItem(info.position);
+        Log.d("context-item", "view_songs_by_artist listitem " + info);
+//        Log.d("context-item", "view_songs_by_artist listitem " + listItem.toString());
         // If info is null then this the context menu from the header, not a list item.
         if (info == null) {
+//            Log.d("context-item", "item ID " + String.valueOf(item.getItemId()));
+//            Log.d("context-item", "item ID play_now " + String.valueOf(R.id.play_now));
+//            Log.d("context-item", "item ID add_to_playlist " + String.valueOf(R.id.add_to_playlist));
+//            Log.d("context-item", "item ID browse_artists " + String.valueOf(R.id.view_songs_by_artist));
+//            Log.d("context-item", "item ID download " + String.valueOf(R.id.download));
             switch (item.getItemId()) {
                 case R.id.play_now:
                     play(album);
@@ -422,12 +434,23 @@ public class SongListActivity extends BaseListActivity<Song>
                     add(album);
                     return true;
 
-                case R.id.browse_artists:
-                    ArtistListActivity.show(this, album);
+                //Show songs by the artist
+                case R.id.view_songs_by_artist:
+
+                    Log.d("context-item", "view_songs_by_artist " + artist);
+                    Log.d("context-item", "view_songs_by_artist " + album);
+//                    Log.d("context-item", "view_songs_by_artist " + artist.getName());
+//                    Log.d("context-item", "view_songs_by_artist " + songViewLogic.toString());
+
+//                    ArtistListActivity.show(this, artist);
                     return true;
 
                 case R.id.download:
                     downloadItem(album);
+                    return true;
+
+                case R.id.view_albums_by_song:
+                    Log.d("context-item", "view_albums_by_song item click songlistactivity");
                     return true;
 
                 default:

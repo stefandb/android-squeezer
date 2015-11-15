@@ -133,8 +133,8 @@ public class AlbumView extends AlbumArtView<Album> {
         return getActivity().getResources().getQuantityString(R.plurals.album, quantity);
     }
 
-    @Override
-    public void onItemSelected(int index, Album item) {
-        Log.d("DEBUG-click", "ALBUM VIEW");
-    }
+//    @Override
+//    public void onItemSelected(int index, Album item) {
+//        Log.d("DEBUG-click", "ALBUM VIEW");
+//    }
 }

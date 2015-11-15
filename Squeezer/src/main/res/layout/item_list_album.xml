@@ -1,113 +1,51 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<!--
- Copyright (c) 2013 Google Inc.
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
--->
-
-<!-- Show all the songs on a given album. -->
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    android:id="@+id/rootLayout"
+    android:fitsSystemWindows="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp" />
+        android:layout_height="@dimen/app_bar_height"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:fitsSystemWindows="true">
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="8dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="8dp">
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:contentScrim="?attr/colorPrimary"
+            android:fitsSystemWindows="true"
+            app:expandedTitleMarginStart="@dimen/expanded_toolbar_title_margin_start"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-        <uk.org.ngo.squeezer.widget.SquareImageView
-            android:id="@+id/album"
-            android:layout_width="@dimen/album_art_large_icon_width"
-            android:layout_height="@dimen/album_art_large_icon_height"
-            android:maxHeight="@dimen/album_art_large_icon_height"
-            android:maxWidth="@dimen/album_art_large_icon_width"
-            android:minHeight="@dimen/album_art_large_icon_height"
-            android:minWidth="@dimen/album_art_large_icon_width"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"/>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/header"
+                app:layout_collapseMode="parallax"
+                android:fitsSystemWindows="true"
+                app:layout_collapseParallaxMultiplier="0.7" />
 
-        <TextView
-            android:id="@+id/albumname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@id/album"
-            android:paddingLeft="8dp"
-            android:paddingBottom="2dp"
-            android:hint="@string/unknown_track"
-            android:textAppearance="@style/SqueezerTextAppearance.SongInfo.Primary"/>
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" >
 
-        <TextView
-            android:id="@+id/artistname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="8dp"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
-            android:hint="@string/unknown_artist"
-            android:textAppearance="@style/SqueezerTextAppearance.SongInfo.Secondary"
-            android:layout_toRightOf="@id/album"
-            android:layout_below="@id/albumname"/>
+            </android.support.v7.widget.Toolbar>
 
-        <TextView
-            android:id="@+id/yearname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="@string/unknown_year"
-            android:paddingLeft="8dp"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
-            android:textAppearance="@style/SqueezerTextAppearance.SongInfo.Secondary"
-            android:layout_toRightOf="@id/album"
-            android:layout_below="@id/artistname"/>
+        </android.support.design.widget.CollapsingToolbarLayout>
 
-        <uk.org.ngo.squeezer.widget.ListItemImageButton
-            android:id="@+id/context_menu"
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@drawable/list_selector_holo_dark"
-            android:contentDescription="@string/app_name"
-            android:minWidth="48dp"
-            android:paddingRight="0dp"
-            android:src="@drawable/dropdown_ic_arrow_normal_holo_dark"
-            android:layout_alignWithParentIfMissing="true"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/artistname"
-            android:layout_marginRight="16dp"/>
-    </RelativeLayout>
-
-    <ListView
-        android:id="@+id/item_list"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:fastScrollEnabled="true"/>
+    </android.support.design.widget.AppBarLayout>
 
     <ProgressBar
         android:id="@+id/loading_progress"
@@ -116,10 +54,37 @@
         android:layout_gravity="center"
         android:visibility="gone"/>
 
-    <fragment
-        android:id="@+id/now_playing_fragment"
-        android:name="uk.org.ngo.squeezer.NowPlayingFragment"
-        android:layout_width="fill_parent"
-        android:layout_height="48dp"
-        tools:layout="@layout/now_playing_fragment_mini"/>
-</LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/item_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:src="@drawable/ic_action_av_play_holo_light"
+        app:layout_anchor="@+id/appbar"
+        app:layout_anchorGravity="bottom|right|end" />
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/controls_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="8dp"
+        app:layout_anchor="@+id/item_list"
+        app:layout_anchorGravity="bottom|right|end"
+        android:layout_alignParentBottom="true"
+        app:layout_behavior=".behavior.TransformingToolbarBehavior">
+
+        <fragment
+            app:layout_anchorGravity="bottom"
+            android:name="uk.org.ngo.squeezer.NowPlayingFragment"
+            android:id="@+id/now_playing_fragment"
+            tools:layout="@layout/now_playing_fragment_mini"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </android.support.v7.widget.CardView>
+</android.support.design.widget.CoordinatorLayout>
