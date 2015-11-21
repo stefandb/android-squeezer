@@ -171,6 +171,8 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
 
             @Override
             public boolean doItemContext(MenuItem menuItem, int index, Song selectedItem) {
+                Log.d("context-function-debug", "CurrentPlaylistActivity doItemContext (menuitem, index, selectedItem)");
+                Log.d("click", String.valueOf(selectedItem));
                 ISqueezeService service = getService();
                 if (service == null) {
                     return true;
@@ -197,8 +199,7 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
                         return true;
 
                     case R.id.playlist_move:
-                        PlaylistItemMoveDialog.addTo(CurrentPlaylistActivity.this,
-                                index);
+                        PlaylistItemMoveDialog.addTo(CurrentPlaylistActivity.this, index, selectedItem.getName());
                         return true;
                 }
 

@@ -16,6 +16,7 @@ public class PlaylistItemMoveDialog extends BaseEditTextDialog {
     private BaseListActivity<?> activity;
 
     private int fromIndex;
+    private String SongTitle;
 
     private Playlist playlist;
 
@@ -27,8 +28,11 @@ public class PlaylistItemMoveDialog extends BaseEditTextDialog {
         activity = (BaseListActivity<?>) getActivity();
         Bundle args = getArguments();
         fromIndex = args.getInt("fromIndex");
+        SongTitle = args.getString("title", "");
+
+
         playlist = args.getParcelable("playlist");
-        dialog.setTitle(getString(R.string.move_to_dialog_title, fromIndex));
+        dialog.setTitle(getString(R.string.move_to_dialog_title, SongTitle));
         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
         editText.setHint(R.string.move_to_index_hint);
 
@@ -59,6 +63,15 @@ public class PlaylistItemMoveDialog extends BaseEditTextDialog {
         PlaylistItemMoveDialog dialog = new PlaylistItemMoveDialog();
         Bundle args = new Bundle();
         args.putInt("fromIndex", fromIndex + 1);
+        dialog.setArguments(args);
+        dialog.show(activity.getSupportFragmentManager(), "MoveDialog");
+    }
+
+    public static void addTo(BaseListActivity<?> activity, int fromIndex, String Title) {
+        PlaylistItemMoveDialog dialog = new PlaylistItemMoveDialog();
+        Bundle args = new Bundle();
+        args.putInt("fromIndex", fromIndex + 1);
+        args.putString("title", Title);
         dialog.setArguments(args);
         dialog.show(activity.getSupportFragmentManager(), "MoveDialog");
     }
