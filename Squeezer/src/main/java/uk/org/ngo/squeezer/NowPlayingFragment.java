@@ -779,6 +779,7 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
             ContextMenu.ContextMenuInfo menuInfo) {
+        Log.d("context-function-debug", "NowPlayingFragment onCreateContextMenu (menu, v, menuInfo)");
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.songcontextmenu, menu);
@@ -803,7 +804,9 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
      */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        Log.d("context-function-debug", "NowPlayingFragment onContextItemSelected (item)");
         Song song = getCurrentSong();
+        Log.d("click", String.valueOf(item));
         if (song == null || song.isRemote()) {
             return false;
         }
@@ -832,6 +835,7 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
                 throw new IllegalStateException("Unknown menu ID.");
         }
     }
+
 
     /**
      * @see android.support.v4.app.Fragment#onCreateOptionsMenu(android.view.Menu,

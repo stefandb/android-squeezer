@@ -108,6 +108,7 @@ public class AlbumView extends AlbumArtView<Album> {
      */
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        Log.d("context-function-debug", "AlbumView onCreateContextMenu (menu, v, menuInfo)");
         super.onCreateContextMenu(menu, v, menuInfo);
 
         menuInfo.menuInflater.inflate(R.menu.albumcontextmenu, menu);
@@ -116,16 +117,6 @@ public class AlbumView extends AlbumArtView<Album> {
             item.setVisible(true);
             item.setTitle(getActivity().getString(R.string.BROWSE_SONGS_BY_ITEM, mArtist.getName()));
         }
-    }
-
-    @Override
-    public boolean doItemContext(MenuItem menuItem, int index, Album selectedItem) {
-        switch (menuItem.getItemId()) {
-            case R.id.browse_songs_by_artist:
-                SongListActivity.show(getActivity(), selectedItem, mArtist);
-                return true;
-        }
-        return super.doItemContext(menuItem, index, selectedItem);
     }
 
     @Override

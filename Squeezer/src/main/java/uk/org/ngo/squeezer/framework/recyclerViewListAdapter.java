@@ -21,11 +21,6 @@ import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.model.Alarm;
 import uk.org.ngo.squeezer.util.CompoundButtonWrapper;
 
-//import com.bignerdranch.android.materialcoordination.R;
-//import com.bignerdranch.android.materialcoordination.model.SimpleItem;
-//import com.bignerdranch.android.materialcoordination.util.FileLoader;
-//import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,10 +79,6 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
         void onItemClicked(Item simpleItem);
     }
 
-//    public recyclerViewListAdapter(Context context) {
-////        this(FileLoader.loadSampleItems(context), null, true);
-//    }
-
     public recyclerViewListAdapter(ItemView<T> itemView) {
         mItemView = itemView;
         mEmptyItem = true;
@@ -102,8 +93,6 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
         loadingText = itemView.getActivity().getString(R.string.loading_text);
         pageSize = itemView.getActivity().getResources().getInteger(R.integer.PageSize);
         pages.clear();
-
-//        this(FileLoader.loadSampleItems(context), null, true);
     }
 
     public recyclerViewListAdapter(List<T> items, OnItemClickListener onItemClickListener) {
@@ -116,31 +105,10 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
         mShowIcon = showIcon;
     }
 
-    public void additems(int count, int start, List<T> items){
-        for (int i=0; i<items.size(); i++) {
-            int position = 0;
-            if(mItems != null){
-                position = mItems.size() + 1;
-            }
-            mItems.add(mItems.size(), items.get(i));
-        }
-        notifyDataSetChanged();
-    }
-
     @Override
     public SimpleHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
         final SimpleHolder viewHolder = new SimpleHolder(inflater.inflate(R.layout.list_item, viewGroup, false));
-//        viewHolder.getItemView().setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (mOnItemClickListener == null) {
-//                    return;
-//                }
-//
-//                mOnItemClickListener.onItemClicked(mItems.get(viewHolder.getAdapterPosition()));
-//            }
-//        });
         return viewHolder;
     }
 
@@ -152,13 +120,11 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
         Log.d("item-debug", "position " + String.valueOf(position));
         Log.d("item-debug", "mItems " + mItems.get(position).toString());
 
-
         T item = mItems.get(position);
         Log.d("item-debug", "item " + String.valueOf(item));
 //        if (mItems.) {
             mItemView.getAdapterView(viewHolder, position, item);
 //        }
-
 
         viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -167,21 +133,6 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
                 return false;
             }
         });
-
-//        mItemView.getAdapterView(viewHolder, (position == 0 && mEmptyItem ? "" : loadingText));
-
-
-//        Item item = mItems.get(i);
-//        viewHolder.getTextView().setText(item.getName());
-//
-//        if (!mShowIcon) {
-//            viewHolder.getImageView().setVisibility(View.GONE);
-//        }
-
-//        Context context = viewHolder.itemView.getContext();
-//        Picasso.with(context)
-//                .load(item.getIconUrl())
-//                .into(viewHolder.getImageView());
     }
 
     @Override
@@ -392,6 +343,7 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
             //menuInfo is null
+            Log.d("context-function-debug", "RecyclerviewListAdapter onCreateContextMenu (menu, v, menuInfo)");
             AdapterView.AdapterContextMenuInfo adapterMenuInfo = (AdapterView.AdapterContextMenuInfo) menuInfo;
             final T selectedItem = (T) mItems.get(position);
 
@@ -403,38 +355,43 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
         }
 
         public boolean doItemContext(MenuItem menuItem, int position) {
+            Log.d("context-function-debug", "recyclerviewadapter simpelholder doItemContext (menuitem, position)");
+//            return true;
             return mItemView.doItemContext(menuItem, position, getItem(position));
         }
 
         public boolean doItemContext(MenuItem menuItem) {
+            Log.d("context-function-debug", "recyclerviewadapter simpelholder doItemContext (menuitem)");
+//            return true;
             return mItemView.doItemContext(menuItem);
         }
     }
-
-
-
-
 
     /**
      * TODO-stefan code ombouwen van ItemAdapter
      */
     public boolean doItemContext(MenuItem menuItem, int position) {
+        Log.d("context-function-debug", "recyclerviewadapter doItemContext (menuitem, position)");
+//        return true;
         return mItemView.doItemContext(menuItem, position, getItem(position));
     }
 
     public boolean doItemContext(MenuItem menuItem) {
+        Log.d("context-function-debug",  "recyclerviewadapter - SimpleHolder : doItemContext (menuitem)");
+//        return true;
         return mItemView.doItemContext(menuItem);
     }
 
     public T getItem(int position) {
-        T item = getPage(position)[position % pageSize];
-        if (item == null) {
-            if (mEmptyItem) {
-                position--;
-            }
-            getActivity().maybeOrderPage(pageNumber(position) * pageSize);
-        }
-        return item;
+        return mItems.get(position);
+//        T item = getPage(position)[position % pageSize];
+//        if (item == null) {
+//            if (mEmptyItem) {
+//                position--;
+//            }
+//            getActivity().maybeOrderPage(pageNumber(position) * pageSize);
+//        }
+//        return item;
     }
 
     public ItemListActivity getActivity() {

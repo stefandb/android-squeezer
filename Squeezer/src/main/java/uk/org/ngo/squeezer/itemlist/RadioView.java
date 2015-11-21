@@ -40,8 +40,4 @@ public class RadioView extends PluginView {
         PluginItemListActivity.show(getActivity(), item);
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v,
-            ItemView.ContextMenuInfo menuInfo) {
-    }
 }

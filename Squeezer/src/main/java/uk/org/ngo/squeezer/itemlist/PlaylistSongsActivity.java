@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -117,6 +118,7 @@ public class PlaylistSongsActivity extends BaseListActivity<Song> {
 
             @Override
             public boolean doItemContext(MenuItem menuItem, int index, Song selectedItem) {
+                Log.d("context-function-debug", "PlaylistItemSongsActivity doItemContext (menuitem, index, selectedItem)");
                 ISqueezeService service = getService();
                 if (service == null) {
                     return super.doItemContext(menuItem, index, selectedItem);

@@ -16,6 +16,7 @@
 
 package uk.org.ngo.squeezer.itemlist;
 
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -68,15 +69,15 @@ public class PlaylistView extends BaseItemView<Playlist> {
 
     @Override
     public boolean doItemContext(MenuItem menuItem, int index, Playlist selectedItem) {
+        Log.d("context-function-debug", "PlaylistView doItemContext (menuitem, index, selectedItem)");
+//
         activity.setCurrentPlaylist(index, selectedItem);
         switch (menuItem.getItemId()) {
             case PLAYLISTS_CONTEXTMENU_DELETE_ITEM:
-                new PlaylistsDeleteDialog().show(activity.getSupportFragmentManager(),
-                        PlaylistsDeleteDialog.class.getName());
+                new PlaylistsDeleteDialog().show(activity.getSupportFragmentManager(), PlaylistsDeleteDialog.class.getName());
                 return true;
             case PLAYLISTS_CONTEXTMENU_RENAME_ITEM:
-                new PlaylistsRenameDialog().show(activity.getSupportFragmentManager(),
-                        PlaylistsRenameDialog.class.getName());
+                new PlaylistsRenameDialog().show(activity.getSupportFragmentManager(), PlaylistsRenameDialog.class.getName());
                 return true;
             case R.id.browse_songs:
                 PlaylistSongsActivity.show(getActivity(), selectedItem);

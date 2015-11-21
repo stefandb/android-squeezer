@@ -300,14 +300,36 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
 
     @Override
     public boolean onContextItemSelected(MenuItem menuItem) {
-        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : onContextItemSelected");
-        AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) menuItem.getMenuInfo();
+        Log.d("context-function-debug", "BseListActivity onContextItemSelected (item)");
 
-        // If menuInfo is null we have a sub menu, we expect the adapter to have stored the position
-        if (menuInfo == null)
-            return itemAdapter.doItemContext(menuItem);
-        else
-            return itemAdapter.doItemContext(menuItem, menuInfo.position);
+        AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) menuItem.getMenuInfo();
+        Log.d("context-function-debug", "click menuitem () " + menuItem);
+        Log.d("context-function-debug", "click menuitem (getitemid) " + menuItem.getItemId());
+        Log.d("context-function-debug", "click menuitem (tostring) " + menuItem.toString());
+        Log.d("context-function-debug", "click menuitem (getmenuinfo) " + menuItem.getMenuInfo());
+        Log.d("context-function-debug", "click menuinfo () " + menuInfo);
+
+        int position = -1;
+        try {
+            position = getItemAdapter().getPosition();   //((BackupRestoreListAdapter)getAdapter()).getPosition();
+        } catch (Exception e) {
+            Log.d(TAG, e.getLocalizedMessage(), e);
+            return super.onContextItemSelected(menuItem);
+        }
+
+        Log.d("context-function-debug", "click position () " + String.valueOf(position));
+        Log.d("context-function-debug", "click position () " + getItemAdapter().getItem(position).toString());
+
+        return itemAdapter.doItemContext(menuItem, position);
+
+//        Log.d("context-function-debug", "click menuitem" + menuInfo.toString());
+
+//        return true;
+//         If menuInfo is null we have a sub menu, we expect the adapter to have stored the position
+//        if (menuInfo == null)
+//            return itemAdapter.doItemContext(menuItem);
+//        else
+//            return itemAdapter.doItemContext(menuItem, menuInfo.position);
     }
 
     /**

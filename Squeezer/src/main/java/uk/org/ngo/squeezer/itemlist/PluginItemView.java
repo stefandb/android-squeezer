@@ -131,6 +131,7 @@ public class PluginItemView extends BaseItemView<PluginItem> {
 
     @Override
     public boolean doItemContext(MenuItem menuItem, int index, PluginItem selectedItem) {
+        Log.d("context-function-debug", "PluginItemView doItemContext (menuitem, index, selectedItem)");
         Log.d("flow" , "pluginitemview | doItemContext");
         switch (menuItem.getItemId()) {
             case R.id.play_now:

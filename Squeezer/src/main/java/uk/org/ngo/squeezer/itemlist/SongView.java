@@ -18,6 +18,7 @@ package uk.org.ngo.squeezer.itemlist;
 
 
 import android.support.annotation.IntDef;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.View;
 
@@ -140,6 +141,7 @@ public class SongView extends PlaylistItemView<Song> {
      */
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        Log.d("context-function-debug", "SongView onCreateContextMenu (menu, v, menuInfo)");
         super.onCreateContextMenu(menu, v, menuInfo);
 
         menuInfo.menuInflater.inflate(R.menu.songcontextmenu, menu);
@@ -151,6 +153,7 @@ public class SongView extends PlaylistItemView<Song> {
         }
 
         if (!"".equals(song.getArtistId())) {
+            Log.d("context-item-create", "songview : onCreateContextMenu " + String.valueOf(R.id.view_albums_by_song));
             menu.findItem(R.id.view_albums_by_song).setVisible(true);
         }
 
@@ -161,6 +164,7 @@ public class SongView extends PlaylistItemView<Song> {
 
     @Override
     public boolean doItemContext(android.view.MenuItem menuItem, int index, Song selectedItem) {
+        Log.d("context-function-debug", "SongView doItemContext (menuitem, index, selectedItem)");
         switch (menuItem.getItemId()) {
             case R.id.view_this_album:
                 SongListActivity.show(getActivity(), selectedItem.getAlbum());
