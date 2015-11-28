@@ -52,6 +52,14 @@ public class PlaylistSongsActivity extends BaseListActivity<Song> {
         if (extras != null) {
             playlist = extras.getParcelable("playlist");
         }
+
+        NavigationDrawer(savedInstanceState);
+        if (savedInstanceState == null) {
+            // set the selection to the item with the identifier 11
+            navigationDrawer.setSelection(8, false);
+        }
+
+        getSupportActionBar().setTitle(R.string.home_item_playlists);
     }
 
     public static void show(Activity context, Playlist playlist) {

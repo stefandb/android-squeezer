@@ -58,7 +58,7 @@ public abstract class PlaylistItemView<T extends PlaylistItem> extends
 
     @Override
     public void onItemSelected(int index, T item) {
-        Log.d("DEBUG-click", "PLAYLISTITEM VIEW");
+        Log.d("debug-onItemClick", "PlaylistItemView onItemSelected");
 //        Log.d(getTag(), "Executing on select action");
         if (onSelectAction != null) {
             onSelectAction.execute(item);
