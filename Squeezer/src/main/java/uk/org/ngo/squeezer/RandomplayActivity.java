@@ -22,6 +22,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringDef;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -34,12 +37,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.Arrays;
 
 import uk.org.ngo.squeezer.framework.BaseActivity;
+import uk.org.ngo.squeezer.framework.RecyclerItemClickListener;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class RandomplayActivity extends BaseActivity {
 
-    private ListView listView;
+//    private ListView listView;
+    private RecyclerView mrecyclerView;
 
     @StringDef({TRACKS, ALBUMS, CONTRIBUTORS, YEAR})
     @Retention(RetentionPolicy.SOURCE)
@@ -64,14 +71,16 @@ public class RandomplayActivity extends BaseActivity {
             navigationDrawer.setSelection(7, false);
         }
         getSupportActionBar().setTitle(R.string.home_item_random_mix);
-        listView = (ListView) findViewById(R.id.item_list);
+        mrecyclerView = checkNotNull((RecyclerView) findViewById(R.id.item_list),
+                "getContentView() did not return a view containing R.id.item_list");
+        mrecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     public void onEventMainThread(HandshakeComplete event) {
         setRandomPlayList(getService());
     }
 
-    private void setRandomPlayList(@NonNull ISqueezeService service) {
+    private void setRandomPlayList(@NonNull final ISqueezeService service) {
         String[] values = getResources().getStringArray(R.array.randomplay_items);
         int[] icons = new int[values.length];
         Arrays.fill(icons, R.drawable.ic_random);
@@ -79,28 +88,18 @@ public class RandomplayActivity extends BaseActivity {
         // XXX: Implement the "Choose the genres that the random mix will be
         // drawn from" functionality.
         // icons[icons.length - 1] = R.drawable.ic_genres;
-        listView.setAdapter(new IconRowAdapter(this, values, icons));
-        listView.setOnItemClickListener(new OnRandomPlayClickListener(service));
-    }
-
-    /**
-     * Provides an OnItemClickListener where the onItemClick() method is known to require
-     * a functioning ISqueezeService.
-     */
-    private class OnRandomPlayClickListener implements OnItemClickListener {
-        @NonNull protected final ISqueezeService mService;
-
-        OnRandomPlayClickListener(@NonNull ISqueezeService service) {
-            mService = service;
-        }
-
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            if (position < randomplayTypes.size()) {
-                mService.randomPlay(randomplayTypes.get(position));
-                NowPlayingActivity.show(RandomplayActivity.this);
-            }
-        }
+        mrecyclerView.setAdapter(new IconRowAdapter(this, values, icons));
+        mrecyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        if (position < randomplayTypes.size()) {
+                            service.randomPlay(randomplayTypes.get(position));
+                            NowPlayingActivity.show(RandomplayActivity.this);
+                        }
+                    }
+            })
+        );
     }
 
     static void show(Context context) {

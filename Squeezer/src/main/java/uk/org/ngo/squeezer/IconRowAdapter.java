@@ -17,10 +17,15 @@
 package uk.org.ngo.squeezer;
 
 import android.app.Activity;
+import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -31,7 +36,7 @@ import java.util.List;
  *
  * @author Kurt Aaholst
  */
-public class IconRowAdapter extends BaseAdapter {
+public class IconRowAdapter extends RecyclerView.Adapter<IconRowAdapter.SimpleHolder> {
 
     private final Activity activity;
 
@@ -46,23 +51,37 @@ public class IconRowAdapter extends BaseAdapter {
      */
     private List<IconRow> mRows = new ArrayList<IconRow>();
 
-    @Override
-    public int getCount() {
-        return mRows.size();
-    }
-
     public int getImage(int position) {
         return mRows.get(position).getIcon();
     }
 
     @Override
-    public CharSequence getItem(int position) {
-        return mRows.get(position).getText();
+    public SimpleHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        final SimpleHolder viewHolder = new SimpleHolder(inflater.inflate(R.layout.list_item, parent, false));
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("clikc", "frdfrrfd");
+            }
+        });
+        return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(final SimpleHolder viewHolder, int position) {
+        viewHolder.getText1().setText(mRows.get(position).getText());
+        viewHolder.getIcon().setImageResource(mRows.get(position).getIcon());
     }
 
     @Override
     public long getItemId(int position) {
         return mRows.get(position).getId();
+    }
+
+    @Override
+    public int getItemCount() {
+        return mRows.size();
     }
 
     /**
@@ -93,18 +112,6 @@ public class IconRowAdapter extends BaseAdapter {
     public IconRowAdapter(Activity context, List<IconRow> rows) {
         this.activity = context;
         mRows = rows;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View row = getActivity().getLayoutInflater().inflate(rowLayout, parent, false);
-        TextView text1 = (TextView) row.findViewById(textId);
-        ImageView icon = (ImageView) row.findViewById(iconId);
-
-        text1.setText(mRows.get(position).getText());
-        icon.setImageResource(mRows.get(position).getIcon());
-
-        return row;
     }
 
     public Activity getActivity() {
@@ -153,6 +160,27 @@ public class IconRowAdapter extends BaseAdapter {
 
         public void setIcon(int icon) {
             mIcon = icon;
+        }
+    }
+
+
+    public static class SimpleHolder extends RecyclerView.ViewHolder {
+
+        private TextView text1;
+        private ImageView icon;
+
+        public SimpleHolder(View itemView) {
+            super(itemView);
+            text1 = (TextView) itemView.findViewById(R.id.text1);
+            icon = (ImageView) itemView.findViewById(R.id.icon);
+        }
+
+        public TextView getText1() {
+            return text1;
+        }
+
+        public ImageView getIcon() {
+            return icon;
         }
     }
 }
