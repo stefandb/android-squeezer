@@ -20,6 +20,7 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -89,8 +90,10 @@ public class SearchActivity extends ItemListActivity {
         }
     }
 
-    @Override
-    public final boolean onContextItemSelected(MenuItem menuItem) {
+//    @Override
+    public final boolean onContextItemSelectedOLD(MenuItem menuItem) {
+        Log.d("context-function-debug", "SearchActivity onContextItemSelected (item)");
+        Log.d("click", String.valueOf(menuItem));
         if (getService() != null) {
             ExpandableListContextMenuInfo contextMenuInfo = (ExpandableListContextMenuInfo) menuItem
                     .getMenuInfo();
