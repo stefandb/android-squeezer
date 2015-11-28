@@ -16,6 +16,7 @@
 
 package uk.org.ngo.squeezer.itemlist;
 
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -134,37 +135,40 @@ public class PlayerView extends BaseItemView<Player> {
 
     @Override
     public boolean doItemContext(MenuItem menuItem, int index, Player selectedItem) {
-        activity.setCurrentPlayer(selectedItem);
-        ISqueezeService service = activity.getService();
-        if (service == null) {
-            return super.doItemContext(menuItem, index, selectedItem);
-        }
-
-        switch (menuItem.getItemId()) {
-            case R.id.sleep:
-                // This is the start of a context menu.
-                // Just return, as we have set the current player.
-                return true;
-            case R.id.cancel_sleep:
-                service.sleep(selectedItem, 0);
-                return true;
-            case R.id.rename:
-                new PlayerRenameDialog().show(activity.getSupportFragmentManager(),
-                        PlayerRenameDialog.class.getName());
-                return true;
-            case R.id.toggle_power:
-                service.togglePower(selectedItem);
-                return true;
-            case R.id.player_sync:
-                new PlayerSyncDialog().show(activity.getSupportFragmentManager(),
-                        PlayerSyncDialog.class.getName());
-                return true;
-        }
+        Log.d("context-function-debug", "PlayerView doItemContext (menuitem, index, selectedItem)");
+//        activity.setCurrentPlayer(selectedItem);
+//        ISqueezeService service = activity.getService();
+//        if (service == null) {
+//            return super.doItemContext(menuItem, index, selectedItem);
+//        }
+//
+//        switch (menuItem.getItemId()) {
+//            case R.id.sleep:
+//                // This is the start of a context menu.
+//                // Just return, as we have set the current player.
+//                return true;
+//            case R.id.cancel_sleep:
+//                service.sleep(selectedItem, 0);
+//                return true;
+//            case R.id.rename:
+//                new PlayerRenameDialog().show(activity.getSupportFragmentManager(),
+//                        PlayerRenameDialog.class.getName());
+//                return true;
+//            case R.id.toggle_power:
+//                service.togglePower(selectedItem);
+//                return true;
+//            case R.id.player_sync:
+//                new PlayerSyncDialog().show(activity.getSupportFragmentManager(),
+//                        PlayerSyncDialog.class.getName());
+//                return true;
+//        }
         return super.doItemContext(menuItem, index, selectedItem);
     }
 
     @Override
     public boolean doItemContext(MenuItem menuItem) {
+        Log.d("context-function-debug", "PlayerView doItemContext (menuitem)");
+        Log.d("click", String.valueOf(menuItem));
         ISqueezeService service = activity.getService();
         if (service == null) {
             return super.doItemContext(menuItem);

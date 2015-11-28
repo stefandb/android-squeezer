@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -123,8 +124,10 @@ public class PlayerListActivity extends ItemListActivity implements
         super.onSaveInstanceState(outState);
     }
 
-    @Override
-    public final boolean onContextItemSelected(MenuItem item) {
+//    @Override
+    public final boolean onContextItemSelectedOLD(MenuItem item) {
+        Log.d("context-function-debug", "PlayersListActivity onContextItemSelected (item)");
+        Log.d("click", String.valueOf(item));
         if (getService() != null) {
             ExpandableListView.ExpandableListContextMenuInfo contextMenuInfo = (ExpandableListView.ExpandableListContextMenuInfo) item
                     .getMenuInfo();
