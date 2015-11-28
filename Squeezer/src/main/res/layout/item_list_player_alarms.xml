@@ -18,125 +18,219 @@
 
 <!-- Show all the songs on a given album. -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:tools="http://schemas.android.com/tools"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="fill_parent"-->
+    <!--android:orientation="vertical">-->
+
+    <!--<android.support.v7.widget.Toolbar-->
+        <!--android:id="@+id/toolbar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="?attr/actionBarSize"-->
+        <!--android:background="?attr/colorPrimary"-->
+        <!--android:elevation="4dp" />-->
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/alarm_manager"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="fill_parent"-->
+        <!--android:orientation="vertical">-->
+
+        <!--<RelativeLayout-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:paddingBottom="8dp"-->
+            <!--android:paddingLeft="16dp"-->
+            <!--android:paddingRight="16dp"-->
+            <!--android:paddingTop="8dp">-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/all_alarms_text"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentLeft="true"-->
+                <!--android:layout_toLeftOf="@+id/alarms_enabled"-->
+                <!--android:singleLine="true"-->
+                <!--android:textAppearance="@style/SqueezerTextAppearance.Medium"-->
+                <!--tools:text="All Alarms" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/all_alarms_hint"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentLeft="true"-->
+                <!--android:layout_below="@id/all_alarms_text"-->
+                <!--android:layout_toLeftOf="@+id/alarms_enabled"-->
+                <!--android:singleLine="true"-->
+                <!--android:text="@string/all_alarms_off_hint"-->
+                <!--android:textAppearance="@style/SqueezerTextAppearance.Small" />-->
+
+            <!--<include-->
+                <!--android:id="@+id/alarms_enabled"-->
+                <!--layout="@layout/squeezer_switch"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentEnd="true"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:layout_centerVertical="true" />-->
+        <!--</RelativeLayout>-->
+
+        <!--<ProgressBar-->
+            <!--android:id="@+id/loading_progress"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="fill_parent"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:visibility="gone" />-->
+    <!--</LinearLayout>-->
+
+    <!--<TextView-->
+        <!--android:id="@android:id/empty"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="fill_parent"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:drawableLeft="@drawable/ic_squeezeplay"-->
+        <!--android:drawablePadding="16dp"-->
+        <!--android:gravity="center"-->
+        <!--android:paddingLeft="16dp"-->
+        <!--android:paddingRight="16dp"-->
+        <!--android:text="@string/no_players_connected"-->
+        <!--android:textAppearance="@style/SqueezerTextAppearance.Medium"-->
+        <!--android:visibility="gone" />-->
+<!--</LinearLayout>-->
+
+
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical">
+    android:id="@+id/coordinator_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp" />
+        android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:id="@+id/alarm_manager"
+        <!--app:layout_scrollFlags="scroll|enterAlways"-->
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_collapseMode="pin"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:paddingBottom="8dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="?attr/actionBarSize">
 
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="8dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="8dp">
-
-            <TextView
-                android:id="@+id/all_alarms_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_toLeftOf="@+id/alarms_enabled"
-                android:singleLine="true"
-                android:textAppearance="@style/SqueezerTextAppearance.Medium"
-                tools:text="All Alarms" />
-
-            <TextView
-                android:id="@+id/all_alarms_hint"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@id/all_alarms_text"
-                android:layout_toLeftOf="@+id/alarms_enabled"
-                android:singleLine="true"
-                android:text="@string/all_alarms_off_hint"
-                android:textAppearance="@style/SqueezerTextAppearance.Small" />
-
-            <include
-                android:id="@+id/alarms_enabled"
-                layout="@layout/squeezer_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true" />
-        </RelativeLayout>
-
-        <ListView
-            android:id="@+id/item_list"
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="?alarm_list_background"
-            android:fastScrollEnabled="true"
-            tools:listitem="@layout/list_item_alarm" />
-
-        <ProgressBar
-            android:id="@+id/loading_progress"
+        <TextView
+            android:id="@+id/all_alarms_text"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center"
-            android:visibility="gone" />
-
-        <RelativeLayout
-            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="8dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="8dp">
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@+id/alarms_enabled"
+            android:singleLine="true"
+            android:textAppearance="@style/SqueezerTextAppearance.Medium"
+            tools:text="All Alarms" />
 
-            <ImageButton
-                android:id="@+id/add_alarm"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_centerHorizontal="true"
-                android:background="?main_button_background"
-                android:src="@drawable/ic_add" />
+        <TextView
+            android:id="@+id/all_alarms_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/all_alarms_text"
+            android:layout_toLeftOf="@+id/alarms_enabled"
+            android:singleLine="true"
+            android:text="@string/all_alarms_off_hint"
+            android:textAppearance="@style/SqueezerTextAppearance.Small" />
 
-            <ImageButton
-                android:id="@+id/settings"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:background="?item_background"
-                android:src="?ic_alarm_settings" />
-        </RelativeLayout>
-    </LinearLayout>
+        <include
+            android:id="@+id/alarms_enabled"
+            layout="@layout/squeezer_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
 
-    <TextView
-        android:id="@android:id/empty"
+    <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/item_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="?attr/actionBarSize" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:src="@drawable/ic_alarm_settings"
+        app:fabSize="mini"
+        app:layout_anchor="@id/item_list"
+        app:layout_anchorGravity="bottom|right|end" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/add_alarm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:src="@drawable/ic_add"
+        app:fabSize="mini"
+        app:layout_anchor="@id/item_list"
+        app:layout_anchorGravity="bottom|right|end" />
+
+
+    <!--<android.support.design.widget.FloatingActionButton-->
+    <!--android:id="@+id/fab"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="bottom|right"-->
+    <!--android:layout_margin="16dp"-->
+    <!--android:clickable="true"-->
+    <!--android:src="@drawable/ic_share_white_24dp"-->
+    <!--android:visibility="invisible" />-->
+
+    <ProgressBar
+        android:id="@+id/loading_progress"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_gravity="center"
-        android:drawableLeft="@drawable/ic_squeezeplay"
-        android:drawablePadding="16dp"
-        android:gravity="center"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:text="@string/no_players_connected"
-        android:textAppearance="@style/SqueezerTextAppearance.Medium"
         android:visibility="gone" />
 
-    <fragment
-        android:id="@+id/now_playing_fragment"
-        android:name="uk.org.ngo.squeezer.NowPlayingFragment"
-        android:layout_width="fill_parent"
-        android:layout_height="48dp"
-        tools:layout="@layout/now_playing_fragment_mini" />
-</LinearLayout>
+    <!--app:layout_behavior=".behavior.TransformingToolbarBehavior"-->
+    <android.support.v7.widget.CardView
+        android:id="@+id/controls_container"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentBottom=
+            "true"
+        android:layout_gravity="bottom"
+        android:background="?attr/colorAccent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_behavior=".behavior.TransformingToolbarBehavior"
+        custom:cardElevation="8dp">
+
+        <fragment
+            android:id="@+id/now_playing_fragment"
+            android:name="uk.org.ngo.squeezer.NowPlayingFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            tools:layout="@layout/now_playing_fragment_mini" />
+    </android.support.v7.widget.CardView>
+
+</android.support.design.widget.CoordinatorLayout>

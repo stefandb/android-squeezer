@@ -30,6 +30,7 @@ import android.text.SpannableString;
 import android.text.format.DateFormat;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -266,10 +267,8 @@ public class AlarmView extends BaseItemView<Alarm> {
 
     @Override
     public void onItemSelected(int index, Alarm item) {
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        Log.d("xlick", String.valueOf(item));
+//        super.onItemSelected(index, item);
     }
 
     public void setAlarmPlaylists(List<AlarmPlaylist> alarmPlaylists) {
