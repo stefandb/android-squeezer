@@ -114,17 +114,16 @@ public class ItemAdapter<T extends Item> extends BaseAdapter implements
         pages.clear();
     }
 
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
-        //TODO-stefan tijdelijke oplossing
         T item = getItem(position);
         if (item != null) {
-//            return mItemView.getAdapterView(convertView, parent, position, item);
+            return mItemView.getAdapterView(convertView, parent, position, item);
         }
 
-        return convertView;
-//        return mItemView.getAdapterView(convertView, parent, (position == 0 && mEmptyItem ? "" : loadingText));
+        return mItemView.getAdapterView(convertView, parent,
+                (position == 0 && mEmptyItem ? "" : loadingText));
     }
 
     public String getQuantityString(int size) {

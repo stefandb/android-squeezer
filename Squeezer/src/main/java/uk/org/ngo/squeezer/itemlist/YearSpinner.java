@@ -64,13 +64,15 @@ public class YearSpinner {
                     if (adapter == null) {
                         YearView itemView = new YearView(activity) {
                             @Override
-                            public recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder viewHolder,  int position, Year item) {
-                                return Util.getSpinnerItemView(getActivity(), viewHolder, item.getName());
+                            public View getAdapterView(View convertView, ViewGroup parent,
+                                                       int position, Year item) {
+                                return Util.getSpinnerItemView(getActivity(), convertView, parent, item.getName());
                             }
 
                             @Override
-                            public recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder viewHolder,  String label) {
-                                return Util.getSpinnerItemView(getActivity(), viewHolder, label);
+                            public View getAdapterView(View convertView, ViewGroup parent,
+                                                       String label) {
+                                return Util.getSpinnerItemView(getActivity(), convertView, parent, label);
                             }
                         };
                         adapter = new SpinnerItemAdapter<Year>(itemView, true);

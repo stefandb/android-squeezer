@@ -168,6 +168,20 @@ public class Util {
      * @param convertView
      * @param parent
      * @param label
+     * @return a view suitable for use as a spinner view.
+     */
+    public static View getSpinnerItemView(Context context, View convertView, ViewGroup parent,
+                                          String label) {
+        return getSpinnerView(context, convertView, parent, label,
+                android.R.layout.simple_spinner_item);
+    }
+
+    /**
+     *
+     * @param context
+     * @param convertView
+     * @param parent
+     * @param label
      * @return a view suitable for use in a spinner's dropdown menu.
      */
     public static recyclerViewListAdapter.SimpleHolder getSpinnerDropDownView(Context context, recyclerViewListAdapter.SimpleHolder convertView,  String label) {

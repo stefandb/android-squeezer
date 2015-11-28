@@ -39,6 +39,7 @@ import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.itemlist.AlbumListActivity;
 import uk.org.ngo.squeezer.itemlist.ArtistListActivity;
 import uk.org.ngo.squeezer.itemlist.SongListActivity;
+import uk.org.ngo.squeezer.model.Alarm;
 import uk.org.ngo.squeezer.util.Reflection;
 import uk.org.ngo.squeezer.widget.ListItemImageButton;
 import uk.org.ngo.squeezer.widget.SquareImageView;
@@ -256,6 +257,16 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
         recyclerViewListAdapter.SimpleHolder view = getAdapterView(viewHolder, mLoadingViewParams);
         bindView(viewHolder, text);
         return view;
+    }
+
+    @Override
+    public View getAdapterView(View convertView, ViewGroup parent, String text) {
+        return null;
+    }
+
+    @Override
+    public View getAdapterView(View convertView, ViewGroup parent, int position, T item) {
+        return null;
     }
 
     /**

@@ -76,6 +76,10 @@ public interface ItemView<T extends Item> {
      */
     recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder viewHolder, String text);
 
+    View getAdapterView(View convertView, ViewGroup parent, int position, T item);
+
+    View getAdapterView(View convertView, ViewGroup parent, String text);
+
     /**
      * @return The generic argument of the implementation
      */
