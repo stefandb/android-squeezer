@@ -397,14 +397,14 @@ public class SongListActivity extends BaseListActivity<Song>
         super.onCreateContextMenu(menu, v, menuInfo);
 
         if (album != null) {
-            MenuInflater menuInflater = getMenuInflater();
-            menuInflater.inflate(R.menu.albumcontextmenu, menu);
+//            MenuInflater menuInflater = getMenuInflater();
+//            menuInflater.inflate(R.menu.albumcontextmenu, menu);
 
             // Hide the option to view the album.
-            MenuItem browse = menu.findItem(R.id.browse_songs);
-            if (browse != null) {
-                browse.setVisible(false);
-            }
+//            MenuItem browse = menu.findItem(R.id.browse_songs);
+//            if (browse != null) {
+//                browse.setVisible(false);
+//            }
         }
     }
 
