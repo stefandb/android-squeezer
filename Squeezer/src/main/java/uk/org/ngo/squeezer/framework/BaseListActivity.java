@@ -107,9 +107,10 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
         mrecyclerView = checkNotNull((RecyclerView) findViewById(R.id.item_list),
                 "getContentView() did not return a view containing R.id.item_list");
         mrecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mrecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getResources()));
 
         loadingProgress = checkNotNull((ProgressBar) findViewById(R.id.loading_progress),
-                "getContentView() did not return a view containing R.id.loading_progress");
+        "getContentView() did not return a view containing R.id.loading_progress");
 
 //        mrecyclerView.addOnItemTouchListener();
         mrecyclerView.setOnScrollListener(new RecyclerScrollListener());
