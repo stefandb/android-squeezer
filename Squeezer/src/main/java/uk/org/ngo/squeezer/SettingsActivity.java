@@ -379,24 +379,24 @@ public class SettingsActivity extends PreferenceActivity implements
                 dialog.setContentView(R.layout.scrobbler_choice_dialog);
                 dialog.setTitle("Scrobbling applications");
 
-                ListView appList = (ListView) dialog.findViewById(R.id.scrobble_apps);
-                appList.setAdapter(new IconRowAdapter(this, apps, icons));
-
-                final Context context = dialog.getContext();
-                appList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position,
-                            long id) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse("market://details?id=" + urls[position]));
-                        try {
-                            startActivity(intent);
-                        } catch (ActivityNotFoundException e) {
-                            Toast.makeText(context, R.string.settings_market_not_found,
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+//                ListView appList = (ListView) dialog.findViewById(R.id.scrobble_apps);
+//                appList.setAdapter(new IconRowAdapter(this, apps, icons));
+//
+//                final Context context = dialog.getContext();
+//                appList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(AdapterView<?> parent, View view, int position,
+//                            long id) {
+//                        Intent intent = new Intent(Intent.ACTION_VIEW);
+//                        intent.setData(Uri.parse("market://details?id=" + urls[position]));
+//                        try {
+//                            startActivity(intent);
+//                        } catch (ActivityNotFoundException e) {
+//                            Toast.makeText(context, R.string.settings_market_not_found,
+//                                    Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                });
         }
 
         return dialog;
