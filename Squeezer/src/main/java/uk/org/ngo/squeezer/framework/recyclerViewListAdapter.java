@@ -6,7 +6,6 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import uk.org.ngo.squeezer.R;
@@ -23,6 +23,8 @@ import uk.org.ngo.squeezer.util.CompoundButtonWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Created by Stefan on 7-11-2015.
@@ -108,7 +110,8 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
     @Override
     public SimpleHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-        final SimpleHolder viewHolder = new SimpleHolder(inflater.inflate(R.layout.list_item, viewGroup, false));
+        final SimpleHolder viewHolder = new SimpleHolder(inflater.inflate(mItemView.getListItemLayout(), viewGroup, false));
+//        final SimpleHolder viewHolder = new SimpleHolder(inflater.inflate(R.layout.list_item, viewGroup, false));
         return viewHolder;
     }
 
@@ -165,7 +168,7 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
         Alarm alarm;
         TextView time;
         TextView amPm;
-        CompoundButtonWrapper enabled;
+        Switch enabled;
         CompoundButtonWrapper repeat;
         ImageView delete;
         Spinner playlist;
@@ -277,12 +280,18 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
             this.amPm = (TextView) itemView.findViewById(amPm);
         }
 
-        public CompoundButtonWrapper getEnabled() {
-            return enabled;
+        public Switch getEnabled() {
+            return this.enabled;
         }
 
-        public void setEnabled(CompoundButtonWrapper enabled) {
-            this.enabled = enabled;
+        public Switch setEnabled(int enabled) {
+            int a = itemView.getId();
+            Object b = itemView.getTag();
+
+            this.enabled = checkNotNull((Switch) itemView.findViewById(enabled),
+                    "setEnabled() did not return a view containing R.id.enabled");
+
+            return this.enabled;
         }
 
         public CompoundButtonWrapper getRepeat() {
@@ -558,6 +567,10 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
         if (item != null && item.getId() != null) {
             mItemView.onItemSelected(position, item);
         }
+    }
+
+    public List<T> getItems(){
+        return mItems;
     }
 
 }

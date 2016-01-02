@@ -39,8 +39,11 @@ import java.util.Map;
 
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.dialog.AlarmSettingsDialog;
+import uk.org.ngo.squeezer.framework.BaseItemView;
 import uk.org.ngo.squeezer.framework.BaseListActivity;
 import uk.org.ngo.squeezer.framework.ItemView;
+import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
+import uk.org.ngo.squeezer.itemlist.dialog.AlbumViewDialog;
 import uk.org.ngo.squeezer.model.Alarm;
 import uk.org.ngo.squeezer.model.AlarmPlaylist;
 import uk.org.ngo.squeezer.model.Player;
@@ -58,7 +61,7 @@ public class AlarmsActivity extends BaseListActivity<Alarm> implements AlarmSett
     private AlarmView mAlarmView;
 
     /** Toggle/Switch that controls whether all alarms are enabled or disabled. */
-    private CompoundButtonWrapper mAlarmsEnabledButton;
+    private CompoundButtonWrapper mAlarmsEnabfledButton;
 
     /** View to display when no players are connected. */
     private View mEmptyView;
@@ -74,6 +77,7 @@ public class AlarmsActivity extends BaseListActivity<Alarm> implements AlarmSett
 
     /** Maps from a @Player.Pref.Name to its value. */
     private final Map<String, String> mPlayerPrefs = new HashMap<>();
+    private CompoundButtonWrapper mAlarmsEnabledButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

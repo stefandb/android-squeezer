@@ -97,6 +97,11 @@ public class AlarmView extends BaseItemView<Alarm> {
         return view;
     }
 
+    @Override
+    public int getListItemLayout(){
+        return R.layout.list_item_alarm;
+    }
+
     private recyclerViewListAdapter.SimpleHolder getAdapterView(final recyclerViewListAdapter.SimpleHolder viewHolder) {
 //        AlarmViewHolder currentViewHolder =
 //                (convertView != null && convertView.getTag() instanceof AlarmViewHolder)
@@ -115,19 +120,23 @@ public class AlarmView extends BaseItemView<Alarm> {
             viewHolder.setPm(amPmStrings[1]);
             viewHolder.setTime(R.id.time);
             viewHolder.setAmPm(R.id.am_pm);
+            viewHolder.getAmPm();
             viewHolder.getAmPm().setVisibility(viewHolder.is24HourFormat ? View.GONE : View.VISIBLE);
 
+//        int height = viewHolder.getItemView().findViewById(R.id.controllall).getHeight();
+//
+//        Log.d("height header", String.valueOf(height));
 
-            viewHolder.setEnabled(new CompoundButtonWrapper((CompoundButton) viewHolder.getItemView().findViewById(R.id.enabled)));
-            viewHolder.getEnabled().setOncheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            viewHolder.setEnabled(R.id.enabled).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (getActivity().getService() != null) {
-                        viewHolder.getAlarm().setEnabled(b);
-                        getActivity().getService().alarmEnable(viewHolder.getAlarm().getId(), b);
+                        viewHolder.getAlarm().setEnabled(isChecked);
+                        getActivity().getService().alarmEnable(viewHolder.getAlarm().getId(), isChecked);
                     }
                 }
             });
+
             viewHolder.setRepeat(new CompoundButtonWrapper((CompoundButton) viewHolder.getItemView().findViewById(R.id.repeat)));
             viewHolder.getRepeat().setOncheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override

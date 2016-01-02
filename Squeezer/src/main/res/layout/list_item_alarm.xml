@@ -50,7 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/time"
-            android:layout_toEndOf="@+id/time"
+            android:layout_toEndOf="@+id/enabled"
             android:layout_toLeftOf="@+id/enabled"
             android:layout_toRightOf="@+id/time"
             android:layout_toStartOf="@+id/enabled"
@@ -60,14 +60,15 @@
             android:textColor="?alarm_am_pm_color"
             tools:text="AM" />
 
-        <include
-            android:id="@+id/enabled"
-            layout="@layout/squeezer_switch"
+        <Switch xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text=""
+            android:id="@+id/enabled"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true" />
+            android:layout_centerVertical="true"/>
+
     </RelativeLayout>
 
     <CheckBox

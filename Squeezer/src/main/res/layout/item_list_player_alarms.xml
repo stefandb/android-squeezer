@@ -125,11 +125,13 @@
     </android.support.design.widget.AppBarLayout>
 
     <RelativeLayout
+        android:id="@+id/controllall"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="8dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
+        android:visibility="gone"
         android:paddingTop="?attr/actionBarSize">
 
         <TextView
@@ -165,6 +167,8 @@
 
     <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
     <android.support.v7.widget.RecyclerView
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/controllall"
         android:id="@+id/item_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -175,6 +179,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
+        android:layout_marginBottom="56dp"
+        android:paddingBottom="56dp"
         android:clickable="true"
         android:src="@drawable/ic_alarm_settings"
         app:fabSize="mini"
@@ -182,15 +188,18 @@
         app:layout_anchorGravity="bottom|right|end" />
 
     <android.support.design.widget.FloatingActionButton
+        app:layout_anchorGravity="bottom|right|end"
         android:id="@+id/add_alarm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
+        android:layout_marginBottom="56dp"
+        android:paddingBottom="56dp"
         android:clickable="true"
         android:src="@drawable/ic_add"
         app:fabSize="mini"
         app:layout_anchor="@id/item_list"
-        app:layout_anchorGravity="bottom|right|end" />
+        />
 
 
     <!--<android.support.design.widget.FloatingActionButton-->
