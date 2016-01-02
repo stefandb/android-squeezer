@@ -39,16 +39,19 @@ public class PlaylistView extends BaseItemView<Playlist> {
 
     public PlaylistView(PlaylistsActivity activity) {
         super(activity);
+        Log.d("XXX-player", "PlaylistView - PlaylistView");
         this.activity = activity;
     }
 
     @Override
     public String getQuantityString(int quantity) {
+        Log.d("XXX-player", "PlaylistView - getQuantityString");
         return getActivity().getResources().getQuantityString(R.plurals.playlist, quantity);
     }
 
     @Override
     public void onItemSelected(int index, Playlist item) {
+        Log.d("XXX-player", "PlaylistView - onItemSelected");
         activity.setCurrentPlaylist(index, item);
         PlaylistSongsActivity.show(getActivity(), item);
     }
@@ -56,6 +59,7 @@ public class PlaylistView extends BaseItemView<Playlist> {
     // XXX: Make this a menu resource.
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        Log.d("XXX-player", "PlaylistView - onCreateContextMenu");
         super.onCreateContextMenu(menu, v, menuInfo);
 
         menu.add(Menu.NONE, PLAYLISTS_CONTEXTMENU_DELETE_ITEM, 0, R.string.menu_item_delete);
@@ -69,6 +73,7 @@ public class PlaylistView extends BaseItemView<Playlist> {
 
     @Override
     public boolean doItemContext(MenuItem menuItem, int index, Playlist selectedItem) {
+        Log.d("XXX-player", "PlaylistView - doItemContext");
         Log.d("context-function-debug", "PlaylistView doItemContext (menuitem, index, selectedItem)");
 //
         activity.setCurrentPlaylist(index, selectedItem);

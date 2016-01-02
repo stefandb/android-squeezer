@@ -16,6 +16,7 @@
 
 package uk.org.ngo.squeezer.itemlist;
 
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,14 +61,17 @@ class PlayerListAdapter extends BaseExpandableListAdapter implements View.OnCrea
     private int mPlayerCount;
 
     public PlayerListAdapter(PlayerListActivity activity) {
+        Log.d("XXX-player", "playerlistadapter - PlayerListAdapter");
         mActivity = activity;
     }
 
     public void onChildClick(int groupPosition, int childPosition) {
+        Log.d("XXX-player", "playerlistadapter - onChildClick");
         mChildAdapters.get(groupPosition).onItemSelected(childPosition);
     }
 
     public void clear() {
+        Log.d("XXX-player", "playerlistadapter - clear");
         mPlayersChanged = true;
         mChildAdapters.clear();
         mPlayerCount = 0;
@@ -83,8 +87,12 @@ class PlayerListAdapter extends BaseExpandableListAdapter implements View.OnCrea
      *     generated.
      */
     public void setSyncGroups(Multimap<String, Player> playerSyncGroups) {
+        Log.d("XXX-player", "playerlistadapter - setSyncGroups");
+        Log.d("XXX-player", "playerlistadapter - setSyncGroups " + playerSyncGroups.toString());
         // The players might not have changed (so there's no need to reset the contents of the
         // adapter) but information about an individual player might have done.
+
+
         if (prevPlayerSyncGroups != null && prevPlayerSyncGroups.equals(playerSyncGroups)) {
             notifyDataSetChanged();
             return;
@@ -111,6 +119,7 @@ class PlayerListAdapter extends BaseExpandableListAdapter implements View.OnCrea
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        Log.d("XXX-player", "playerlistadapter - onCreateContextMenu");
         mPlayersChanged = false;
         ExpandableListView.ExpandableListContextMenuInfo contextMenuInfo = (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
         long packedPosition = contextMenuInfo.packedPosition;
@@ -133,6 +142,7 @@ class PlayerListAdapter extends BaseExpandableListAdapter implements View.OnCrea
     }
 
     public boolean doItemContext(MenuItem menuItem, int groupPosition, int childPosition) {
+        Log.d("XXX-player", "playerlistadapter - doItemContext 1");
         if (mPlayersChanged) {
             Toast.makeText(mActivity, mActivity.getText(R.string.player_list_changed),
                     Toast.LENGTH_LONG).show();
@@ -150,6 +160,7 @@ class PlayerListAdapter extends BaseExpandableListAdapter implements View.OnCrea
      * @return
      */
     public boolean doItemContext(MenuItem menuItem) {
+        Log.d("XXX-player", "playerlistadapter - doItemContext 2");
         if (mPlayersChanged) {
             Toast.makeText(mActivity, mActivity.getText(R.string.player_list_changed),
                     Toast.LENGTH_LONG).show();
@@ -161,31 +172,44 @@ class PlayerListAdapter extends BaseExpandableListAdapter implements View.OnCrea
 
     @Override
     public boolean areAllItemsEnabled() {
+        Log.d("XXX-player", "playerlistadapter - areAllItemsEnabled");
         return true; // Should be false, but then there is no divider
     }
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+        Log.d("XXX-player", "playerlistadapter - getChildView");
+        Log.d("XXX-player", mChildAdapters.toString());
+        Log.d("XXX-player", mChildAdapters.get(groupPosition).toString());
+        Log.d("XXX-player", String.valueOf(groupPosition));
+        Log.d("XXX-player", String.valueOf(childPosition));
+        Log.d("XXX-player", String.valueOf(convertView));
+        Log.d("XXX-player", String.valueOf(parent));
+
         return mChildAdapters.get(groupPosition).getView(childPosition, convertView, parent);
     }
 
     @Override
     public int getGroupCount() {
+        Log.d("XXX-player", "playerlistadapter - getGroupCount");
         return mChildAdapters.size();
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
+        Log.d("XXX-player", "playerlistadapter - getChildrenCount");
         return mChildAdapters.get(groupPosition).getCount();
     }
 
     @Override
     public Object getGroup(int groupPosition) {
+        Log.d("XXX-player", "playerlistadapter - getGroup");
         return mChildAdapters.get(groupPosition);
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
+        Log.d("XXX-player", "playerlistadapter - getChild");
         return mChildAdapters.get(groupPosition).getItem(childPosition);
     }
 
@@ -198,21 +222,25 @@ class PlayerListAdapter extends BaseExpandableListAdapter implements View.OnCrea
      */
     @Override
     public long getGroupId(int groupPosition) {
+        Log.d("XXX-player", "playerlistadapter - getGroupId");
         return mChildAdapters.get(groupPosition).getItem(0).getIdAsLong();
     }
 
     @Override
     public long getChildId(int groupPosition, int childPosition) {
+        Log.d("XXX-player", "playerlistadapter - getChildId");
         return mChildAdapters.get(groupPosition).getItem(childPosition).getIdAsLong();
     }
 
     @Override
     public boolean hasStableIds() {
+        Log.d("XXX-player", "playerlistadapter - hasStableIds");
         return true;
     }
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+        Log.d("XXX-player", "playerlistadapter - getGroupView");
         View row = mActivity.getLayoutInflater().inflate(R.layout.group_player, parent, false);
 
         TextView text1 = (TextView) row.findViewById(R.id.text1);
@@ -238,6 +266,7 @@ class PlayerListAdapter extends BaseExpandableListAdapter implements View.OnCrea
 
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
+        Log.d("XXX-player", "playerlistadapter - isChildSelectable");
         return false;
     }
 }

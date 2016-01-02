@@ -16,6 +16,7 @@
 
 package uk.org.ngo.squeezer.itemlist;
 
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.View;
 
@@ -37,6 +38,7 @@ public class RadioView extends PluginView {
 
     @Override
     public void onItemSelected(int index, Plugin item) {
+        Log.d("xxx", item.getName());
         PluginItemListActivity.show(getActivity(), item);
     }
 

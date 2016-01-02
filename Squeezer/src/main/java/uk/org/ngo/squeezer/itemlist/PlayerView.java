@@ -62,6 +62,13 @@ public class PlayerView extends BaseItemView<Player> {
         return new PlayerViewHolder();
     }
 
+
+    @Override
+    public int getListItemLayout(){
+        return R.layout.list_item_player;
+    }
+
+
     @Override
     public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, Player item) {
         final PlayerListActivity activity = (PlayerListActivity) getActivity();

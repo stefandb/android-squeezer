@@ -24,6 +24,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +35,7 @@ import android.widget.ListAdapter;
 import android.widget.ProgressBar;
 
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -118,11 +120,14 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
         registerForContextMenu(mrecyclerView);
         mrecyclerView.setLongClickable(true);
 
+        ItemTouchHelper ith = new ItemTouchHelper(_ithCallback);
+        ith.attachToRecyclerView(mrecyclerView);
+
         mrecyclerView.addOnItemTouchListener(
             new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
-                    Log.d("debug", "klik position " + String.valueOf(position));
+                    Log.d("debug-xxx", "klik position " + String.valueOf(position));
                     getItemAdapter().onItemSelected(position);
                 }
             })
@@ -191,6 +196,30 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
             }
         });
     }
+
+    ItemTouchHelper.Callback _ithCallback = new ItemTouchHelper.Callback() {
+        //and in your imlpementaion of
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            // get the viewHolder's and target's positions in your adapter data, swap them
+            Collections.swap(getItemAdapter().getItems(), viewHolder.getAdapterPosition(), target.getAdapterPosition());
+            // and notify the adapter that its dataset has changed
+            getItemAdapter().notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+            return true;
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            //TODO
+            Log.d("SWIPED", "direction" + String.valueOf(direction));
+        }
+
+        //defines the enabled move directions in each state (idle, swiping, dragging).
+        @Override
+        public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG,
+                    ItemTouchHelper.DOWN | ItemTouchHelper.UP | ItemTouchHelper.START | ItemTouchHelper.END);
+        }
+    };
 
     private void hideToolbar() {
 

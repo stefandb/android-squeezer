@@ -166,6 +166,11 @@ public class ItemAdapter<T extends Item> extends BaseAdapter implements
 
     public boolean doItemContext(MenuItem menuItem, int position) {
         Log.d("context-function-debug", "ItemAdapyter doItemContext (menuitem, position)");
+
+        Log.d("debug-xxx", menuItem.toString());
+        Log.d("debug-xxx", String.valueOf(menuItem.getTitle()));
+        Log.d("debug-xxx", String.valueOf(menuItem));
+
         Log.d("click", String.valueOf(menuItem));
         return mItemView.doItemContext(menuItem, position, getItem(position));
     }
