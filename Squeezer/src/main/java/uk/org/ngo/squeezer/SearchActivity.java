@@ -64,10 +64,14 @@ public class SearchActivity extends ItemListActivity {
     private SearchAdapter searchResultsAdapter;
 
     private String searchString;
+
     private RecyclerExpandableAdapter mExpandableAdapter;
 
     private final int[] groupIcons = {
-            R.drawable.ic_songs, R.drawable.ic_albums, R.drawable.ic_artists, R.drawable.ic_genres
+            R.drawable.ic_songs,
+            R.drawable.ic_albums,
+            R.drawable.ic_artists,
+            R.drawable.ic_genres
     };
 
 
@@ -75,18 +79,15 @@ public class SearchActivity extends ItemListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_layout);
-
         loadingLabel = findViewById(R.id.loading_label);
 
-        searchResultsAdapter = new SearchAdapter(this);
         resultsExpandableListView = (RecyclerView) findViewById(R.id.item_list);
         resultsExpandableListView.setLayoutManager(new LinearLayoutManager(this));
-
-
-        RecyclerExpandableAdapter mExpandableAdapter = new RecyclerExpandableAdapter(this, generateCrimes());
+        mExpandableAdapter = new RecyclerExpandableAdapter(this, generateCrimes());
         mExpandableAdapter.setCustomParentAnimationViewId(R.id.parent_list_item_expand_arrow);
         mExpandableAdapter.setParentClickableViewAnimationDefaultDuration();
         mExpandableAdapter.setParentAndIconExpandOnClick(true);
+
 //        resultsExpandableListView.setOnChildClickListener(new OnChildClickListener() {
 //            @Override
 //            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
@@ -96,17 +97,13 @@ public class SearchActivity extends ItemListActivity {
 //            }
 //        });
 
-        resultsExpandableListView.setAdapter(mExpandableAdapter);
-
 //        resultsExpandableListView.setOnCreateContextMenuListener(searchResultsAdapter);
 //        resultsExpandableListView.setOnScrollListener(new ScrollListener());
 
         handleIntent(getIntent());
 
         NavigationDrawer(savedInstanceState);
-
         getSupportActionBar().setTitle(R.string.menu_item_search_label);
-
         navigationDrawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
@@ -122,26 +119,33 @@ public class SearchActivity extends ItemListActivity {
             new ItemAdapter<Genre>(new GenreView(this)),
         };
 
-        String[] Titles = {"Songs","Albums","Artists","Genres"};
-
-        //door de titels of adapters en de andere ophalen dat en een parent object aanmaken via functie in crimeLab
-
-
-
-
         ((SongViewWithArt) adapters[0].getItemView()).setDetails(
                 SongView.DETAILS_DURATION | SongView.DETAILS_ALBUM | SongView.DETAILS_ARTIST);
 
         ((AlbumView) adapters[1].getItemView()).setDetails(
                 AlbumView.DETAILS_ARTIST | AlbumView.DETAILS_YEAR);
 
+        String[] Titles = {"Songs", "Albums", "Artists", "Genres"};
 
+        int index = 0;
+        for(String Title : Titles) {
+            ExpandableParentListItem crime = new ExpandableParentListItem();
+            crime.setTitle(Title);
+            crime.setIcon(groupIcons[index]);
+            crime.setSolved(index % 2 == 0);
+            crime.setItemClassName(String.valueOf(adapters[index].getItemView().getItemClass()));
+            crimeLab.setCrime(crime);
+            index++;
+        }
 
         List<ExpandableParentListItem> crimes = crimeLab.getCrimes();
         ArrayList<ParentObject> parentObjects = new ArrayList<>();
         for (ExpandableParentListItem crime : crimes) {
             ArrayList<Object> childList = new ArrayList<>();
-            childList.add(new ExpandableChildListItem(R.drawable.ic_years, "tekst", "tekst"));
+            childList.add(new ExpandableChildListItem(R.drawable.ic_years, "tekst 1", "tekst 1"));
+//            childList.add(new ExpandableChildListItem(R.drawable.ic_years, "tekst 2", "tekst 2"));
+//            childList.add(new ExpandableChildListItem(R.drawable.ic_years, "tekst 3", "tekst 3"));
+//            childList.add(new ExpandableChildListItem(R.drawable.ic_years, "tekst 4", "tekst 4"));
             crime.setChildObjectList(childList);
             parentObjects.add(crime);
         }
@@ -157,12 +161,12 @@ public class SearchActivity extends ItemListActivity {
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-//            doSearch(query);
+            doSearch(query);
         }
     }
 
-//    @Override
-    public final boolean onContextItemSelectedOLD(MenuItem menuItem) {
+    @Override
+    public final boolean onContextItemSelected(MenuItem menuItem) {
         Log.d("context-function-debug", "SearchActivity onContextItemSelected (item)");
         Log.d("click", String.valueOf(menuItem));
         if (getService() != null) {
@@ -194,13 +198,13 @@ public class SearchActivity extends ItemListActivity {
      * search.
      */
     public void onEventMainThread(HandshakeComplete event) {
-//        resultsExpandableListView.setAdapter(searchResultsAdapter);
-//        doSearch();
+        resultsExpandableListView.setAdapter(mExpandableAdapter);
+        doSearch();
     }
 
     @Override
     protected void orderPage(@NonNull ISqueezeService service, int start) {
-//        service.search(start, searchString, itemListCallback);
+        service.search(start, searchString, itemListCallback);
     }
 
     /**
@@ -219,9 +223,10 @@ public class SearchActivity extends ItemListActivity {
 
     @Override
     protected void clearItemAdapter() {
-//        resultsExpandableListView.setVisibility(View.GONE);
-//        loadingLabel.setVisibility(View.VISIBLE);
-//        searchResultsAdapter.clear();
+        resultsExpandableListView.setVisibility(View.GONE);
+        loadingLabel.setVisibility(View.VISIBLE);
+        //TODO-stefan functie schrijven in adaper om het object te legen
+//        mExpandableAdapter.clear();
     }
 
     /**
@@ -233,15 +238,24 @@ public class SearchActivity extends ItemListActivity {
 
     private final IServiceItemListCallback itemListCallback = new IServiceItemListCallback() {
         @Override
-        public void onItemsReceived(final int count, final int start, Map parameters, final List items, final Class dataType) {
+        public void onItemsReceived(final int count, final int start, final Map parameters, final List items, final Class dataType) {
             SearchActivity.super.onItemsReceived(count, start, items.size());
 
             getUIThreadHandler().post(new Runnable() {
                 @Override
                 public void run() {
+                    Log.d("items-search", "new search");
+                    Log.d("items-search", String.valueOf(count));
+                    Log.d("items-search", String.valueOf(start));
+                    Log.d("items-search", String.valueOf(parameters));
+                    Log.d("items-search", String.valueOf(items));
+                    Log.d("items-search", String.valueOf(dataType));
+
+                    mExpandableAdapter.setChildItems(String.valueOf(dataType), items);
+
 //                    searchResultsAdapter.updateItems(count, start, items, dataType);
                     loadingLabel.setVisibility(View.GONE);
-//                    resultsExpandableListView.setVisibility(View.VISIBLE);
+                    resultsExpandableListView.setVisibility(View.VISIBLE);
                 }
             });
         }

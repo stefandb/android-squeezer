@@ -22,6 +22,12 @@ public class ExpandableParentListItem implements ParentObject {
     private int mParentNumber;
     private String mParentText;
     private boolean mInitiallyExpanded;
+    private int mIcon;
+    private int mItemCount = 0;
+
+    //HIDDEN DATA
+    private String _itemClassName;
+
 
     public ExpandableParentListItem() {
         mId = UUID.randomUUID();
@@ -46,6 +52,13 @@ public class ExpandableParentListItem implements ParentObject {
         return mParentText;
     }
 
+    public int getIcon() {
+        return mIcon;
+    }
+
+    public void setIcon(int mIcon) {
+        this.mIcon = mIcon;
+    }
 
     public UUID getId() {
         return mId;
@@ -91,5 +104,21 @@ public class ExpandableParentListItem implements ParentObject {
     @Override
     public void setChildObjectList(List<Object> list) {
         this.childObjectList = list;
+    }
+
+    public String getItemClassName() {
+        return _itemClassName;
+    }
+
+    public void setItemClassName(String _itemClassName) {
+        this._itemClassName = _itemClassName;
+    }
+
+    public String getItemCount() {
+        return String.valueOf(mItemCount);
+    }
+
+    public void setItemCount(int mItemCount) {
+        this.mItemCount = mItemCount;
     }
 }
