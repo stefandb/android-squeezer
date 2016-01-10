@@ -32,6 +32,7 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +52,7 @@ import uk.org.ngo.squeezer.model.Artist;
 import uk.org.ngo.squeezer.model.ExpandableChildListItem;
 import uk.org.ngo.squeezer.model.ExpandableParentListItem;
 import uk.org.ngo.squeezer.model.Genre;
+import uk.org.ngo.squeezer.model.SearchType;
 import uk.org.ngo.squeezer.model.Song;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
@@ -66,6 +68,8 @@ public class SearchActivity extends ItemListActivity {
     private String searchString;
 
     private RecyclerExpandableAdapter mExpandableAdapter;
+
+    ArrayList<SearchType> SearchTypes;
 
     private final int[] groupIcons = {
             R.drawable.ic_songs,
@@ -84,6 +88,8 @@ public class SearchActivity extends ItemListActivity {
         resultsExpandableListView = (RecyclerView) findViewById(R.id.item_list);
         resultsExpandableListView.setLayoutManager(new LinearLayoutManager(this));
         mExpandableAdapter = new RecyclerExpandableAdapter(this, generateCrimes());
+        mExpandableAdapter.setSearchEngines(SearchTypes);
+
         mExpandableAdapter.setCustomParentAnimationViewId(R.id.parent_list_item_expand_arrow);
         mExpandableAdapter.setParentClickableViewAnimationDefaultDuration();
         mExpandableAdapter.setParentAndIconExpandOnClick(true);
@@ -112,28 +118,25 @@ public class SearchActivity extends ItemListActivity {
 
         CrimeLab crimeLab = CrimeLab.get(this);
 
-        ItemAdapter<?>[] adapters = {
-            new ItemAdapter<Song>(new SongViewWithArt(this)),
-            new ItemAdapter<Album>(new AlbumView(this)),
-            new ItemAdapter<Artist>(new ArtistView(this)),
-            new ItemAdapter<Genre>(new GenreView(this)),
-        };
+        SearchTypes = new ArrayList<>();
 
-        ((SongViewWithArt) adapters[0].getItemView()).setDetails(
+        SearchTypes.add(new SearchType("Songs", R.drawable.ic_songs, new SongViewWithArt(this), "Song"));
+        SearchTypes.add(new SearchType("Albums", R.drawable.ic_albums, new AlbumView(this), "Album"));
+        SearchTypes.add(new SearchType("Artists", R.drawable.ic_artists, new ArtistView(this), "Artist"));
+        SearchTypes.add(new SearchType("Genres", R.drawable.ic_genres, new GenreView(this), "Genre"));
+
+        ((SongViewWithArt) SearchTypes.get(0).getViewBuilder()).setDetails(
                 SongView.DETAILS_DURATION | SongView.DETAILS_ALBUM | SongView.DETAILS_ARTIST);
 
-        ((AlbumView) adapters[1].getItemView()).setDetails(
+        ((AlbumView) SearchTypes.get(1).getViewBuilder()).setDetails(
                 AlbumView.DETAILS_ARTIST | AlbumView.DETAILS_YEAR);
 
-        String[] Titles = {"Songs", "Albums", "Artists", "Genres"};
-
         int index = 0;
-        for(String Title : Titles) {
+        for(SearchType search : SearchTypes) {
             ExpandableParentListItem crime = new ExpandableParentListItem();
-            crime.setTitle(Title);
-            crime.setIcon(groupIcons[index]);
-            crime.setSolved(index % 2 == 0);
-            crime.setItemClassName(String.valueOf(adapters[index].getItemView().getItemClass()));
+            crime.setTitle(search.getTitle());
+            crime.setIcon(search.getIconResourse());
+            crime.setItemClassName(String.valueOf(search.getViewBuilder().getItemClass()));
             crimeLab.setCrime(crime);
             index++;
         }
@@ -142,10 +145,6 @@ public class SearchActivity extends ItemListActivity {
         ArrayList<ParentObject> parentObjects = new ArrayList<>();
         for (ExpandableParentListItem crime : crimes) {
             ArrayList<Object> childList = new ArrayList<>();
-            childList.add(new ExpandableChildListItem(R.drawable.ic_years, "tekst 1", "tekst 1"));
-//            childList.add(new ExpandableChildListItem(R.drawable.ic_years, "tekst 2", "tekst 2"));
-//            childList.add(new ExpandableChildListItem(R.drawable.ic_years, "tekst 3", "tekst 3"));
-//            childList.add(new ExpandableChildListItem(R.drawable.ic_years, "tekst 4", "tekst 4"));
             crime.setChildObjectList(childList);
             parentObjects.add(crime);
         }
@@ -265,5 +264,4 @@ public class SearchActivity extends ItemListActivity {
             return SearchActivity.this;
         }
     };
-
 }

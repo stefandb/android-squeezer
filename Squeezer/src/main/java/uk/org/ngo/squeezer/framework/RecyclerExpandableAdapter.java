@@ -19,6 +19,7 @@ import uk.org.ngo.squeezer.model.Album;
 import uk.org.ngo.squeezer.model.Artist;
 import uk.org.ngo.squeezer.model.ExpandableParentListItem;
 import uk.org.ngo.squeezer.model.Genre;
+import uk.org.ngo.squeezer.model.SearchType;
 import uk.org.ngo.squeezer.model.Song;
 
 /**
@@ -27,6 +28,7 @@ import uk.org.ngo.squeezer.model.Song;
 public class RecyclerExpandableAdapter<Child extends Item> extends ExpandableRecyclerAdapter<ParentHolder, RecyclerItemViewHolder> {
 
     private final LayoutInflater mInflater;
+    private ArrayList<SearchType> searchTypes;
 
     public RecyclerExpandableAdapter(Context context, List<ParentObject> parentItemList) {
         super(context, parentItemList);
@@ -56,18 +58,33 @@ public class RecyclerExpandableAdapter<Child extends Item> extends ExpandableRec
 
     @Override
     public void onBindChildViewHolder(RecyclerItemViewHolder childHolder, int i, Object o) {
-        Child childObject = null;
-        if(o instanceof Song){
-            childObject = (Child) o;
-        }else if(o instanceof Album){
-            childObject = (Child) o;
-        }else if(o instanceof Artist){
-            childObject = (Child) o;
-        }else if(o instanceof Genre){
-            childObject = (Child) o;
-        }else{
-            new Exception(o.getClass().toString() + " is a not coorect search type class");
+        String ClassType = o.getClass().getName().toLowerCase().trim().toString();
+        String searchClassName = String.valueOf(ClassType.substring(ClassType.lastIndexOf('.') + 1)).toLowerCase().trim().toString();
+        for(SearchType engine: searchTypes) {
+
+//            Log.d("check", "nieuw");
+//            Log.d("check", searchClassName);
+//            Log.d("check", currentClassName);
+//            Log.d("check", String.valueOf(currentClassName.contains(searchClassName)));
+//            Log.d("check", "eind");
+
+
+            if(engine.getModelClassName().toLowerCase().trim().toString().contains(searchClassName)){
+                Child childObject = (Child) o;
+                engine.getViewBuilder().bindView(childHolder, childObject);
+            }
         }
+//        if(o.getClass().getName() instanceof Song){
+//            childObject = (Child) o;
+//        }else if(o instanceof Album){
+//            childObject = (Child) o;
+//        }else if(o instanceof Artist){
+//            childObject = (Child) o;
+//        }else if(o instanceof Genre){
+//            childObject = (Child) o;
+//        }else{
+//            new Exception(o.getClass().toString() + " is a not coorect search type class");
+//        }
 
 //        childHolder.text1.setText(childObject.getText1());
 //        childHolder.text2.setText(childObject.getText2());
@@ -86,13 +103,6 @@ public class RecyclerExpandableAdapter<Child extends Item> extends ExpandableRec
             String searchClassName = String.valueOf(ClassType.substring(ClassType.lastIndexOf('.') + 1)).toLowerCase().trim().toString();
             String currentClassName = String.valueOf(loopClass.substring(loopClass.lastIndexOf('.') + 1)).toLowerCase().trim().toString();
 
-            Log.d("check", "nieuw");
-            Log.d("check", searchClassName);
-            Log.d("check", currentClassName);
-            Log.d("check", String.valueOf(currentClassName.contains(searchClassName)));
-            Log.d("check", "eind");
-
-
             if(currentClassName.contains(searchClassName)){
                 Log.d("check", "Dit is goed");
 
@@ -100,6 +110,7 @@ public class RecyclerExpandableAdapter<Child extends Item> extends ExpandableRec
                 ArrayList<Object> childList = new ArrayList<>();
 
                 for(T childItem: items) {
+
                     childList.add(childItem);
                 }
 
@@ -110,7 +121,7 @@ public class RecyclerExpandableAdapter<Child extends Item> extends ExpandableRec
         notifyDataSetChanged();
     }
 
-    public void setViewHolderInstance(){
-
+    public void setSearchEngines(ArrayList<SearchType> st){
+        searchTypes = st;
     }
 }

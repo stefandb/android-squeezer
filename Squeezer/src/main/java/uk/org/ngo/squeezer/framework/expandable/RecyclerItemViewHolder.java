@@ -251,7 +251,7 @@ public class RecyclerItemViewHolder<T extends Item> extends ChildViewHolder impl
         final T selectedItem = (T) mItems.get(position);
 
         //TODO-stefan fixen
-//        ItemView.ContextMenuInfo c = new ItemView.ContextMenuInfo(position, selectedItem, recyclerViewListAdapter.this, getActivity().getMenuInflater());
+//        ItemView.ContextMenuInfo c = new ItemView.ContextMenuInfo(position, selectedItem, RecyclerItemViewHolder.this, getActivity().getMenuInflater());
 //
 //        if (selectedItem != null && selectedItem.getId() != null) {
 //            mItemView.onCreateContextMenu(menu, v, c);
