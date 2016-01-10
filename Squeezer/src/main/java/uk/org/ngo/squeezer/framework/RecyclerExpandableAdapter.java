@@ -13,16 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.org.ngo.squeezer.R;
-import uk.org.ngo.squeezer.framework.expandable.ChildHolder;
+import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.framework.expandable.ParentHolder;
-import uk.org.ngo.squeezer.itemlist.AlbumView;
-import uk.org.ngo.squeezer.itemlist.ArtistView;
-import uk.org.ngo.squeezer.itemlist.GenreView;
-import uk.org.ngo.squeezer.itemlist.SongView;
-import uk.org.ngo.squeezer.itemlist.SongViewWithArt;
 import uk.org.ngo.squeezer.model.Album;
 import uk.org.ngo.squeezer.model.Artist;
-import uk.org.ngo.squeezer.model.ExpandableChildListItem;
 import uk.org.ngo.squeezer.model.ExpandableParentListItem;
 import uk.org.ngo.squeezer.model.Genre;
 import uk.org.ngo.squeezer.model.Song;
@@ -30,7 +24,7 @@ import uk.org.ngo.squeezer.model.Song;
 /**
  * Created by Stefan on 5-1-2016.
  */
-public class RecyclerExpandableAdapter<Child extends Item> extends ExpandableRecyclerAdapter<ParentHolder, ChildHolder> {
+public class RecyclerExpandableAdapter<Child extends Item> extends ExpandableRecyclerAdapter<ParentHolder, RecyclerItemViewHolder> {
 
     private final LayoutInflater mInflater;
 
@@ -47,9 +41,9 @@ public class RecyclerExpandableAdapter<Child extends Item> extends ExpandableRec
     }
 
     @Override
-    public ChildHolder onCreateChildViewHolder(ViewGroup viewGroup) {
+    public RecyclerItemViewHolder onCreateChildViewHolder(ViewGroup viewGroup) {
         View view = mInflater.inflate(R.layout.list_item, viewGroup, false);
-        return new ChildHolder(view);
+        return new RecyclerItemViewHolder(view);
     }
 
     @Override
@@ -61,7 +55,7 @@ public class RecyclerExpandableAdapter<Child extends Item> extends ExpandableRec
     }
 
     @Override
-    public void onBindChildViewHolder(ChildHolder childHolder, int i, Object o) {
+    public void onBindChildViewHolder(RecyclerItemViewHolder childHolder, int i, Object o) {
         Child childObject = null;
         if(o instanceof Song){
             childObject = (Child) o;

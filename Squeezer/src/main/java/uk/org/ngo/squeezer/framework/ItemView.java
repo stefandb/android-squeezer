@@ -24,6 +24,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
+
 
 /**
  * Defines view logic for a {@link Item}
@@ -62,7 +64,7 @@ public interface ItemView<T extends Item> {
      *
      * @return the view to display.
      */
-    recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder viewHolder, int position, T item);
+    RecyclerItemViewHolder getAdapterView(RecyclerItemViewHolder viewHolder, int position, T item);
 
 
     int getListItemLayout();
@@ -79,7 +81,7 @@ public interface ItemView<T extends Item> {
      *
      * @return the view to display.
      */
-    recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder viewHolder, String text);
+    RecyclerItemViewHolder getAdapterView(RecyclerItemViewHolder viewHolder, String text);
 
     View getAdapterView(View convertView, ViewGroup parent, int position, T item);
 

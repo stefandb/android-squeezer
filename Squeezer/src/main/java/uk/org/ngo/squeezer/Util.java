@@ -31,6 +31,7 @@ import java.util.Formatter;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
 
+import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 
 public class Util {
@@ -158,7 +159,7 @@ public class Util {
      * @param label
      * @return a view suitable for use as a spinner view.
      */
-    public static recyclerViewListAdapter.SimpleHolder getSpinnerItemView(Context context, recyclerViewListAdapter.SimpleHolder viewHolder, String label) {
+    public static RecyclerItemViewHolder getSpinnerItemView(Context context, RecyclerItemViewHolder viewHolder, String label) {
         return getSpinnerView(context, viewHolder, label, android.R.layout.simple_spinner_item);
     }
 
@@ -184,7 +185,7 @@ public class Util {
      * @param label
      * @return a view suitable for use in a spinner's dropdown menu.
      */
-    public static recyclerViewListAdapter.SimpleHolder getSpinnerDropDownView(Context context, recyclerViewListAdapter.SimpleHolder convertView,  String label) {
+    public static RecyclerItemViewHolder getSpinnerDropDownView(Context context, RecyclerItemViewHolder convertView,  String label) {
         return getSpinnerView(context, convertView, label, android.R.layout.simple_spinner_dropdown_item);
     }
 
@@ -200,11 +201,11 @@ public class Util {
         return getSpinnerView(context, convertView, parent, label, android.R.layout.simple_spinner_dropdown_item);
     }
 
-    public static recyclerViewListAdapter.SimpleHolder getActionBarSpinnerItemView(Context context, recyclerViewListAdapter.SimpleHolder convertView,  String label) {
+    public static RecyclerItemViewHolder getActionBarSpinnerItemView(Context context, RecyclerItemViewHolder convertView,  String label) {
         return getSpinnerView(context, convertView, label, android.support.v7.appcompat.R.layout.support_simple_spinner_dropdown_item);
     }
 
-    private static recyclerViewListAdapter.SimpleHolder getSpinnerView(Context context, recyclerViewListAdapter.SimpleHolder convertView, String label, int layout) {
+    private static RecyclerItemViewHolder getSpinnerView(Context context, RecyclerItemViewHolder convertView, String label, int layout) {
 //        TextView view;
 //        view = (TextView) (convertView != null
 //                && TextView.class.isAssignableFrom(convertView.getClass())

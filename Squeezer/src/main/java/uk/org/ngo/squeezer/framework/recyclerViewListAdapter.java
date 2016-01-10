@@ -18,6 +18,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.model.Alarm;
 import uk.org.ngo.squeezer.util.CompoundButtonWrapper;
 
@@ -29,7 +30,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Created by Stefan on 7-11-2015.
  */
-public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapter<recyclerViewListAdapter.SimpleHolder> {
+public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapter<RecyclerItemViewHolder> {
 
     /**
      * View logic for this adapter
@@ -108,15 +109,15 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
     }
 
     @Override
-    public SimpleHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public RecyclerItemViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-        final SimpleHolder viewHolder = new SimpleHolder(inflater.inflate(mItemView.getListItemLayout(), viewGroup, false));
+        final RecyclerItemViewHolder viewHolder = new RecyclerItemViewHolder(inflater.inflate(mItemView.getListItemLayout(), viewGroup, false));
 //        final SimpleHolder viewHolder = new SimpleHolder(inflater.inflate(R.layout.list_item, viewGroup, false));
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(final SimpleHolder viewHolder, int position) {
+    public void onBindViewHolder(final RecyclerItemViewHolder viewHolder, int position) {
 
         viewHolder.setPosition(position);
 
@@ -129,7 +130,7 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
             mItemView.getAdapterView(viewHolder, position, item);
 //        }
 
-        viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+        viewHolder.getItemView().setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 setPosition(viewHolder.getPosition());

@@ -59,6 +59,7 @@ import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Util;
 import uk.org.ngo.squeezer.framework.BaseItemView;
 import uk.org.ngo.squeezer.framework.BaseListActivity;
+import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.model.Alarm;
 import uk.org.ngo.squeezer.model.AlarmPlaylist;
@@ -89,8 +90,8 @@ public class AlarmView extends BaseItemView<Alarm> {
     }
 
     @Override
-    public recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder viewHolder, int position, Alarm item) {
-        recyclerViewListAdapter.SimpleHolder view = getAdapterView(viewHolder);
+    public RecyclerItemViewHolder getAdapterView(RecyclerItemViewHolder viewHolder, int position, Alarm item) {
+        RecyclerItemViewHolder view = getAdapterView(viewHolder);
 
         bindView(viewHolder, position, item);
 
@@ -102,7 +103,7 @@ public class AlarmView extends BaseItemView<Alarm> {
         return R.layout.list_item_alarm;
     }
 
-    private recyclerViewListAdapter.SimpleHolder getAdapterView(final recyclerViewListAdapter.SimpleHolder viewHolder) {
+    private RecyclerItemViewHolder getAdapterView(final RecyclerItemViewHolder viewHolder) {
 //        AlarmViewHolder currentViewHolder =
 //                (convertView != null && convertView.getTag() instanceof AlarmViewHolder)
 //                        ? (AlarmViewHolder) convertView.getTag()
@@ -215,7 +216,7 @@ public class AlarmView extends BaseItemView<Alarm> {
         return viewHolder;
     }
 
-    private void bindView(final recyclerViewListAdapter.SimpleHolder viewHolder, final int position, final Alarm item) {
+    private void bindView(final RecyclerItemViewHolder viewHolder, final int position, final Alarm item) {
         long tod = item.getTod();
         int hour = (int) (tod / 3600);
         int minute = (int) ((tod / 60) % 60);
@@ -255,7 +256,7 @@ public class AlarmView extends BaseItemView<Alarm> {
         }
     }
 
-    private void setDowText(recyclerViewListAdapter.SimpleHolder viewHolder, int day) {
+    private void setDowText(RecyclerItemViewHolder viewHolder, int day) {
         SpannableString text = new SpannableString(ServerString.getAlarmShortDayText(day));
         if (viewHolder.getAlarm().isDayActive(day)) {
             text.setSpan(new StyleSpan(Typeface.BOLD), 0, text.length(), 0);

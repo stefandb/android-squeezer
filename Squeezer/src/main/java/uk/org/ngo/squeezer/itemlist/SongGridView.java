@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
+import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 
 /**
@@ -33,7 +34,7 @@ public class SongGridView extends SongViewWithArt {
     }
 
     @Override
-    public recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder convertView, @ViewParam int viewParams) {
+    public RecyclerItemViewHolder getAdapterView(RecyclerItemViewHolder convertView, @ViewParam int viewParams) {
         mIconWidth = getActivity().getResources().getDimensionPixelSize(R.dimen.album_art_icon_grid_width);
         mIconHeight = getActivity().getResources().getDimensionPixelSize(R.dimen.album_art_icon_grid_height);
         return getAdapterView(convertView, viewParams, R.layout.grid_item);

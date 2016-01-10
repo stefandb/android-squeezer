@@ -26,6 +26,7 @@ import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
 import uk.org.ngo.squeezer.framework.PlaylistItemView;
+import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.itemlist.action.PlayableItemAction;
 import uk.org.ngo.squeezer.model.MusicFolderItem;
@@ -51,7 +52,7 @@ public class MusicFolderView extends PlaylistItemView<MusicFolderItem> {
     }
 
     @Override
-    public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, MusicFolderItem item) {
+    public void bindView(RecyclerItemViewHolder viewHolder, MusicFolderItem item) {
         viewHolder.getText1().setText(item.getName()  + " FF");
 
         String type = item.getType();

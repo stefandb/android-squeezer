@@ -23,6 +23,7 @@ import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.ArtworkItem;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
 import uk.org.ngo.squeezer.framework.PlaylistItemView;
+import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 
 /**
@@ -49,7 +50,7 @@ public abstract class AlbumArtView<T extends ArtworkItem> extends
      * @param text The text to bind to {@link ViewHolder#text1}
      */
     @Override
-    public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, String text) {
+    public void bindView(RecyclerItemViewHolder viewHolder, String text) {
         viewHolder.getIcon().setImageResource(R.drawable.icon_pending_artwork);
         viewHolder.getText1().setText(text + " DD");
         viewHolder.getText2().setText("");

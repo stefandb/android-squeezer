@@ -29,6 +29,7 @@ import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
 import uk.org.ngo.squeezer.framework.PlaylistItemView;
+import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.itemlist.action.PlayableItemAction;
 import uk.org.ngo.squeezer.model.Artist;
@@ -99,7 +100,7 @@ public class SongView extends PlaylistItemView<Song> {
     }
 
     @Override
-    public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, Song item) {
+    public void bindView(RecyclerItemViewHolder viewHolder, Song item) {
         viewHolder.getText1().setText(item.getName() + " JJ");
 
         viewHolder.getText2().setText(mJoiner.join(
@@ -121,7 +122,7 @@ public class SongView extends PlaylistItemView<Song> {
      * @param label The text to bind to {@link ViewHolder#text1}
      */
     @Override
-    public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, String label) {
+    public void bindView(RecyclerItemViewHolder viewHolder, String label) {
         viewHolder.getText1().setText(label + " LL");
         viewHolder.getText2().setText("");
     }

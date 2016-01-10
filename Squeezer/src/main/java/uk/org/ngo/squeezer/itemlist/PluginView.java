@@ -20,6 +20,7 @@ import android.view.View;
 
 import uk.org.ngo.squeezer.framework.BaseItemView;
 import uk.org.ngo.squeezer.framework.BaseListActivity;
+import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.model.Plugin;
 import uk.org.ngo.squeezer.util.ImageFetcher;
@@ -33,7 +34,7 @@ public abstract class PluginView extends BaseItemView<Plugin> {
     }
 
     @Override
-    public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, Plugin item) {
+    public void bindView(RecyclerItemViewHolder viewHolder, Plugin item) {
         viewHolder.getText1().setText(item.getName() + " II");
         ImageFetcher.getInstance(getActivity()).loadImage(item.getIcon(), viewHolder.getIcon(), mIconWidth, mIconHeight);
     }

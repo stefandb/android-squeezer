@@ -36,6 +36,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
 
 import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.itemlist.AlbumListActivity;
 import uk.org.ngo.squeezer.itemlist.ArtistListActivity;
 import uk.org.ngo.squeezer.itemlist.SongListActivity;
@@ -62,10 +63,10 @@ import uk.org.ngo.squeezer.widget.SquareImageView;
  * if the primary state should show a context button you may not want to show that button while
  * waiting for data to arrive.
  * <p>
- * Override {@link #bindView(recyclerViewListAdapter.SimpleHolder, Item)} and {@link #bindView(recyclerViewListAdapter.SimpleHolder, String)} to
+ * Override {@link #bindView(RecyclerItemViewHolder, Item)} and {@link #bindView(RecyclerItemViewHolder, String)} to
  * control how data from the item is inserted in to the view.
  * <p>
- * If you need a completely custom view hierarchy then override {@link #getAdapterView(recyclerViewListAdapter.SimpleHolder, int)} and {@link #getAdapterView(recyclerViewListAdapter.SimpleHolder, String)}.
+ * If you need a completely custom view hierarchy then override {@link #getAdapterView(RecyclerItemViewHolder, int)} and {@link #getAdapterView(RecyclerItemViewHolder, String)}.
  *
  * @param <T> the Item subclass this view represents.
  */
@@ -222,12 +223,12 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
     /**
      * Returns a view suitable for displaying the data of item in a list. Item may not be null.
      * <p>
-     * Override this method and {@link #getAdapterView(recyclerViewListAdapter.SimpleHolder, String)} if your subclass
+     * Override this method and {@link #getAdapterView(RecyclerItemViewHolder, String)} if your subclass
      * uses a different layout.
      */
     @Override
-    public recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder viewHolder, int position, T item) {
-        recyclerViewListAdapter.SimpleHolder view = getAdapterView(viewHolder, mViewParams);
+    public RecyclerItemViewHolder getAdapterView(RecyclerItemViewHolder viewHolder, int position, T item) {
+        RecyclerItemViewHolder view = getAdapterView(viewHolder, mViewParams);
         bindView(view, item);
         return view;
     }
@@ -240,25 +241,25 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
     /**
      * Binds the item's name to {@link ViewHolder#text1}.
      * <p>
-     * OVerride this instead of {@link #getAdapterView(recyclerViewListAdapter.SimpleHolder, Item)} if the
+     * OVerride this instead of {@link #getAdapterView(RecyclerItemViewHolder, Item)} if the
      * default layouts are sufficient.
      *
      * @param viewHolder The view that contains the {@link ViewHolder}
      * @param item The item to be bound
      */
-    public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, T item) {
+    public void bindView(RecyclerItemViewHolder viewHolder, T item) {
         viewHolder.getText1().setText(item.getName() + " CC");
     }
 
     /**
      * Returns a view suitable for displaying the "Loading..." text.
      * <p>
-     * Override this method and {@link #getAdapterView(recyclerViewListAdapter.SimpleHolder, String)} if your
+     * Override this method and {@link #getAdapterView(RecyclerItemViewHolder, String)} if your
      * extension uses a different layout.
      */
     @Override
-    public recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder viewHolder, String text) {
-        recyclerViewListAdapter.SimpleHolder view = getAdapterView(viewHolder, mLoadingViewParams);
+    public RecyclerItemViewHolder getAdapterView(RecyclerItemViewHolder viewHolder, String text) {
+        RecyclerItemViewHolder view = getAdapterView(viewHolder, mLoadingViewParams);
         bindView(viewHolder, text);
         return view;
     }
@@ -276,13 +277,13 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
     /**
      * Binds the text to {@link ViewHolder#text1}.
      * <p>
-     * Override this instead of {@link #getAdapterView(recyclerViewListAdapter.SimpleHolder, String)} if the default
+     * Override this instead of {@link #getAdapterView(RecyclerItemViewHolder, String)} if the default
      * layout is sufficient.
      *
      * @param viewHolder The view that contains the {@link ViewHolder}
      * @param text The text to set in the view.
      */
-    public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, String text) {
+    public void bindView(RecyclerItemViewHolder viewHolder, String text) {
         viewHolder.getText1().setText(text + " BB");
     }
 
@@ -295,7 +296,7 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
      *
      * @return convertView if it can be reused, or a new view
      */
-    public recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder viewHolder, @ViewParam int viewParams) {
+    public RecyclerItemViewHolder getAdapterView(RecyclerItemViewHolder viewHolder, @ViewParam int viewParams) {
         return getAdapterView(viewHolder, viewParams, R.layout.list_item);
     }
 
@@ -308,7 +309,7 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
      *
      * @return convertView if it can be reused, or a new view
      */
-    public recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder viewHolder, @ViewParam int viewParams, int layoutResource) {
+    public RecyclerItemViewHolder getAdapterView(RecyclerItemViewHolder viewHolder, @ViewParam int viewParams, int layoutResource) {
 //        ViewHolder viewHolder =
 //                (convertView != null && convertView.getTag() instanceof ViewHolder)
 //                        ? (ViewHolder) convertView.getTag()

@@ -30,6 +30,7 @@ import java.util.Map;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Util;
 import uk.org.ngo.squeezer.framework.BaseItemView;
+import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.itemlist.dialog.PlayerRenameDialog;
 import uk.org.ngo.squeezer.itemlist.dialog.PlayerSyncDialog;
@@ -53,7 +54,7 @@ public class PlayerView extends BaseItemView<Player> {
     }
 
     @Override
-    public recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder viewHolder, @ViewParam int viewParams) {
+    public RecyclerItemViewHolder getAdapterView(RecyclerItemViewHolder viewHolder, @ViewParam int viewParams) {
         return getAdapterView(viewHolder, viewParams, R.layout.list_item_player);
     }
 
@@ -70,7 +71,7 @@ public class PlayerView extends BaseItemView<Player> {
 
 
     @Override
-    public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, Player item) {
+    public void bindView(RecyclerItemViewHolder viewHolder, Player item) {
         final PlayerListActivity activity = (PlayerListActivity) getActivity();
         PlayerState playerState = activity.getPlayerState(item.getId());
 

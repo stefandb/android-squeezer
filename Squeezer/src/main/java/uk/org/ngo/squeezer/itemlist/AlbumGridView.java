@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
+import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 
 /**
@@ -32,7 +33,7 @@ public class AlbumGridView extends AlbumView {
     }
 
     @Override
-    public recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder viewHolder, @ViewParam int viewParams) {
+    public RecyclerItemViewHolder getAdapterView(RecyclerItemViewHolder viewHolder, @ViewParam int viewParams) {
         mIconWidth = getActivity().getResources().getDimensionPixelSize(R.dimen.album_art_icon_grid_width);
         mIconHeight = getActivity().getResources().getDimensionPixelSize(R.dimen.album_art_icon_grid_height);
         return getAdapterView(viewHolder, viewParams, R.layout.grid_item);

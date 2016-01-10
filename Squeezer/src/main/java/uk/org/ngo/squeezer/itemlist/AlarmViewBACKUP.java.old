@@ -88,13 +88,13 @@ public class AlarmViewBACKUP extends BaseItemView<Alarm> {
     }
 
     @Override
-    public recyclerViewListAdapter.SimpleHolder getAdapterView(recyclerViewListAdapter.SimpleHolder Simpleholder, int position, Alarm item) {
-        recyclerViewListAdapter.SimpleHolder view = getAdapterView(Simpleholder);
+    public RecyclerItemViewHolder getAdapterView(RecyclerItemViewHolder Simpleholder, int position, Alarm item) {
+        RecyclerItemViewHolder view = getAdapterView(Simpleholder);
         bindView((AlarmViewHolder) view.getTag(), position, item);
         return view;
     }
 
-    private View getAdapterView(recyclerViewListAdapter.SimpleHolder convertView, final ViewGroup parent) {
+    private View getAdapterView(RecyclerItemViewHolder convertView, final ViewGroup parent) {
         AlarmViewHolder currentViewHolder =
                 (convertView != null && convertView.getTag() instanceof AlarmViewHolder)
                         ? (AlarmViewHolder) convertView.getTag()

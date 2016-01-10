@@ -22,6 +22,7 @@ import android.view.View;
 
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
+import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.model.Song;
 import uk.org.ngo.squeezer.util.ImageFetcher;
@@ -42,7 +43,7 @@ public class SongViewWithArt extends SongView {
     }
 
     @Override
-    public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, Song item) {
+    public void bindView(RecyclerItemViewHolder viewHolder, Song item) {
         super.bindView(viewHolder, item);
 
         Uri artworkUrl = item.getArtworkUrl();
@@ -62,7 +63,7 @@ public class SongViewWithArt extends SongView {
      * @param label The text to bind to {@link ViewHolder#text1}
      */
     @Override
-    public void bindView(recyclerViewListAdapter.SimpleHolder viewHolder, String label) {
+    public void bindView(RecyclerItemViewHolder viewHolder, String label) {
         super.bindView(viewHolder, label);
 
         viewHolder.getIcon().setImageResource(R.drawable.icon_pending_artwork);

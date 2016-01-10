@@ -91,7 +91,7 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
         }
 
 //        @Override
-//        public recyclerViewListAdapter.SimpleHolder getView(int position, recyclerViewListAdapter.SimpleHolder viewHolder) {
+//        public RecyclerItemViewHolder getView(int position, RecyclerItemViewHolder viewHolder) {
 ////            View view = super.getView(position, convertView, parent);
 ////            Object viewTag = view.getTag();
 ////
