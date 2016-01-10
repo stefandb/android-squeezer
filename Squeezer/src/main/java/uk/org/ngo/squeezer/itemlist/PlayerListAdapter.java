@@ -179,19 +179,15 @@ class PlayerListAdapter extends BaseExpandableListAdapter implements View.OnCrea
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         Log.d("XXX-player", "playerlistadapter - getChildView");
-        Log.d("XXX-player", mChildAdapters.toString());
-        Log.d("XXX-player", mChildAdapters.get(groupPosition).toString());
-        Log.d("XXX-player", String.valueOf(groupPosition));
-        Log.d("XXX-player", String.valueOf(childPosition));
-        Log.d("XXX-player", String.valueOf(convertView));
-        Log.d("XXX-player", String.valueOf(parent));
 
+        Log.d("ERROR", "hier kan het fout gaan");
         return mChildAdapters.get(groupPosition).getView(childPosition, convertView, parent);
     }
 
     @Override
     public int getGroupCount() {
         Log.d("XXX-player", "playerlistadapter - getGroupCount");
+        Log.d("ERROR", "hier kan het fout gaan");
         return mChildAdapters.size();
     }
 

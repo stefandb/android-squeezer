@@ -101,6 +101,8 @@ public class PlayerView extends BaseItemView<Player> {
 
     @Override
     public void onItemSelected(int index, Player item) {
+        Log.d("xxx", String.valueOf(index));
+        Log.d("xxx", item.toString());
     }
 
     @Override

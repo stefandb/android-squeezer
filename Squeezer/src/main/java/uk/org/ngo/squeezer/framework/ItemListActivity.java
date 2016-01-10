@@ -292,7 +292,6 @@ public abstract class ItemListActivity extends BaseActivity {
          * Subclasses must call this.
          */
         public ScrollListener() {
-            Log.d("function-debug", "uk.org.ngo.squeezer.framework ItemListActivity - ScrollListener : ScrollListener");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR &&
                     Build.VERSION.SDK_INT <= Build.VERSION_CODES.FROYO) {
                 mTouchListener = new TouchListener(this);
