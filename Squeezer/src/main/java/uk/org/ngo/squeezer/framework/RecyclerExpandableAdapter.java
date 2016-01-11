@@ -29,10 +29,10 @@ public class RecyclerExpandableAdapter<Child extends Item> extends ExpandableRec
 
     private final LayoutInflater mInflater;
     private ArrayList<SearchType> searchTypes;
+    private ItemView<Child> mItemView = null;
 
     public RecyclerExpandableAdapter(Context context, List<ParentObject> parentItemList) {
         super(context, parentItemList);
-
         mInflater = LayoutInflater.from(context);
     }
 
@@ -61,34 +61,13 @@ public class RecyclerExpandableAdapter<Child extends Item> extends ExpandableRec
         String ClassType = o.getClass().getName().toLowerCase().trim().toString();
         String searchClassName = String.valueOf(ClassType.substring(ClassType.lastIndexOf('.') + 1)).toLowerCase().trim().toString();
         for(SearchType engine: searchTypes) {
-
-//            Log.d("check", "nieuw");
-//            Log.d("check", searchClassName);
-//            Log.d("check", currentClassName);
-//            Log.d("check", String.valueOf(currentClassName.contains(searchClassName)));
-//            Log.d("check", "eind");
-
-
             if(engine.getModelClassName().toLowerCase().trim().toString().contains(searchClassName)){
                 Child childObject = (Child) o;
+                childHolder.setItem(childObject);
+
                 engine.getViewBuilder().bindView(childHolder, childObject);
             }
         }
-//        if(o.getClass().getName() instanceof Song){
-//            childObject = (Child) o;
-//        }else if(o instanceof Album){
-//            childObject = (Child) o;
-//        }else if(o instanceof Artist){
-//            childObject = (Child) o;
-//        }else if(o instanceof Genre){
-//            childObject = (Child) o;
-//        }else{
-//            new Exception(o.getClass().toString() + " is a not coorect search type class");
-//        }
-
-//        childHolder.text1.setText(childObject.getText1());
-//        childHolder.text2.setText(childObject.getText2());
-//        childHolder.icon.setImageResource(childObject.getImage());
     }
 
     public List<ParentObject> getParentItems(){

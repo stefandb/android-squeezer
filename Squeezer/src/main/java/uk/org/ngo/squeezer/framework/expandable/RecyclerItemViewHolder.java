@@ -66,6 +66,7 @@ public class RecyclerItemViewHolder<T extends Item> extends ChildViewHolder impl
     Spinner playlist;
     LinearLayout dowHolder;
     final TextView[] dowTexts = new TextView[7];
+    private T mSingleItem;
 
 
     public RecyclerItemViewHolder(View v) {
@@ -248,10 +249,11 @@ public class RecyclerItemViewHolder<T extends Item> extends ChildViewHolder impl
         //menuInfo is null
         Log.d("context-function-debug", "RecyclerviewListAdapter onCreateContextMenu (menu, v, menuInfo)");
         AdapterView.AdapterContextMenuInfo adapterMenuInfo = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        final T selectedItem = (T) mItems.get(position);
+        final T selectedItem = (T) getItem(position);
 
         //TODO-stefan fixen
-//        ItemView.ContextMenuInfo c = new ItemView.ContextMenuInfo(position, selectedItem, RecyclerItemViewHolder.this, getActivity().getMenuInflater());
+
+//        ItemView.ContextMenuInfo c = new ItemView.ContextMenuInfo(position, selectedItem, mContext, mItemView.getActivity().getMenuInflater());
 //
 //        if (selectedItem != null && selectedItem.getId() != null) {
 //            mItemView.onCreateContextMenu(menu, v, c);
@@ -261,7 +263,7 @@ public class RecyclerItemViewHolder<T extends Item> extends ChildViewHolder impl
     public boolean doItemContext(MenuItem menuItem, int position) {
         Log.d("context-function-debug", "recyclerviewadapter simpelholder doItemContext (menuitem, position)");
 //            return true;
-        return mItemView.doItemContext(menuItem, position, mItems.get(position));
+        return mItemView.doItemContext(menuItem, position, getItem(position));
     }
 
     public boolean doItemContext(MenuItem menuItem) {
@@ -272,6 +274,18 @@ public class RecyclerItemViewHolder<T extends Item> extends ChildViewHolder impl
 
     public void setItems(List<T> itemslist){
         mItems = itemslist;
+    }
+
+    public void setItem(T item){
+        mSingleItem = item;
+    }
+
+    public T getItem(int position){
+        if(mItems.size() == 0){
+            return mSingleItem;
+        }else{
+            return mItems.get(position);
+        }
     }
 
     public void setItemView(ItemView<T> itemView){
