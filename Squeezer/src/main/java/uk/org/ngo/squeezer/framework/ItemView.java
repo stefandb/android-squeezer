@@ -24,6 +24,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bignerdranch.expandablerecyclerview.ViewHolder.ChildViewHolder;
+
 import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 
 
@@ -126,8 +128,7 @@ public interface ItemView<T extends Item> {
      * @see android.view.View.OnCreateContextMenuListener#onCreateContextMenu(ContextMenu, View,
      * android.view.ContextMenu.ContextMenuInfo)
      */
-    void onCreateContextMenu(ContextMenu menu, View v,
-            ItemView.ContextMenuInfo menuInfo);
+    void onCreateContextMenu(ContextMenu menu, View v, ItemView.ContextMenuInfo menuInfo);
 
     /**
      * Perform the selected action from the context menu for the selected item.
@@ -153,6 +154,7 @@ public interface ItemView<T extends Item> {
      */
     boolean doItemContext(MenuItem menuItem);
 
+
     /**
      * Extra menu information provided to the {@link android.view.View.OnCreateContextMenuListener#onCreateContextMenu(ContextMenu,
      * View, ContextMenu.ContextMenuInfo) } callback when a context menu is brought up for this ItemView.
@@ -172,15 +174,54 @@ public interface ItemView<T extends Item> {
         /**
          * The {@link ItemAdapter} that is bridging the content to the list view.
          */
-        public final recyclerViewListAdapter<?> adapter;
+        public recyclerViewListAdapter<?> adapter;
 
         /**
          * A {@link android.view.MenuInflater} that can be used to inflate a menu resource.
          */
         public final MenuInflater menuInflater;
 
-        public ContextMenuInfo(int position, Item item, recyclerViewListAdapter<?> adapter,
-                MenuInflater menuInflater) {
+        public ContextMenuInfo(int position, Item item, recyclerViewListAdapter<?> adapter, MenuInflater menuInflater) {
+            this.position = position;
+            this.item = item;
+            this.adapter = adapter;
+            this.menuInflater = menuInflater;
+        }
+
+        public <T extends Item> ContextMenuInfo(int position, Item item, MenuInflater menuInflater) {
+            this.position = position;
+            this.item = item;
+            this.menuInflater = menuInflater;
+        }
+    }
+
+    /**
+     * Extra menu information provided to the {@link android.view.View.OnCreateContextMenuListener#onCreateContextMenu(ContextMenu,
+     * View, ContextMenu.ContextMenuInfo) } callback when a context menu is brought up for this ItemView.
+     */
+    class ContextMenuInfoExapndable implements ContextMenu.ContextMenuInfo {
+
+        /**
+         * The position in the adapter for which the context menu is being displayed.
+         */
+        public final int position;
+
+        /**
+         * The {@link Item} for which the context menu is being displayed.
+         */
+        public final Item item;
+
+        /**
+         * The {@link ItemAdapter} that is bridging the content to the list view.
+         */
+        public final RecyclerExpandableAdapter<?,?> adapter;
+
+        /**
+         * A {@link android.view.MenuInflater} that can be used to inflate a menu resource.
+         */
+        public final MenuInflater menuInflater;
+
+        public ContextMenuInfoExapndable(int position, Item item, RecyclerExpandableAdapter<?,?> adapter, MenuInflater menuInflater) {
             this.position = position;
             this.item = item;
             this.adapter = adapter;

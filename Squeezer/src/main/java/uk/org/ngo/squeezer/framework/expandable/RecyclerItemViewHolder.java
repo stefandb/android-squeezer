@@ -15,12 +15,17 @@ import android.widget.TextView;
 import com.bignerdranch.expandablerecyclerview.ViewHolder.ChildViewHolder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.framework.BaseItemView;
 import uk.org.ngo.squeezer.framework.Item;
 import uk.org.ngo.squeezer.framework.ItemView;
+import uk.org.ngo.squeezer.framework.RecyclerExpandableAdapter;
+import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.model.Alarm;
+import uk.org.ngo.squeezer.model.SearchType;
 import uk.org.ngo.squeezer.util.CompoundButtonWrapper;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -33,15 +38,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Created by Stefan on 6-1-2016.
  */
-public class RecyclerItemViewHolder<T extends Item> extends ChildViewHolder implements View.OnCreateContextMenuListener {
+public class RecyclerItemViewHolder<T extends Item, K extends BaseItemView> extends ChildViewHolder implements View.OnCreateContextMenuListener {
 
     private List<T> mItems = new ArrayList<>();
     /**
      * View logic for this adapter
      */
     private ItemView<T> mItemView = null;
+    private HashMap<String, K> mItemViews = null;
 
-
+    private RecyclerExpandableAdapter<?,?> mContextExpandableList = null;
+    private RecyclerExpandableAdapter<?, ?> mContextList = null;
 
     public TextView text1;
     public TextView text2;
@@ -79,6 +86,24 @@ public class RecyclerItemViewHolder<T extends Item> extends ChildViewHolder impl
 
         itemView.setOnCreateContextMenuListener(this);
     }
+
+    public <Child extends Item, K extends BaseItemView> RecyclerItemViewHolder(View v, RecyclerExpandableAdapter<?, ?> childKRecyclerExpandableAdapter) {
+        super(v);
+
+        itemView = v;
+        text1 = (TextView) v.findViewById(R.id.text1);
+        text2 = (TextView) v.findViewById(R.id.text2);
+        icon = (ImageView) v.findViewById(R.id.icon);
+
+        itemView.setOnCreateContextMenuListener(this);
+
+        mContextList = childKRecyclerExpandableAdapter;
+    }
+
+    public <K extends ChildViewHolder> void getViewHolder(){
+
+    }
+
 
 
     public RecyclerItemViewHolder(){
@@ -244,6 +269,8 @@ public class RecyclerItemViewHolder<T extends Item> extends ChildViewHolder impl
     }
 
 
+
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         //menuInfo is null
@@ -252,18 +279,29 @@ public class RecyclerItemViewHolder<T extends Item> extends ChildViewHolder impl
         final T selectedItem = (T) getItem(position);
 
         //TODO-stefan fixen
-
-//        ItemView.ContextMenuInfo c = new ItemView.ContextMenuInfo(position, selectedItem, mContext, mItemView.getActivity().getMenuInflater());
 //
-//        if (selectedItem != null && selectedItem.getId() != null) {
-//            mItemView.onCreateContextMenu(menu, v, c);
+//        if(mContextList != null){
+//
+//        }else if(mContextExpandableList != null){
+//            ItemView.ContextMenuInfoExapndable c = new ItemView.ContextMenuInfoExapndable(position, selectedItem, mContextExpandableList, getItemView(selectedItem).getActivity().getMenuInflater());
+//        }else{
+//
 //        }
+
+
+        ItemView.ContextMenuInfo c = new ItemView.ContextMenuInfo(position, selectedItem, getItemView(selectedItem).getActivity().getMenuInflater());
+
+        if (selectedItem != null && selectedItem.getId() != null) {
+            getItemView(selectedItem).onCreateContextMenu(menu, v, c);
+        }
     }
 
     public boolean doItemContext(MenuItem menuItem, int position) {
         Log.d("context-function-debug", "recyclerviewadapter simpelholder doItemContext (menuitem, position)");
 //            return true;
-        return mItemView.doItemContext(menuItem, position, getItem(position));
+        final T selectedItem = (T) getItem(position);
+
+        return getItemView(selectedItem).doItemContext(menuItem, position, getItem(position));
     }
 
     public boolean doItemContext(MenuItem menuItem) {
@@ -288,7 +326,20 @@ public class RecyclerItemViewHolder<T extends Item> extends ChildViewHolder impl
         }
     }
 
+    private ItemView getItemView(T Item){
+        if(mItemViews == null){
+            return mItemView;
+        }else {
+//            Log.d("debug-class-name-itemview", Item.getClass().getSimpleName());
+            return mItemViews.get(Item.getClass().getSimpleName());
+        }
+    }
+
     public void setItemView(ItemView<T> itemView){
         mItemView = itemView;
+    }
+
+    public void setItemViews(HashMap<String, K> enginesViews){
+        mItemViews = enginesViews;
     }
 }

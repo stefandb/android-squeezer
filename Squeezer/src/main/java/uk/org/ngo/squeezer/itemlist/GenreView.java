@@ -20,6 +20,8 @@ import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.View;
 
+import com.bignerdranch.expandablerecyclerview.ViewHolder.ChildViewHolder;
+
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
 import uk.org.ngo.squeezer.framework.SpinnerItemView;

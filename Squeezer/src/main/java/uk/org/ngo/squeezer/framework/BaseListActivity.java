@@ -102,6 +102,7 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
 
         mRetainFragment = RetainFragment.getInstance(TAG, getSupportFragmentManager());
 
+
         setContentView(getContentView());
 //        mListView = checkNotNull((AbsListView) findViewById(R.id.item_list),
 //                "getContentView() did not return a view containing R.id.item_list");
@@ -120,8 +121,8 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
         registerForContextMenu(mrecyclerView);
         mrecyclerView.setLongClickable(true);
 
-        ItemTouchHelper ith = new ItemTouchHelper(_ithCallback);
-        ith.attachToRecyclerView(mrecyclerView);
+//        ItemTouchHelper ith = new ItemTouchHelper(_ithCallback);
+//        ith.attachToRecyclerView(mrecyclerView);
 
         mrecyclerView.addOnItemTouchListener(
             new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {

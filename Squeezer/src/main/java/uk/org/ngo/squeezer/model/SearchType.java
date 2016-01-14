@@ -33,6 +33,7 @@ public class SearchType<T extends BaseItemView> {
     private int mIconResourse;
     private T mViewBuilder;
     private String mModelClassName;
+    private boolean mExpand;
 
     public SearchType(){
 
@@ -62,7 +63,7 @@ public class SearchType<T extends BaseItemView> {
     }
 
     public T getViewBuilder() {
-        return mViewBuilder;
+        return (T) mViewBuilder;
     }
 
     public void setViewBuilder(T mViewBuilder) {
@@ -75,5 +76,13 @@ public class SearchType<T extends BaseItemView> {
 
     public void setModelClassName(String mModelClassName) {
         this.mModelClassName = mModelClassName;
+    }
+
+    public boolean isExpand() {
+        return mExpand;
+    }
+
+    public void setExpand(boolean mExpand) {
+        this.mExpand = mExpand;
     }
 }

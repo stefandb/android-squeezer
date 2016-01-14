@@ -27,37 +27,31 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
-import android.widget.ExpandableListView.OnChildClickListener;
 
 import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import uk.org.ngo.squeezer.framework.ItemAdapter;
+import uk.org.ngo.squeezer.framework.BaseItemView;
+import uk.org.ngo.squeezer.framework.Item;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
 import uk.org.ngo.squeezer.framework.RecyclerExpandableAdapter;
+import uk.org.ngo.squeezer.framework.RecyclerItemClickListener;
 import uk.org.ngo.squeezer.framework.expandable.CrimeLab;
-import uk.org.ngo.squeezer.framework.expandable.ParentHolder;
 import uk.org.ngo.squeezer.itemlist.AlbumView;
 import uk.org.ngo.squeezer.itemlist.ArtistView;
 import uk.org.ngo.squeezer.itemlist.GenreView;
 import uk.org.ngo.squeezer.itemlist.IServiceItemListCallback;
 import uk.org.ngo.squeezer.itemlist.SongView;
 import uk.org.ngo.squeezer.itemlist.SongViewWithArt;
-import uk.org.ngo.squeezer.model.Album;
-import uk.org.ngo.squeezer.model.Artist;
-import uk.org.ngo.squeezer.model.ExpandableChildListItem;
 import uk.org.ngo.squeezer.model.ExpandableParentListItem;
-import uk.org.ngo.squeezer.model.Genre;
 import uk.org.ngo.squeezer.model.SearchType;
-import uk.org.ngo.squeezer.model.Song;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
 
-public class SearchActivity extends ItemListActivity {
+public class SearchActivity<Child extends Item, K extends BaseItemView> extends ItemListActivity {
 
     private View loadingLabel;
 
@@ -93,6 +87,69 @@ public class SearchActivity extends ItemListActivity {
         mExpandableAdapter.setCustomParentAnimationViewId(R.id.parent_list_item_expand_arrow);
         mExpandableAdapter.setParentClickableViewAnimationDefaultDuration();
         mExpandableAdapter.setParentAndIconExpandOnClick(true);
+
+
+        registerForContextMenu(resultsExpandableListView);
+        resultsExpandableListView.setLongClickable(true);
+
+//        ItemTouchHelper ith = new ItemTouchHelper(_ithCallback);
+//        ith.attachToRecyclerView(resultsExpandableListView);
+
+
+        resultsExpandableListView.addOnItemTouchListener(
+            new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    Log.d("debug-xxx", "klik position " + String.valueOf(position));
+
+                    Log.d("debug-click-saecr", "NIEUWE KLIK");
+                    Log.d("debug-click-saecr", String.valueOf(mExpandableAdapter.getItemCount()));
+                    Log.d("debug-click-saecr", String.valueOf(position));
+
+                    int indexposition = 0;
+
+                    /**
+                     * controleren of item waar op geklikt is een parent is
+                     *  -een boolean op true zeten
+                     *  -rest van code overslaan
+                     *
+                     *  bij een klik op child
+                     *  -door alle parent lopen en controleren op een true (als open) en het aantal child items optellen bij position dan dat item ophalen
+                     */
+
+
+
+
+
+                    for(Object parent: mExpandableAdapter.getParentItems()){
+                        Log.d("debug-click-saecr", "A");
+                        indexposition++;
+                        ExpandableParentListItem a = (ExpandableParentListItem) parent;
+
+                        for(Object childItem: a.getChildObjectList()){
+                            Log.d("debug-click-saecr", "B");
+                            if(indexposition == position){
+                                Log.d("debug-click-saecr", "C");
+                                for(SearchType search : SearchTypes) {
+                                    Log.d("debug-click-saecr", "D");
+                                    String loopClass= childItem.getClass().getName();
+                                    String currentClassName = String.valueOf(loopClass.substring(loopClass.lastIndexOf('.') + 1)).toLowerCase().trim().toString();
+                                    Log.d("debug-click-saecr", currentClassName);
+                                    Log.d("debug-click-saecr", search.getModelClassName());
+
+                                    if(currentClassName.contains(search.getModelClassName().toLowerCase().trim().toString())){
+                                        Log.d("debug-click-saecr", "E");
+                                        search.getViewBuilder().onItemSelected(position, (Child) childItem);
+                                    }
+                                }
+                            }
+                            indexposition++;
+                        }
+                    }
+                }
+            })
+        );
+
 
 //        resultsExpandableListView.setOnChildClickListener(new OnChildClickListener() {
 //            @Override
@@ -243,16 +300,8 @@ public class SearchActivity extends ItemListActivity {
             getUIThreadHandler().post(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d("items-search", "new search");
-                    Log.d("items-search", String.valueOf(count));
-                    Log.d("items-search", String.valueOf(start));
-                    Log.d("items-search", String.valueOf(parameters));
-                    Log.d("items-search", String.valueOf(items));
-                    Log.d("items-search", String.valueOf(dataType));
 
                     mExpandableAdapter.setChildItems(String.valueOf(dataType), items);
-
-//                    searchResultsAdapter.updateItems(count, start, items, dataType);
                     loadingLabel.setVisibility(View.GONE);
                     resultsExpandableListView.setVisibility(View.VISIBLE);
                 }

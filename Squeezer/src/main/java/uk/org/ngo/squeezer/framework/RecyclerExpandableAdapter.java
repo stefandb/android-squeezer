@@ -10,6 +10,7 @@ import com.bignerdranch.expandablerecyclerview.Adapter.ExpandableRecyclerAdapter
 import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import uk.org.ngo.squeezer.R;
@@ -25,7 +26,7 @@ import uk.org.ngo.squeezer.model.Song;
 /**
  * Created by Stefan on 5-1-2016.
  */
-public class RecyclerExpandableAdapter<Child extends Item> extends ExpandableRecyclerAdapter<ParentHolder, RecyclerItemViewHolder> {
+public class RecyclerExpandableAdapter<Child extends Item, K extends BaseItemView> extends ExpandableRecyclerAdapter<ParentHolder, RecyclerItemViewHolder> {
 
     private final LayoutInflater mInflater;
     private ArrayList<SearchType> searchTypes;
@@ -44,8 +45,17 @@ public class RecyclerExpandableAdapter<Child extends Item> extends ExpandableRec
 
     @Override
     public RecyclerItemViewHolder onCreateChildViewHolder(ViewGroup viewGroup) {
+        //TODO-stefan R.layout dynamisch maken
         View view = mInflater.inflate(R.layout.list_item, viewGroup, false);
-        return new RecyclerItemViewHolder(view);
+
+        HashMap<String, K> enginesViews = new HashMap<String, K>();
+        for (int i = 0; i < searchTypes.size(); i++) {
+            enginesViews.put(searchTypes.get(i).getModelClassName(), (K) searchTypes.get(i).getViewBuilder());
+        }
+        RecyclerItemViewHolder viewHolderInstance = new RecyclerItemViewHolder(view, this);
+        viewHolderInstance.setItemViews(enginesViews);
+
+        return viewHolderInstance;
     }
 
     @Override
@@ -103,4 +113,6 @@ public class RecyclerExpandableAdapter<Child extends Item> extends ExpandableRec
     public void setSearchEngines(ArrayList<SearchType> st){
         searchTypes = st;
     }
+
+
 }
