@@ -84,6 +84,7 @@ public class RecyclerItemViewHolder<T extends Item, K extends BaseItemView> exte
         text2 = (TextView) v.findViewById(R.id.text2);
         icon = (ImageView) v.findViewById(R.id.icon);
 
+        itemView.setLongClickable(true);
         itemView.setOnCreateContextMenuListener(this);
     }
 
@@ -95,16 +96,11 @@ public class RecyclerItemViewHolder<T extends Item, K extends BaseItemView> exte
         text2 = (TextView) v.findViewById(R.id.text2);
         icon = (ImageView) v.findViewById(R.id.icon);
 
+        itemView.setLongClickable(true);
         itemView.setOnCreateContextMenuListener(this);
 
         mContextList = childKRecyclerExpandableAdapter;
     }
-
-    public <K extends ChildViewHolder> void getViewHolder(){
-
-    }
-
-
 
     public RecyclerItemViewHolder(){
         super(null);
@@ -254,8 +250,6 @@ public class RecyclerItemViewHolder<T extends Item, K extends BaseItemView> exte
         this.dowTexts[position] = text;
     }
 
-
-
     public void setDowHolder(LinearLayout dowHolder) {
         this.dowHolder = dowHolder;
     }
@@ -273,21 +267,8 @@ public class RecyclerItemViewHolder<T extends Item, K extends BaseItemView> exte
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        //menuInfo is null
-        Log.d("context-function-debug", "RecyclerviewListAdapter onCreateContextMenu (menu, v, menuInfo)");
         AdapterView.AdapterContextMenuInfo adapterMenuInfo = (AdapterView.AdapterContextMenuInfo) menuInfo;
         final T selectedItem = (T) getItem(position);
-
-        //TODO-stefan fixen
-//
-//        if(mContextList != null){
-//
-//        }else if(mContextExpandableList != null){
-//            ItemView.ContextMenuInfoExapndable c = new ItemView.ContextMenuInfoExapndable(position, selectedItem, mContextExpandableList, getItemView(selectedItem).getActivity().getMenuInflater());
-//        }else{
-//
-//        }
-
 
         ItemView.ContextMenuInfo c = new ItemView.ContextMenuInfo(position, selectedItem, getItemView(selectedItem).getActivity().getMenuInflater());
 
@@ -297,16 +278,11 @@ public class RecyclerItemViewHolder<T extends Item, K extends BaseItemView> exte
     }
 
     public boolean doItemContext(MenuItem menuItem, int position) {
-        Log.d("context-function-debug", "recyclerviewadapter simpelholder doItemContext (menuitem, position)");
-//            return true;
         final T selectedItem = (T) getItem(position);
-
         return getItemView(selectedItem).doItemContext(menuItem, position, getItem(position));
     }
 
     public boolean doItemContext(MenuItem menuItem) {
-        Log.d("context-function-debug", "recyclerviewadapter simpelholder doItemContext (menuitem)");
-//            return true;
         return mItemView.doItemContext(menuItem);
     }
 
@@ -319,6 +295,11 @@ public class RecyclerItemViewHolder<T extends Item, K extends BaseItemView> exte
     }
 
     public T getItem(int position){
+        Log.d("DEBUG-X-klik", String.valueOf(mItems.size()));
+        Log.d("DEBUG-X-klik", mItems.toString());
+        Log.d("DEBUG-X-klik", String.valueOf(position));
+
+
         if(mItems.size() == 0){
             return mSingleItem;
         }else{

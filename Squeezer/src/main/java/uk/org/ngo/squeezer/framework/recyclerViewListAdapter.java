@@ -113,6 +113,7 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
         final RecyclerItemViewHolder viewHolder = new RecyclerItemViewHolder(inflater.inflate(mItemView.getListItemLayout(), viewGroup, false));
         viewHolder.setItemView(mItemView);
+        viewHolder.setItems(mItems);
 //        final SimpleHolder viewHolder = new SimpleHolder(inflater.inflate(R.layout.list_item, viewGroup, false));
         return viewHolder;
     }

@@ -25,9 +25,12 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
+import android.widget.Toast;
 
+import com.bignerdranch.expandablerecyclerview.Adapter.ExpandableRecyclerAdapter;
 import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
 
 import java.util.ArrayList;
@@ -46,11 +49,21 @@ import uk.org.ngo.squeezer.itemlist.GenreView;
 import uk.org.ngo.squeezer.itemlist.IServiceItemListCallback;
 import uk.org.ngo.squeezer.itemlist.SongView;
 import uk.org.ngo.squeezer.itemlist.SongViewWithArt;
+import uk.org.ngo.squeezer.model.Album;
+import uk.org.ngo.squeezer.model.Artist;
 import uk.org.ngo.squeezer.model.ExpandableParentListItem;
+import uk.org.ngo.squeezer.model.Genre;
 import uk.org.ngo.squeezer.model.SearchType;
+import uk.org.ngo.squeezer.model.Song;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
 
+/**
+ * TODO-stefan PlaylistItemView -> onSelectAction dynamisch maken voor elk type zoek engine het goede type pakken
+ *
+ * @param <Child>
+ * @param <K>
+ */
 public class SearchActivity<Child extends Item, K extends BaseItemView> extends ItemListActivity {
 
     private View loadingLabel;
@@ -100,51 +113,37 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
             new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
-                    Log.d("debug-xxx", "klik position " + String.valueOf(position));
+                    if(mExpandableAdapter.getItemList().get(position) instanceof ParentObject) {
+                        ExpandableParentListItem parent = (ExpandableParentListItem) mExpandableAdapter.getParentItems().get(position);
 
-                    Log.d("debug-click-saecr", "NIEUWE KLIK");
-                    Log.d("debug-click-saecr", String.valueOf(mExpandableAdapter.getItemCount()));
-                    Log.d("debug-click-saecr", String.valueOf(position));
-
-                    int indexposition = 0;
-
-                    /**
-                     * controleren of item waar op geklikt is een parent is
-                     *  -een boolean op true zeten
-                     *  -rest van code overslaan
-                     *
-                     *  bij een klik op child
-                     *  -door alle parent lopen en controleren op een true (als open) en het aantal child items optellen bij position dan dat item ophalen
-                     */
-
-
-
-
-
-                    for(Object parent: mExpandableAdapter.getParentItems()){
-                        Log.d("debug-click-saecr", "A");
-                        indexposition++;
-                        ExpandableParentListItem a = (ExpandableParentListItem) parent;
-
-                        for(Object childItem: a.getChildObjectList()){
-                            Log.d("debug-click-saecr", "B");
-                            if(indexposition == position){
-                                Log.d("debug-click-saecr", "C");
-                                for(SearchType search : SearchTypes) {
-                                    Log.d("debug-click-saecr", "D");
-                                    String loopClass= childItem.getClass().getName();
-                                    String currentClassName = String.valueOf(loopClass.substring(loopClass.lastIndexOf('.') + 1)).toLowerCase().trim().toString();
-                                    Log.d("debug-click-saecr", currentClassName);
-                                    Log.d("debug-click-saecr", search.getModelClassName());
-
-                                    if(currentClassName.contains(search.getModelClassName().toLowerCase().trim().toString())){
-                                        Log.d("debug-click-saecr", "E");
-                                        search.getViewBuilder().onItemSelected(position, (Child) childItem);
+                        int searchEngineId = parent.getSearchEngineId();
+                        SearchType searchEngine = SearchTypes.get(searchEngineId);
+                        searchEngine.toggleExpand();
+                    }else{
+                        int index = 0;
+                        SearchType engine = null;
+                        for(SearchType search : SearchTypes) {
+                            engine = search;
+                            if(!search.isExpand()){
+                                ExpandableParentListItem parentItem = null;
+                                for(Object parent: mExpandableAdapter.getParentItems()){
+                                    parentItem = (ExpandableParentListItem) parent;
+                                    if(parentItem.getSearchEngineId() == index){
+                                        break;
                                     }
                                 }
+
+                                if(position < parentItem.getItemCountint()){
+                                    position += parentItem.getItemCountint();
+                                }else{
+                                    break;
+                                }
                             }
-                            indexposition++;
+                            index++;
                         }
+
+                        Object c = mExpandableAdapter.getItemList().get(position);
+                        engine.getViewBuilder().onItemSelected(position, (Child) c);
                     }
                 }
             })
@@ -194,6 +193,7 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
             crime.setTitle(search.getTitle());
             crime.setIcon(search.getIconResourse());
             crime.setItemClassName(String.valueOf(search.getViewBuilder().getItemClass()));
+            crime.setSearchEngineId(index);
             crimeLab.setCrime(crime);
             index++;
         }
@@ -221,23 +221,37 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
         }
     }
 
+    /**
+     * TODO-stefan BUG
+     * @param menuItem
+     * @return
+     */
     @Override
-    public final boolean onContextItemSelected(MenuItem menuItem) {
-        Log.d("context-function-debug", "SearchActivity onContextItemSelected (item)");
-        Log.d("click", String.valueOf(menuItem));
+    public boolean onContextItemSelected(MenuItem menuItem) {
         if (getService() != null) {
-            ExpandableListContextMenuInfo contextMenuInfo = (ExpandableListContextMenuInfo) menuItem
-                    .getMenuInfo();
-            long packedPosition = contextMenuInfo.packedPosition;
-            int groupPosition = ExpandableListView.getPackedPositionGroup(packedPosition);
-            int childPosition = ExpandableListView.getPackedPositionChild(packedPosition);
-            if (ExpandableListView.getPackedPositionType(packedPosition)
-                    == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-                return searchResultsAdapter.doItemContext(menuItem, groupPosition, childPosition);
+            Log.d("context-function-debug", "BseListActivity onContextItemSelected (item)");
+
+            AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) menuItem.getMenuInfo();
+            Log.d("context-function-debug", "click menuitem () " + menuItem);
+            Log.d("context-function-debug", "click menuitem (getitemid) " + menuItem.getItemId());
+            Log.d("context-function-debug", "click menuitem (tostring) " + menuItem.toString());
+            Log.d("context-function-debug", "click menuitem (getmenuinfo) " + menuItem.getMenuInfo());
+            Log.d("context-function-debug", "click menuinfo () " + menuInfo);
+
+            int position = -1;
+            try {
+                position = mExpandableAdapter.getPosition();   //((BackupRestoreListAdapter)getAdapter()).getPosition();
+            } catch (Exception e) {
+                Log.d("SEARCH ACTIVITY", e.getLocalizedMessage(), e);
+                return super.onContextItemSelected(menuItem);
             }
+
+            return mExpandableAdapter.doItemContext(menuItem, position);
         }
         return false;
     }
+
+
 
     /**
      * Performs the search now that the service connection is active.
@@ -313,4 +327,5 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
             return SearchActivity.this;
         }
     };
+
 }

@@ -58,9 +58,11 @@ public abstract class PlaylistItemView<T extends PlaylistItem> extends
 
     @Override
     public void onItemSelected(int index, T item) {
+        Log.d("child-lick-function", "PlaylistItemView onItemSelected");
         Log.d("debug-onItemClick", "PlaylistItemView onItemSelected");
 //        Log.d(getTag(), "Executing on select action");
         if (onSelectAction != null) {
+            //TODO-stefan onderzoeken wat het type is
             onSelectAction.execute(item);
         }
     }

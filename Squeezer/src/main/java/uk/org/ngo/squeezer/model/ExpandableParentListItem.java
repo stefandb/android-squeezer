@@ -25,6 +25,8 @@ public class ExpandableParentListItem implements ParentObject {
     private int mIcon;
     private int mItemCount = 0;
 
+    private int searchEngineId = 0;
+
     //HIDDEN DATA
     private String _itemClassName;
 
@@ -118,7 +120,19 @@ public class ExpandableParentListItem implements ParentObject {
         return String.valueOf(mItemCount);
     }
 
+    public int getItemCountint() {
+        return (mItemCount);
+    }
+
     public void setItemCount(int mItemCount) {
         this.mItemCount = mItemCount;
+    }
+
+    public int getSearchEngineId() {
+        return searchEngineId;
+    }
+
+    public void setSearchEngineId(int searchEngineId) {
+        this.searchEngineId = searchEngineId;
     }
 }

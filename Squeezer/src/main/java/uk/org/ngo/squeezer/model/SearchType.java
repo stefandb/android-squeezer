@@ -33,7 +33,7 @@ public class SearchType<T extends BaseItemView> {
     private int mIconResourse;
     private T mViewBuilder;
     private String mModelClassName;
-    private boolean mExpand;
+    private boolean mExpand = false;
 
     public SearchType(){
 
@@ -84,5 +84,13 @@ public class SearchType<T extends BaseItemView> {
 
     public void setExpand(boolean mExpand) {
         this.mExpand = mExpand;
+    }
+
+    public void toggleExpand() {
+        if (this.mExpand) {
+            this.mExpand = false;
+        }else{
+            this.mExpand = true;
+        }
     }
 }

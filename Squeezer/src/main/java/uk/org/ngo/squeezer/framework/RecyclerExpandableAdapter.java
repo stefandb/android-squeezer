@@ -3,6 +3,7 @@ package uk.org.ngo.squeezer.framework;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -31,6 +32,9 @@ public class RecyclerExpandableAdapter<Child extends Item, K extends BaseItemVie
     private final LayoutInflater mInflater;
     private ArrayList<SearchType> searchTypes;
     private ItemView<Child> mItemView = null;
+
+    private int position = 0;
+
 
     public RecyclerExpandableAdapter(Context context, List<ParentObject> parentItemList) {
         super(context, parentItemList);
@@ -67,7 +71,7 @@ public class RecyclerExpandableAdapter<Child extends Item, K extends BaseItemVie
     }
 
     @Override
-    public void onBindChildViewHolder(RecyclerItemViewHolder childHolder, int i, Object o) {
+    public void onBindChildViewHolder(final RecyclerItemViewHolder childHolder, int i, Object o) {
         String ClassType = o.getClass().getName().toLowerCase().trim().toString();
         String searchClassName = String.valueOf(ClassType.substring(ClassType.lastIndexOf('.') + 1)).toLowerCase().trim().toString();
         for(SearchType engine: searchTypes) {
@@ -78,10 +82,23 @@ public class RecyclerExpandableAdapter<Child extends Item, K extends BaseItemVie
                 engine.getViewBuilder().bindView(childHolder, childObject);
             }
         }
+        childHolder.setPosition(i);
+
+        childHolder.getItemView().setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                setPosition(childHolder.getPosition());
+                return false;
+            }
+        });
     }
 
     public List<ParentObject> getParentItems(){
         return mParentItemList;
+    }
+
+    public List<Object> getItemList(){
+        return mItemList;
     }
 
     public <T extends Item> void setChildItems(String ClassType, List<T> items){
@@ -114,5 +131,27 @@ public class RecyclerExpandableAdapter<Child extends Item, K extends BaseItemVie
         searchTypes = st;
     }
 
+    public int getPosition() {
+        return position;
+    }
 
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    /**
+     * TODO-stefan code ombouwen van ItemAdapter
+     */
+    public boolean doItemContext(MenuItem menuItem, int position) {
+        Child Item = (Child) mItemList.get(position);
+        String Classname = Item.getClass().getName().toString().toLowerCase().trim();
+        String searchClassName = String.valueOf(Classname.substring(Classname.lastIndexOf('.') + 1)).toLowerCase().trim().toString();
+
+        for(SearchType engine: searchTypes) {
+            if(engine.getModelClassName().toLowerCase().trim().toString().contains(searchClassName)){
+                return  engine.getViewBuilder().doItemContext(menuItem, position, (Child) mItemList.get(position));
+            }
+        }
+        return false;
+    }
 }

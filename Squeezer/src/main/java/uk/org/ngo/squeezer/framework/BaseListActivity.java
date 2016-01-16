@@ -104,22 +104,19 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
 
 
         setContentView(getContentView());
-//        mListView = checkNotNull((AbsListView) findViewById(R.id.item_list),
-//                "getContentView() did not return a view containing R.id.item_list");
 
         mrecyclerView = checkNotNull((RecyclerView) findViewById(R.id.item_list),
                 "getContentView() did not return a view containing R.id.item_list");
+        registerForContextMenu(mrecyclerView);
+        mrecyclerView.setLongClickable(true);
+
         mrecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mrecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getResources()));
 
         loadingProgress = checkNotNull((ProgressBar) findViewById(R.id.loading_progress),
         "getContentView() did not return a view containing R.id.loading_progress");
 
-//        mrecyclerView.addOnItemTouchListener();
         mrecyclerView.setOnScrollListener(new RecyclerScrollListener());
-
-        registerForContextMenu(mrecyclerView);
-        mrecyclerView.setLongClickable(true);
 
 //        ItemTouchHelper ith = new ItemTouchHelper(_ithCallback);
 //        ith.attachToRecyclerView(mrecyclerView);
@@ -134,16 +131,6 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
             })
         );
 
-
-
-
-//        mListView.setOnItemClickListener(new OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                getItemAdapter().onItemSelected(position);
-//            }
-//        });
-
 //        mListView.setRecyclerListener(new RecyclerListener() {
 //            @Override
 //            public void onMovedToScrapHeap(View view) {
@@ -154,8 +141,6 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
 //                }
 //            }
 //        });
-
-//        mListView.setLongClickable(true);
 
         // Delegate context menu creation to the adapter.
 //        mListView.setOnCreateContextMenuListener(getItemAdapter());
@@ -181,21 +166,21 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
 //        });
 
 
-
-        controls_container = findViewById(R.id.controls_container);
-        CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) controls_container.getLayoutParams();
-        TransformingToolbarBehavior transformingToolbarBehavior = (TransformingToolbarBehavior) layoutParams.getBehavior();
-        transformingToolbarBehavior.setToolbarChangeListener(new TransformingToolbarBehavior.ToolbarChangeListener() {
-            @Override
-            public void onToolbarCollapse() {
-                hideToolbar();
-            }
-
-            @Override
-            public void onToolbarShown() {
-                showToolbar();
-            }
-        });
+//
+//        controls_container = findViewById(R.id.controls_container);
+//        CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) controls_container.getLayoutParams();
+//        TransformingToolbarBehavior transformingToolbarBehavior = (TransformingToolbarBehavior) layoutParams.getBehavior();
+//        transformingToolbarBehavior.setToolbarChangeListener(new TransformingToolbarBehavior.ToolbarChangeListener() {
+//            @Override
+//            public void onToolbarCollapse() {
+//                hideToolbar();
+//            }
+//
+//            @Override
+//            public void onToolbarShown() {
+//                showToolbar();
+//            }
+//        });
     }
 
     ItemTouchHelper.Callback _ithCallback = new ItemTouchHelper.Callback() {
@@ -221,89 +206,6 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
                     ItemTouchHelper.DOWN | ItemTouchHelper.UP | ItemTouchHelper.START | ItemTouchHelper.END);
         }
     };
-
-    private void hideToolbar() {
-
-        if (controls_container.getVisibility() == View.INVISIBLE) {
-            return;
-        }
-
-        controls_container.setVisibility(View.INVISIBLE);
-
-//        int cx = controls_container.getWidth() / 2;
-//        int cy = controls_container.getHeight() / 2;
-//
-////        mFloatingActionButton.setVisibility(View.INVISIBLE);
-////        mFloatingActionButton.setX(mBottomToolbar.getX() + (mBottomToolbar.getWidth() / 2) - (mFloatingActionButton.getWidth() / 2));
-////        mFloatingActionButton.setY(mBottomToolbar.getY() + (mBottomToolbar.getHeight() / 2) - (mFloatingActionButton.getHeight() / 2));
-//
-//        int initialRadius = controls_container.getWidth();
-////        int endRadius = mFloatingActionButton.getWidth();
-//
-//        Animator anim = ViewAnimationUtils.createCircularReveal(controls_container, cx, cy, initialRadius, initialRadius);
-//
-//        anim.addListener(new AnimatorListenerAdapter() {
-//            @Override
-//            public void onAnimationEnd(Animator animation) {
-//                super.onAnimationEnd(animation);
-//                controls_container.setVisibility(View.INVISIBLE);
-//
-//                mFloatingActionButton.setVisibility(View.VISIBLE);
-//                mFloatingActionButton.animate()
-//                        .x(mInitialFabX)
-//                        .y(mInitialFabY)
-//                        .setInterpolator(new LinearOutSlowInInterpolator())
-//                        .start();
-//            }
-//        });
-//
-//        anim.start();
-    }
-
-    private void showToolbar() {
-
-        if (controls_container.getVisibility() != View.INVISIBLE) {
-            return;
-        }
-
-
-        controls_container.setVisibility(View.VISIBLE);
-
-
-//        float x = controls_container.getX() + (controls_container.getWidth() / 2) - (mFloatingActionButton.getWidth() / 2);
-//        float y = controls_container.getY() + (controls_container.getHeight() / 2) - (mFloatingActionButton.getHeight() / 2);
-
-//        mFloatingActionButton.animate()
-//                .x(x)
-//                .y(y)
-//                .setInterpolator(new LinearOutSlowInInterpolator())
-//                .withEndAction(new Runnable() {
-//                    @Override
-//                    public void run() {
-//
-//                        int initialRadius = mFloatingActionButton.getWidth();
-//                        int endRadius = mBottomToolbar.getWidth();
-//
-//                        mBottomToolbar.setVisibility(View.VISIBLE);
-//                        mFloatingActionButton.setVisibility(View.INVISIBLE);
-//
-//                        int cx = mBottomToolbar.getWidth() / 2;
-//                        int cy = mBottomToolbar.getHeight() / 2;
-//                        Animator anim = ViewAnimationUtils.createCircularReveal(mBottomToolbar, cx, cy, initialRadius, endRadius);
-//                        anim.addListener(new AnimatorListenerAdapter() {
-//                            @Override
-//                            public void onAnimationEnd(Animator animation) {
-//                                super.onAnimationEnd(animation);
-//                            }
-//                        });
-//
-//                        anim.start();
-//                    }
-//                })
-//                .start();
-    }
-
-
 
     public void onEventMainThread(HandshakeComplete event) {
         Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : onEventMainThread");
@@ -348,19 +250,7 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
             return super.onContextItemSelected(menuItem);
         }
 
-        Log.d("context-function-debug", "click position () " + String.valueOf(position));
-        Log.d("context-function-debug", "click position () " + getItemAdapter().getItem(position).toString());
-
         return itemAdapter.doItemContext(menuItem, position);
-
-//        Log.d("context-function-debug", "click menuitem" + menuInfo.toString());
-
-//        return true;
-//         If menuInfo is null we have a sub menu, we expect the adapter to have stored the position
-//        if (menuInfo == null)
-//            return itemAdapter.doItemContext(menuItem);
-//        else
-//            return itemAdapter.doItemContext(menuItem, menuInfo.position);
     }
 
     /**
