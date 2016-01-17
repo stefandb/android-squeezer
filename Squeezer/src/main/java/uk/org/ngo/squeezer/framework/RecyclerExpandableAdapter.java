@@ -29,8 +29,7 @@ import uk.org.ngo.squeezer.model.Song;
  */
 public class RecyclerExpandableAdapter<Child extends Item, K extends BaseItemView> extends ExpandableRecyclerAdapter<ParentHolder, RecyclerItemViewHolder> {
 
-    private final LayoutInflater mInflater;
-    private ArrayList<SearchType> searchTypes;
+    protected final LayoutInflater mInflater;
     private ItemView<Child> mItemView = null;
 
     private int position = 0;
@@ -51,14 +50,7 @@ public class RecyclerExpandableAdapter<Child extends Item, K extends BaseItemVie
     public RecyclerItemViewHolder onCreateChildViewHolder(ViewGroup viewGroup) {
         //TODO-stefan R.layout dynamisch maken
         View view = mInflater.inflate(R.layout.list_item, viewGroup, false);
-
-        HashMap<String, K> enginesViews = new HashMap<String, K>();
-        for (int i = 0; i < searchTypes.size(); i++) {
-            enginesViews.put(searchTypes.get(i).getModelClassName(), (K) searchTypes.get(i).getViewBuilder());
-        }
         RecyclerItemViewHolder viewHolderInstance = new RecyclerItemViewHolder(view, this);
-        viewHolderInstance.setItemViews(enginesViews);
-
         return viewHolderInstance;
     }
 
@@ -72,16 +64,7 @@ public class RecyclerExpandableAdapter<Child extends Item, K extends BaseItemVie
 
     @Override
     public void onBindChildViewHolder(final RecyclerItemViewHolder childHolder, int i, Object o) {
-        String ClassType = o.getClass().getName().toLowerCase().trim().toString();
-        String searchClassName = String.valueOf(ClassType.substring(ClassType.lastIndexOf('.') + 1)).toLowerCase().trim().toString();
-        for(SearchType engine: searchTypes) {
-            if(engine.getModelClassName().toLowerCase().trim().toString().contains(searchClassName)){
-                Child childObject = (Child) o;
-                childHolder.setItem(childObject);
-
-                engine.getViewBuilder().bindView(childHolder, childObject);
-            }
-        }
+        //TODO-stefan een default implementatie maken
         childHolder.setPosition(i);
 
         childHolder.getItemView().setOnLongClickListener(new View.OnLongClickListener() {
@@ -101,36 +84,6 @@ public class RecyclerExpandableAdapter<Child extends Item, K extends BaseItemVie
         return mItemList;
     }
 
-    public <T extends Item> void setChildItems(String ClassType, List<T> items){
-        for(ParentObject parent: mParentItemList){
-            ExpandableParentListItem ParentItem = (ExpandableParentListItem) parent;
-            String loopClass= ParentItem.getItemClassName();
-
-            String searchClassName = String.valueOf(ClassType.substring(ClassType.lastIndexOf('.') + 1)).toLowerCase().trim().toString();
-            String currentClassName = String.valueOf(loopClass.substring(loopClass.lastIndexOf('.') + 1)).toLowerCase().trim().toString();
-
-            if(currentClassName.contains(searchClassName)){
-                Log.d("check", "Dit is goed");
-
-                ParentItem.setItemCount(items.size());
-                ArrayList<Object> childList = new ArrayList<>();
-
-                for(T childItem: items) {
-
-                    childList.add(childItem);
-                }
-
-                ParentItem.setChildObjectList(childList);
-            }
-        }
-
-        notifyDataSetChanged();
-    }
-
-    public void setSearchEngines(ArrayList<SearchType> st){
-        searchTypes = st;
-    }
-
     public int getPosition() {
         return position;
     }
@@ -143,15 +96,6 @@ public class RecyclerExpandableAdapter<Child extends Item, K extends BaseItemVie
      * TODO-stefan code ombouwen van ItemAdapter
      */
     public boolean doItemContext(MenuItem menuItem, int position) {
-        Child Item = (Child) mItemList.get(position);
-        String Classname = Item.getClass().getName().toString().toLowerCase().trim();
-        String searchClassName = String.valueOf(Classname.substring(Classname.lastIndexOf('.') + 1)).toLowerCase().trim().toString();
-
-        for(SearchType engine: searchTypes) {
-            if(engine.getModelClassName().toLowerCase().trim().toString().contains(searchClassName)){
-                return  engine.getViewBuilder().doItemContext(menuItem, position, (Child) mItemList.get(position));
-            }
-        }
         return false;
     }
 }

@@ -74,7 +74,7 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
 
     private String searchString;
 
-    private RecyclerExpandableAdapter mExpandableAdapter;
+    private SearchAdapter mExpandableAdapter;
 
     ArrayList<SearchType> SearchTypes;
 
@@ -94,7 +94,7 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
 
         resultsExpandableListView = (RecyclerView) findViewById(R.id.item_list);
         resultsExpandableListView.setLayoutManager(new LinearLayoutManager(this));
-        mExpandableAdapter = new RecyclerExpandableAdapter(this, generateCrimes());
+        mExpandableAdapter = new SearchAdapter(this, generateCrimes());
         mExpandableAdapter.setSearchEngines(SearchTypes);
 
         mExpandableAdapter.setCustomParentAnimationViewId(R.id.parent_list_item_expand_arrow);

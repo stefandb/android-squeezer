@@ -16,7 +16,9 @@
 
 package uk.org.ngo.squeezer;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
@@ -29,13 +31,19 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.TextView;
 
+import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import uk.org.ngo.squeezer.framework.BaseItemView;
 import uk.org.ngo.squeezer.framework.Item;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.framework.PlaylistItem;
+import uk.org.ngo.squeezer.framework.RecyclerExpandableAdapter;
+import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.itemlist.AlbumView;
 import uk.org.ngo.squeezer.itemlist.ArtistView;
 import uk.org.ngo.squeezer.itemlist.GenreView;
@@ -43,149 +51,101 @@ import uk.org.ngo.squeezer.itemlist.SongView;
 import uk.org.ngo.squeezer.itemlist.SongViewWithArt;
 import uk.org.ngo.squeezer.model.Album;
 import uk.org.ngo.squeezer.model.Artist;
+import uk.org.ngo.squeezer.model.ExpandableParentListItem;
 import uk.org.ngo.squeezer.model.Genre;
+import uk.org.ngo.squeezer.model.SearchType;
 import uk.org.ngo.squeezer.model.Song;
 
-public class SearchAdapter extends BaseExpandableListAdapter implements
-        OnCreateContextMenuListener {
+public class SearchAdapter<Child extends Item, K extends BaseItemView> extends RecyclerExpandableAdapter {
 
-    private final int[] groupIcons = {
-            R.drawable.ic_songs, R.drawable.ic_albums, R.drawable.ic_artists, R.drawable.ic_genres
-    };
+    private ArrayList<SearchType> searchTypes;
 
-    private final SearchActivity activity;
+    public SearchAdapter(Context context, List parentItemList) {
+        super(context, parentItemList);
+    }
 
-    private final ItemAdapter<? extends Item>[] childAdapters;
+    @Override
+    public RecyclerItemViewHolder onCreateChildViewHolder(ViewGroup viewGroup) {
+        //TODO-stefan R.layout dynamisch maken
+        View view = mInflater.inflate(R.layout.list_item, viewGroup, false);
 
-    private final Map<Class<? extends Item>, ItemAdapter<? extends Item>> childAdapterMap
-            = new HashMap<Class<? extends Item>, ItemAdapter<? extends Item>>();
-
-    public SearchAdapter(SearchActivity activity) {
-        this.activity = activity;
-
-        ItemAdapter<?>[] adapters = {
-                new ItemAdapter<Song>(new SongViewWithArt(activity)),
-                new ItemAdapter<Album>(new AlbumView(activity)),
-                new ItemAdapter<Artist>(new ArtistView(activity)),
-                new ItemAdapter<Genre>(new GenreView(activity)),
-        };
-
-        ((SongViewWithArt) adapters[0].getItemView()).setDetails(
-                SongView.DETAILS_DURATION | SongView.DETAILS_ALBUM | SongView.DETAILS_ARTIST);
-
-        ((AlbumView) adapters[1].getItemView()).setDetails(
-                AlbumView.DETAILS_ARTIST | AlbumView.DETAILS_YEAR);
-
-        childAdapters = adapters;
-        for (ItemAdapter<? extends Item> itemAdapter : childAdapters) {
-            childAdapterMap.put(itemAdapter.getItemView().getItemClass(), itemAdapter);
+        HashMap<String, K> enginesViews = new HashMap<String, K>();
+        for (int i = 0; i < searchTypes.size(); i++) {
+            enginesViews.put(searchTypes.get(i).getModelClassName(), (K) searchTypes.get(i).getViewBuilder());
         }
+        RecyclerItemViewHolder viewHolderInstance = new RecyclerItemViewHolder(view, this);
+        viewHolderInstance.setItemViews(enginesViews);
+
+        return viewHolderInstance;
     }
 
-    public void clear() {
-        for (ItemAdapter<? extends Item> itemAdapter : childAdapters) {
-            itemAdapter.clear();
+    @Override
+    public void onBindChildViewHolder(final RecyclerItemViewHolder childHolder, int i, Object o) {
+        String ClassType = o.getClass().getName().toLowerCase().trim().toString();
+        String searchClassName = String.valueOf(ClassType.substring(ClassType.lastIndexOf('.') + 1)).toLowerCase().trim().toString();
+        for(SearchType engine: searchTypes) {
+            if(engine.getModelClassName().toLowerCase().trim().toString().contains(searchClassName)){
+                Child childObject = (Child) o;
+                childHolder.setItem(childObject);
+
+                engine.getViewBuilder().bindView(childHolder, childObject);
+            }
         }
+        childHolder.setPosition(i);
+
+        childHolder.getItemView().setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                setPosition(childHolder.getPosition());
+                return false;
+            }
+        });
     }
 
-    public <T extends Item> void updateItems(int count, int start, List<T> items, Class<T> dataType) {
-        @SuppressWarnings("unchecked")
-        ItemAdapter<T> adapter = (ItemAdapter<T>) childAdapterMap.get(dataType);
-        adapter.update(count, start, items);
-        notifyDataSetChanged();
+    public void setSearchEngines(ArrayList<SearchType> st){
+        searchTypes = st;
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        ExpandableListContextMenuInfo contextMenuInfo = (ExpandableListContextMenuInfo) menuInfo;
-        long packedPosition = contextMenuInfo.packedPosition;
-        if (ExpandableListView.getPackedPositionType(packedPosition)
-                == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-            int groupPosition = ExpandableListView.getPackedPositionGroup(packedPosition);
-            int childPosition = ExpandableListView.getPackedPositionChild(packedPosition);
 
-            AdapterContextMenuInfo adapterContextMenuInfo = new AdapterContextMenuInfo(
-                    contextMenuInfo.targetView, childPosition, contextMenuInfo.id);
+    /**
+     * TODO-stefan code ombouwen van ItemAdapter
+     */
+    public boolean doItemContext(MenuItem menuItem, int position) {
+        Child Item = (Child) mItemList.get(position);
+        String Classname = Item.getClass().getName().toString().toLowerCase().trim();
+        String searchClassName = String.valueOf(Classname.substring(Classname.lastIndexOf('.') + 1)).toLowerCase().trim().toString();
 
-            childAdapters[groupPosition].onCreateContextMenu(menu, v, adapterContextMenuInfo);
+        for(SearchType engine: searchTypes) {
+            if(engine.getModelClassName().toLowerCase().trim().toString().contains(searchClassName)){
+                return  engine.getViewBuilder().doItemContext(menuItem, position, (Child) mItemList.get(position));
+            }
         }
-    }
-
-    public void onChildClick(int groupPosition, int childPosition) {
-        childAdapters[groupPosition].onItemSelected(childPosition);
-    }
-
-    public boolean doItemContext(MenuItem menuItem, int groupPosition, int childPosition) {
-        return childAdapters[groupPosition].doItemContext(menuItem, childPosition);
-    }
-
-    @Override
-    public PlaylistItem getChild(int groupPosition, int childPosition) {
-        return (PlaylistItem) childAdapters[groupPosition].getItem(childPosition);
-    }
-
-    @Override
-    public long getChildId(int groupPosition, int childPosition) {
-        return childPosition;
-    }
-
-    @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
-            View convertView, ViewGroup parent) {
-        return childAdapters[groupPosition].getView(childPosition, convertView, parent);
-    }
-
-    @Override
-    public int getChildrenCount(int groupPosition) {
-        return childAdapters[groupPosition].getCount();
-    }
-
-    @Override
-    public Object getGroup(int groupPosition) {
-        return childAdapters[groupPosition];
-    }
-
-    @Override
-    public int getGroupCount() {
-        return childAdapters.length;
-    }
-
-    @Override
-    public long getGroupId(int groupPosition) {
-        return groupPosition;
-    }
-
-    @Override
-    public View getGroupView(int groupPosition, boolean isExpanded, View convertView,
-            ViewGroup parent) {
-        View row = activity.getLayoutInflater().inflate(R.layout.group_item, parent, false);
-
-        TextView label = (TextView) row.findViewById(R.id.label);
-        label.setText(childAdapters[groupPosition].getHeader());
-
-        // Build the icon to display next to the text.
-        //
-        // Take the normal icon (at 48dp) and scale it to 75% of its
-        // original size. Then set it as the left-most compound drawable.
-
-        Drawable icon = Squeezer.getContext().getResources().getDrawable(groupIcons[groupPosition]);
-        int w = icon.getIntrinsicWidth();
-        int h = icon.getIntrinsicHeight();
-        icon.setBounds(0, 0, (int) Math.ceil(w * 0.75), (int) Math.ceil(h * 0.75));
-
-        label.setCompoundDrawables(icon, null, null, null);
-
-        return (row);
-    }
-
-    @Override
-    public boolean hasStableIds() {
         return false;
     }
 
-    @Override
-    public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return true;
-    }
+    public <T extends Item> void setChildItems(String ClassType, List<T> items){
+        for(Object parent: getParentItems()){
+            ExpandableParentListItem ParentItem = (ExpandableParentListItem) parent;
+            String loopClass= ParentItem.getItemClassName();
 
+            String searchClassName = String.valueOf(ClassType.substring(ClassType.lastIndexOf('.') + 1)).toLowerCase().trim().toString();
+            String currentClassName = String.valueOf(loopClass.substring(loopClass.lastIndexOf('.') + 1)).toLowerCase().trim().toString();
+
+            if(currentClassName.contains(searchClassName)){
+                Log.d("check", "Dit is goed");
+
+                ParentItem.setItemCount(items.size());
+                ArrayList<Object> childList = new ArrayList<>();
+
+                for(T childItem: items) {
+
+                    childList.add(childItem);
+                }
+
+                ParentItem.setChildObjectList(childList);
+            }
+        }
+
+        notifyDataSetChanged();
+    }
 }
