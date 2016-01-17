@@ -30,10 +30,9 @@ import uk.org.ngo.squeezer.model.Song;
 public class RecyclerExpandableAdapter<Child extends Item, K extends BaseItemView> extends ExpandableRecyclerAdapter<ParentHolder, RecyclerItemViewHolder> {
 
     protected final LayoutInflater mInflater;
-    private ItemView<Child> mItemView = null;
+    protected ItemView<Child> mItemView = null;
 
     private int position = 0;
-
 
     public RecyclerExpandableAdapter(Context context, List<ParentObject> parentItemList) {
         super(context, parentItemList);
@@ -59,7 +58,7 @@ public class RecyclerExpandableAdapter<Child extends Item, K extends BaseItemVie
         ExpandableParentListItem crime = (ExpandableParentListItem) o;
         parentHolder.mCrimeTitleTextView.setText(crime.getTitle());
         parentHolder.mIcon.setImageResource(crime.getIcon());
-        parentHolder.mItemCount.setText(crime.getItemCount());
+        parentHolder.mItemCount.setText(crime.getChildObjectList().size());
     }
 
     @Override
@@ -97,5 +96,15 @@ public class RecyclerExpandableAdapter<Child extends Item, K extends BaseItemVie
      */
     public boolean doItemContext(MenuItem menuItem, int position) {
         return false;
+    }
+
+    public void clear() {
+        mItemList.clear();
+        mParentItemList.clear();
+        notifyDataSetChanged();
+    }
+
+    public void setItemView(ItemView<Child> view){
+        mItemView = view;
     }
 }

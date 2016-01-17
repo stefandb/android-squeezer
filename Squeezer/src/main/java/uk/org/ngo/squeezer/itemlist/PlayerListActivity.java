@@ -20,23 +20,31 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
 
+import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.SearchAdapter;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
+import uk.org.ngo.squeezer.framework.expandable.CrimeLab;
 import uk.org.ngo.squeezer.itemlist.dialog.PlayerSyncDialog;
+import uk.org.ngo.squeezer.model.ExpandableParentListItem;
 import uk.org.ngo.squeezer.model.Player;
 import uk.org.ngo.squeezer.model.PlayerState;
+import uk.org.ngo.squeezer.model.SearchType;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
 import uk.org.ngo.squeezer.service.event.PlayerStateChanged;
@@ -46,9 +54,7 @@ public class PlayerListActivity extends ItemListActivity implements
         PlayerSyncDialog.PlayerSyncDialogHost {
     private static final String CURRENT_PLAYER = "currentPlayer";
 
-    private ExpandableListView mResultsExpandableListView;
-
-    private PlayerListAdapter mResultsAdapter;
+    private RecyclerView mResultsExpandableListView;
 
     private Player currentPlayer;
     private boolean mTrackingTouch;
@@ -58,61 +64,43 @@ public class PlayerListActivity extends ItemListActivity implements
 
     /** Map from player IDs to Players synced to that player ID. */
     private final Multimap<String, Player> mPlayerSyncGroups = HashMultimap.create();
+    private PlayerListAdapter mExpandableAdapter;
 
     /**
      * Updates the adapter with the current players, and ensures that the list view is
      * expanded.
      */
     private void updateAndExpandPlayerList() {
-        Log.d("XXX-player", "playerlistactivity - updateAndExpandPlayerList");
-        // Can't do anything if the adapter hasn't been set (pre-handshake).
         if (mResultsExpandableListView.getAdapter() == null) {
             return;
         }
 
         updateSyncGroups(getService().getPlayers(), getService().getActivePlayer());
-        Log.d("XXX-player", "playerlistactivity - updateAndExpandPlayerList " + getService().getPlayers().toString());
-        Log.d("XXX-player", "playerlistactivity - updateAndExpandPlayerList " + getService().getActivePlayer().toString());
 
-        mResultsAdapter.setSyncGroups(mPlayerSyncGroups);
+        mExpandableAdapter.updatePlayers(mPlayerSyncGroups);
 
-        for (int i = 0; i < mResultsAdapter.getGroupCount(); i++) {
-            mResultsExpandableListView.expandGroup(i);
-        }
+//        for (int i = 0; i < mResultsAdapter.getGroupCount(); i++) {
+//            mResultsExpandableListView.expandGroup(i);
+//        }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d("XXX-player", "playerlistactivity - onCreate");
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.item_list_players);
+
         if (savedInstanceState != null)
             currentPlayer = savedInstanceState.getParcelable(CURRENT_PLAYER);
 
-        mResultsAdapter = new PlayerListAdapter(this);
-        mResultsExpandableListView = (ExpandableListView) findViewById(R.id.expandable_list);
+        mResultsExpandableListView = (RecyclerView) findViewById(R.id.item_list);
+        mResultsExpandableListView.setLayoutManager(new LinearLayoutManager(this));
 
-        mResultsExpandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
-                                        int childPosition, long id) {
-                mResultsAdapter.onChildClick(groupPosition, childPosition);
-                return true;
-            }
-        });
-
-        // Disable collapsing the list.
-        mResultsExpandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition,
-                    long id) {
-                return true;
-            }
-        });
-
-        mResultsExpandableListView.setOnCreateContextMenuListener(mResultsAdapter);
-        mResultsExpandableListView.setOnScrollListener(new ItemListActivity.ScrollListener());
+        mExpandableAdapter = new PlayerListAdapter(this, generateCrimes());
+        mExpandableAdapter.setItemView(new PlayerView(this));
+        mExpandableAdapter.setCustomParentAnimationViewId(R.id.parent_list_item_expand_arrow);
+        mExpandableAdapter.setParentClickableViewAnimationDefaultDuration();
+        mExpandableAdapter.setParentAndIconExpandOnClick(true);
 
         setIgnoreVolumeChange(true);
 
@@ -121,6 +109,28 @@ public class PlayerListActivity extends ItemListActivity implements
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.home_item_songs);
     }
+
+    private ArrayList<ParentObject> generateCrimes() {
+        CrimeLab crimeLab = CrimeLab.get(this);
+
+        for (int i = 0; i < 4; i++) {
+            ExpandableParentListItem crime = new ExpandableParentListItem();
+            crime.setTitle(String.format("Groeps titel %d", i));
+            crime.setSolved(i % 2 == 0);
+            crimeLab.setCrime(crime);
+        }
+
+        List<ExpandableParentListItem> crimes = crimeLab.getCrimes();
+        ArrayList<ParentObject> parentObjects = new ArrayList<>();
+        for (ExpandableParentListItem crime : crimes) {
+            ArrayList<Object> childList = new ArrayList<>();
+
+            crime.setChildObjectList(childList);
+            parentObjects.add(crime);
+        }
+        return parentObjects;
+    }
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -131,14 +141,11 @@ public class PlayerListActivity extends ItemListActivity implements
 
 //    @Override
     public final boolean onContextItemSelectedOLD(MenuItem item) {
-        Log.d("XXX-player", "playerlistactivity - onContextItemSelectedOLD");
-        Log.d("context-function-debug", "PlayersListActivity onContextItemSelected (item)");
-        Log.d("click", String.valueOf(item));
+        /*
         if (getService() != null) {
             ExpandableListView.ExpandableListContextMenuInfo contextMenuInfo = (ExpandableListView.ExpandableListContextMenuInfo) item
                     .getMenuInfo();
 
-            // If menuInfo is null we have a sub menu, we expect the adapter to have stored the position
             if (contextMenuInfo == null) {
                 return mResultsAdapter.doItemContext(item);
             } else {
@@ -152,6 +159,7 @@ public class PlayerListActivity extends ItemListActivity implements
                 }
             }
         }
+        */
         return false;
     }
 
@@ -164,8 +172,7 @@ public class PlayerListActivity extends ItemListActivity implements
 
     public void onEventMainThread(HandshakeComplete event) {
         Log.d("XXX-player", "playerlistactivity - onEventMainThread 1 ");
-        if (mResultsExpandableListView.getExpandableListAdapter() == null)
-            mResultsExpandableListView.setAdapter(mResultsAdapter);
+            mResultsExpandableListView.setAdapter(mExpandableAdapter);
         updateAndExpandPlayerList();
     }
 
@@ -179,9 +186,8 @@ public class PlayerListActivity extends ItemListActivity implements
     }
 
     public void onEventMainThread(PlayerVolume event) {
-        Log.d("XXX-player", "playerlistactivity - onEventMainThread 3");
         if (!mTrackingTouch) {
-            mResultsAdapter.notifyDataSetChanged();
+            mExpandableAdapter.notifyDataSetChanged();
         }
     }
 
@@ -192,10 +198,6 @@ public class PlayerListActivity extends ItemListActivity implements
      * @param activePlayer The currently active player.
      */
     public void updateSyncGroups(List<Player> players, Player activePlayer) {
-        Log.d("XXX-player", "playerlistactivity - updateSyncGroups");
-        Log.d("XXX-player", "playerlistactivity - updateSyncGroups " + players.toString());
-        Log.d("XXX-player", "playerlistactivity - updateSyncGroups " + activePlayer.toString());
-
         Map<String, Player> connectedPlayers = new HashMap<String, Player>();
 
         // Make a copy of the players we know about, ignoring unconnected ones.
@@ -277,13 +279,13 @@ public class PlayerListActivity extends ItemListActivity implements
 
         service.playerRename(currentPlayer, newName);
         this.currentPlayer.setName(newName);
-        mResultsAdapter.notifyDataSetChanged();
+        mExpandableAdapter.notifyDataSetChanged();
     }
 
     @Override
     protected void clearItemAdapter() {
         Log.d("XXX-player", "playerlistactivity - clearItemAdapter");
-        mResultsAdapter.clear();
+//        mExpandableAdapter.clear();
     }
 
     /**

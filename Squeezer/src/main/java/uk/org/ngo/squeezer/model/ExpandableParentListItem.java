@@ -15,6 +15,7 @@ public class ExpandableParentListItem implements ParentObject {
 
     private UUID mId;
     private String mTitle;
+    private String msubTitle;
     private Date mDate;
     private boolean mSolved;
     private List<ExpandableChildListItem> mChildItemList;
@@ -72,6 +73,14 @@ public class ExpandableParentListItem implements ParentObject {
 
     public void setTitle(String title) {
         mTitle = title;
+    }
+
+    public String getsubTitle() {
+        return msubTitle;
+    }
+
+    public void setsubTitle(String msubTitle) {
+        this.msubTitle = msubTitle;
     }
 
     public Date getDate() {

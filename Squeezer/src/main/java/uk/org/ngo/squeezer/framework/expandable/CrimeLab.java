@@ -24,7 +24,7 @@ public class CrimeLab {
         mCrimes = new ArrayList<>();
         for (int i = 0; i < 0; i++) {
             ExpandableParentListItem crime = new ExpandableParentListItem();
-            crime.setTitle("Crime #" + i);
+            crime.setTitle(String.format("Groeps titel %d", i));
             crime.setSolved(i % 2 == 0);
             mCrimes.add(crime);
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Kurt Aaholst <kaaholst@gmail.com>
+ * Copyright (c) 2009 Google Inc.  All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,67 +16,100 @@
 
 package uk.org.ngo.squeezer.itemlist;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnCreateContextMenuListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.framework.BaseItemView;
+import uk.org.ngo.squeezer.framework.Item;
+import uk.org.ngo.squeezer.framework.ItemAdapter;
+import uk.org.ngo.squeezer.framework.PlaylistItem;
+import uk.org.ngo.squeezer.framework.RecyclerExpandableAdapter;
+import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
+import uk.org.ngo.squeezer.itemlist.AlbumView;
+import uk.org.ngo.squeezer.itemlist.ArtistView;
+import uk.org.ngo.squeezer.itemlist.GenreView;
+import uk.org.ngo.squeezer.itemlist.SongView;
+import uk.org.ngo.squeezer.itemlist.SongViewWithArt;
+import uk.org.ngo.squeezer.model.Album;
+import uk.org.ngo.squeezer.model.Artist;
+import uk.org.ngo.squeezer.model.ExpandableParentListItem;
+import uk.org.ngo.squeezer.model.Genre;
+import uk.org.ngo.squeezer.model.Player;
+import uk.org.ngo.squeezer.model.SearchType;
+import uk.org.ngo.squeezer.model.Song;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import uk.org.ngo.squeezer.R;
-import uk.org.ngo.squeezer.framework.ItemAdapter;
-import uk.org.ngo.squeezer.model.Player;
-import uk.org.ngo.squeezer.model.Song;
-
-class PlayerListAdapter extends BaseExpandableListAdapter implements View.OnCreateContextMenuListener {
-    private final PlayerListActivity mActivity;
-
-    private final List<ItemAdapter<Player>> mChildAdapters = new ArrayList<ItemAdapter<Player>>();
+public class PlayerListAdapter<Child extends Item, K extends BaseItemView> extends RecyclerExpandableAdapter {
 
     /** The last set of player sync groups that were provided. */
     private Multimap<String, Player> prevPlayerSyncGroups;
 
-    /** Indicates if the list of players has changed. */
-    private boolean mPlayersChanged;
-
-    /** The group position of the item that was most recently selected. */
-    private int mLastGroupPosition;
-
-    /** Joins elements together with ' - ', skipping nulls. */
-    private static final Joiner mJoiner = Joiner.on(" - ").skipNulls();
-
-    /** Count of how many players are in the adapter. */
-    private int mPlayerCount;
-
-    public PlayerListAdapter(PlayerListActivity activity) {
-        Log.d("XXX-player", "playerlistadapter - PlayerListAdapter");
-        mActivity = activity;
+    public PlayerListAdapter(Context context, List parentItemList) {
+        super(context, parentItemList);
     }
 
-    public void onChildClick(int groupPosition, int childPosition) {
-        Log.d("XXX-player", "playerlistadapter - onChildClick");
-        mChildAdapters.get(groupPosition).onItemSelected(childPosition);
+    @Override
+    public RecyclerItemViewHolder onCreateChildViewHolder(ViewGroup viewGroup) {
+        //TODO-stefan R.layout dynamisch maken
+        View view = mInflater.inflate(R.layout.list_item_player, viewGroup, false);
+
+        RecyclerItemViewHolder viewHolderInstance = new RecyclerItemViewHolder(view, this);
+        return viewHolderInstance;
     }
 
-    public void clear() {
-        Log.d("XXX-player", "playerlistadapter - clear");
-        mPlayersChanged = true;
-        mChildAdapters.clear();
-        mPlayerCount = 0;
-        notifyDataSetChanged();
+    @Override
+    public void onBindChildViewHolder(final RecyclerItemViewHolder childHolder, int i, Object o) {
+
+        childHolder.setItem((Child) o);
+        mItemView.getAdapterView(childHolder, i, (Child) o);
+
+        childHolder.setPosition(i);
+
+        childHolder.getItemView().setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                setPosition(childHolder.getPosition());
+                return false;
+            }
+        });
     }
+
+    /**
+     * TODO-stefan code ombouwen van ItemAdapter
+     */
+    public boolean doItemContext(MenuItem menuItem, int position) {
+        Player Item = (Player) mItemList.get(position);
+//        return  engine.getViewBuilder().doItemContext(menuItem, position, (Child) mItemList.get(position));
+        return false;
+    }
+
+
 
     /**
      * Sets the players in to the adapter.
@@ -86,9 +119,7 @@ class PlayerListAdapter extends BaseExpandableListAdapter implements View.OnCrea
      *     {@link PlayerListActivity#updateSyncGroups(List, Player)} for how this map is
      *     generated.
      */
-    public void setSyncGroups(Multimap<String, Player> playerSyncGroups) {
-        Log.d("XXX-player", "playerlistadapter - setSyncGroups");
-        Log.d("XXX-player", "playerlistadapter - setSyncGroups " + playerSyncGroups.toString());
+    public void updatePlayers(Multimap<String, Player> playerSyncGroups) {
         // The players might not have changed (so there's no need to reset the contents of the
         // adapter) but information about an individual player might have done.
 
@@ -99,170 +130,49 @@ class PlayerListAdapter extends BaseExpandableListAdapter implements View.OnCrea
         }
 
         prevPlayerSyncGroups = HashMultimap.create(playerSyncGroups);
-        clear();
+//        clear();
 
         List<String> masters = new ArrayList<String>(playerSyncGroups.keySet());
         Collections.sort(masters);
 
+        ArrayList<ParentObject> parentObjects = new ArrayList<>();
+
         for (String masterId : masters) {
-            ItemAdapter<Player> childAdapter = new ItemAdapter<Player>(new PlayerView(mActivity));
+            ExpandableParentListItem playerGroup = new ExpandableParentListItem();
+            playerGroup.setTitle(String.format("Groep naam %s", masterId));
+            playerGroup.setsubTitle(String.format("Sub Groep naam %s", masterId));
 
             List<Player> slaves = new ArrayList<Player>(playerSyncGroups.get(masterId));
-            mPlayerCount += slaves.size();
             Collections.sort(slaves, Player.compareById);
-            childAdapter.update(slaves.size(), 0, slaves);
-            mChildAdapters.add(childAdapter);
+
+            ArrayList<Object> childList = new ArrayList<>();
+
+            for(Player childItem: slaves) {
+                childList.add(childItem);
+            }
+            playerGroup.setChildObjectList(childList);
+
+            parentObjects.add(playerGroup);
+//            mParentItemList.add(playerGroup);
         }
+
+        this.mParentItemList = parentObjects;
+        this.mItemList = generateObjectList(parentObjects);
 
         notifyDataSetChanged();
+
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        Log.d("XXX-player", "playerlistadapter - onCreateContextMenu");
-        mPlayersChanged = false;
-        ExpandableListView.ExpandableListContextMenuInfo contextMenuInfo = (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
-        long packedPosition = contextMenuInfo.packedPosition;
-        if (ExpandableListView.getPackedPositionType(packedPosition)
-                == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-            int groupPosition = ExpandableListView.getPackedPositionGroup(packedPosition);
-            int childPosition = ExpandableListView.getPackedPositionChild(packedPosition);
+    private ArrayList<Object> generateObjectList(List<ParentObject> parentObjectList) {
+        ArrayList objectList = new ArrayList();
+        Iterator var3 = parentObjectList.iterator();
 
-            AdapterView.AdapterContextMenuInfo adapterContextMenuInfo
-                    = new AdapterView.AdapterContextMenuInfo(
-                    contextMenuInfo.targetView, childPosition, contextMenuInfo.id);
-
-            mChildAdapters.get(groupPosition).onCreateContextMenu(menu, v, adapterContextMenuInfo);
-
-            // Enable player sync menu options if there's more than one player.
-            if (mPlayerCount > 1) {
-                menu.findItem(R.id.player_sync).setVisible(true);
-            }
-        }
-    }
-
-    public boolean doItemContext(MenuItem menuItem, int groupPosition, int childPosition) {
-        Log.d("XXX-player", "playerlistadapter - doItemContext 1");
-        if (mPlayersChanged) {
-            Toast.makeText(mActivity, mActivity.getText(R.string.player_list_changed),
-                    Toast.LENGTH_LONG).show();
-            return true;
+        while(var3.hasNext()) {
+            ParentObject parentObject = (ParentObject)var3.next();
+            objectList.add(parentObject);
         }
 
-        mLastGroupPosition = groupPosition;
-        return mChildAdapters.get(groupPosition).doItemContext(menuItem, childPosition);
+        return objectList;
     }
 
-    /**
-     * Handle sub menu items of context menus.
-     *
-     * @param menuItem
-     * @return
-     */
-    public boolean doItemContext(MenuItem menuItem) {
-        Log.d("XXX-player", "playerlistadapter - doItemContext 2");
-        if (mPlayersChanged) {
-            Toast.makeText(mActivity, mActivity.getText(R.string.player_list_changed),
-                    Toast.LENGTH_LONG).show();
-            return true;
-        }
-
-        return mChildAdapters.get(mLastGroupPosition).doItemContext(menuItem);
-    }
-
-    @Override
-    public boolean areAllItemsEnabled() {
-        Log.d("XXX-player", "playerlistadapter - areAllItemsEnabled");
-        return true; // Should be false, but then there is no divider
-    }
-
-    @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        Log.d("XXX-player", "playerlistadapter - getChildView");
-
-        Log.d("ERROR", "hier kan het fout gaan");
-        return mChildAdapters.get(groupPosition).getView(childPosition, convertView, parent);
-    }
-
-    @Override
-    public int getGroupCount() {
-        Log.d("XXX-player", "playerlistadapter - getGroupCount");
-        Log.d("ERROR", "hier kan het fout gaan");
-        return mChildAdapters.size();
-    }
-
-    @Override
-    public int getChildrenCount(int groupPosition) {
-        Log.d("XXX-player", "playerlistadapter - getChildrenCount");
-        return mChildAdapters.get(groupPosition).getCount();
-    }
-
-    @Override
-    public Object getGroup(int groupPosition) {
-        Log.d("XXX-player", "playerlistadapter - getGroup");
-        return mChildAdapters.get(groupPosition);
-    }
-
-    @Override
-    public Object getChild(int groupPosition, int childPosition) {
-        Log.d("XXX-player", "playerlistadapter - getChild");
-        return mChildAdapters.get(groupPosition).getItem(childPosition);
-    }
-
-    /**
-     * Use the ID of the first player in the group as the identifier for the group.
-     * <p>
-     * {@inheritDoc}
-     * @param groupPosition
-     * @return
-     */
-    @Override
-    public long getGroupId(int groupPosition) {
-        Log.d("XXX-player", "playerlistadapter - getGroupId");
-        return mChildAdapters.get(groupPosition).getItem(0).getIdAsLong();
-    }
-
-    @Override
-    public long getChildId(int groupPosition, int childPosition) {
-        Log.d("XXX-player", "playerlistadapter - getChildId");
-        return mChildAdapters.get(groupPosition).getItem(childPosition).getIdAsLong();
-    }
-
-    @Override
-    public boolean hasStableIds() {
-        Log.d("XXX-player", "playerlistadapter - hasStableIds");
-        return true;
-    }
-
-    @Override
-    public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-        Log.d("XXX-player", "playerlistadapter - getGroupView");
-        View row = mActivity.getLayoutInflater().inflate(R.layout.group_player, parent, false);
-
-        TextView text1 = (TextView) row.findViewById(R.id.text1);
-        TextView text2 = (TextView) row.findViewById(R.id.text2);
-
-        ItemAdapter<Player> adapter = mChildAdapters.get(groupPosition);
-        List<String> playerNames = new ArrayList<String>();
-        for (int i = 0; i < adapter.getCount(); i++) {
-            Player p = adapter.getItem(i);
-            playerNames.add(p.getName());
-        }
-        String header = Joiner.on(", ").join(playerNames);
-        text1.setText(mActivity.getString(R.string.player_group_header, header));
-
-        Song groupSong = adapter.getItem(0).getPlayerState().getCurrentSong();
-
-        if (groupSong != null) {
-            text2.setText(mJoiner.join(groupSong.getName(), groupSong.getArtist(),
-                    groupSong.getAlbumName()));
-        }
-        return row;
-    }
-
-    @Override
-    public boolean isChildSelectable(int groupPosition, int childPosition) {
-        Log.d("XXX-player", "playerlistadapter - isChildSelectable");
-        return false;
-    }
 }
