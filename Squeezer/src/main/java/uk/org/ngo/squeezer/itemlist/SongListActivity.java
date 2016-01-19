@@ -24,6 +24,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -194,19 +195,26 @@ public class SongListActivity extends BaseListActivity<Song>
 //            TextView yearView = (TextView) findViewById(R.id.yearname);
             ImageView btnContextMenu = (ImageView) findViewById(R.id.context_menu);
 
+            FloatingActionButton myFab = (FloatingActionButton) findViewById(R.id.play);
+            myFab.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    play(album);
+                }
+            });
+
 //            albumView.setText(album.getName());
 //            artistView.setText(album.getArtist());
             if (album.getYear() != 0) {
 //                yearView.setText(Integer.toString(album.getYear()));
             }
 
-//            Uri artworkUrl = album.getArtworkUrl();
-//
-//            if (artworkUrl.equals(Uri.EMPTY)) {
-//                artwork.setImageResource(R.drawable.icon_album_noart);
-//            } else {
-//                ImageFetcher.getInstance(this).loadImage(artworkUrl, artwork);
-//            }
+            Uri artworkUrl = album.getArtworkUrl();
+
+            if (artworkUrl.equals(Uri.EMPTY)) {
+                artwork.setImageResource(R.drawable.icon_album_noart);
+            } else {
+                ImageFetcher.getInstance(this).loadImage(artworkUrl, artwork);
+            }
 
 //            btnContextMenu.setOnCreateContextMenuListener(this);
 
