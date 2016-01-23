@@ -231,9 +231,7 @@ public abstract class ItemListActivity extends BaseActivity {
      * @param size The number of items in this update
      */
     protected void onItemsReceived(final int count, final int start, int size) {
-        Log.d("function-debug", "uk.org.ngo.squeezer.framework ItemListActivity : onItemsReceived");
-        Log.d(getTag(), "onItemsReceived(" + count + ", " + start + ", " + size + ")");
-
+        Log.d("debug-code", "ItemListAcitivy.onItemsReceived");
         // Add this page of data to mReceivedPages and remove from mOrderedPages.
         // Because we might receive a page in chunks, we test for the end of a page,
         // before we register the page as being received.

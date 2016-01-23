@@ -183,6 +183,7 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
      * @param items New items to insert in the main list
      */
     public void update(int count, int start, List<T> items) {
+        Log.d("debug-code", "Recyclerviewlistactivity.update");
         int offset = (mEmptyItem ? 1 : 0);
         count += offset;
         start += offset;
@@ -196,13 +197,20 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
     }
 
     private void setItems(int start, List<T> items) {
+        Log.d("debug-code", "Recyclerviewlistactivity.setItems");
         T[] page = getPage(start);
         int offset = start % pageSize;
         start--;
         for (T item : items) {
             if (offset >= pageSize) {
             }
-            mItems.add(start, item);
+
+            //controleren of mitem groter is dan start en updaten anders toeveoegn
+            if (start >= 0 && start < mItems.size()) {
+                mItems.set(start, item);
+            }else{
+                mItems.add(start, item);
+            }
             start++;
         }
 

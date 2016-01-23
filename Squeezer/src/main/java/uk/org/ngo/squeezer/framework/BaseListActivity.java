@@ -359,17 +359,13 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
     }
 
     public void onItemsReceived(final int count, final int start, final List<T> items) {
-        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : onItemsReceived");
-        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : onItemsReceived parameters");
-        Log.d("function-debug", "onItemsReceived items " + items.toString());
-        Log.d("function-debug", "onItemsReceived start " + start);
-        Log.d("function-debug", "onItemsReceived count " + count);
-
+        Log.d("debug-code", "BaselistActivity.onItemsReceived 2");
         super.onItemsReceived(count, start, items.size());
 
         getUIThreadHandler().post(new Runnable() {
             @Override
             public void run() {
+                Log.d("debug-code", "BaselistActivity.onItemsReceived.getUIThreadHandler.post");
                 mrecyclerView.setVisibility(View.VISIBLE);
                 loadingProgress.setVisibility(View.GONE);
                 getItemAdapter().update(count, start, items);
@@ -381,7 +377,7 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
 
     @Override
     public void onItemsReceived(int count, int start, Map<String, String> parameters, List<T> items, Class<T> dataType) {
-        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : onItemsReceived");
+        Log.d("debug-code", "Baselistactivity.onItemsReceived 1");
         onItemsReceived(count, start, items);
     }
 

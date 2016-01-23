@@ -58,7 +58,8 @@ public class RecyclerExpandableAdapter<Child extends Item, K extends BaseItemVie
         ExpandableParentListItem crime = (ExpandableParentListItem) o;
         parentHolder.mCrimeTitleTextView.setText(crime.getTitle());
         parentHolder.mIcon.setImageResource(crime.getIcon());
-        parentHolder.mItemCount.setText(crime.getChildObjectList().size());
+        parentHolder.mItemCount.setText("9876");
+//        parentHolder.mItemCount.setText(crime.getChildObjectList().size());
     }
 
     @Override
