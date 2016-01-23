@@ -18,6 +18,7 @@ package uk.org.ngo.squeezer.itemlist;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -37,6 +38,7 @@ import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.BaseListActivity;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.framework.ItemView;
+import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.itemlist.dialog.PlaylistItemMoveDialog;
 import uk.org.ngo.squeezer.itemlist.dialog.PlaylistSaveDialog;
@@ -48,6 +50,7 @@ import uk.org.ngo.squeezer.service.event.MusicChanged;
 import uk.org.ngo.squeezer.service.event.PlayersChanged;
 import uk.org.ngo.squeezer.service.event.PlaylistTracksAdded;
 import uk.org.ngo.squeezer.service.event.PlaylistTracksDeleted;
+import uk.org.ngo.squeezer.util.ImageFetcher;
 
 import static uk.org.ngo.squeezer.framework.BaseItemView.ViewHolder;
 
@@ -90,8 +93,6 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
             super(itemView);
         }
 
-//        @Override
-//        public RecyclerItemViewHolder getView(int position, RecyclerItemViewHolder viewHolder) {
 ////            View view = super.getView(position, convertView, parent);
 ////            Object viewTag = view.getTag();
 ////
@@ -204,6 +205,27 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
                 }
 
                 return super.doItemContext(menuItem, index, selectedItem);
+            }
+
+            String currentSongId = "";
+
+            @Override
+            public void bindView(RecyclerItemViewHolder viewHolder, Song item) {
+                super.bindView(viewHolder, item);
+
+                if(currentSongId == ""){
+                    currentSongId = (player.getPlayerState().getCurrentSong().getId());
+                    Log.d("current-playlist", "current" + player.getPlayerState().getCurrentSong().getId());
+                }
+
+                Log.d("current-playlist", "list-item " + item.getId());
+                Log.d("current-playlist", String.valueOf("check " + currentSongId == item.getId()));
+
+                if(Integer.parseInt(currentSongId) == Integer.parseInt(item.getId())){
+                    viewHolder.getItemView().setBackgroundColor(getResources().getColor(R.color.squeezer_second));
+                }else{
+                    viewHolder.getItemView().setBackgroundColor(getResources().getColor(R.color.white));
+                }
             }
         };
 
