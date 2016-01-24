@@ -115,6 +115,8 @@ public class PluginItemView extends BaseItemView<PluginItem> {
             alert.show();
         }else if(item.getType() != null && item.getType().toString().toLowerCase().contains("audio") || item.isAudio()){
             mActivity.play((PluginItem) item);
+        }else if(!item.isAudio() && !item.isHasitems() && item.getType().toString().toLowerCase().contains("text")){
+            
         }else{
             mActivity.show(item);
         }

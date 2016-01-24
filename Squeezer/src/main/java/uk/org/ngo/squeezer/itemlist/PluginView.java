@@ -16,6 +16,7 @@
 
 package uk.org.ngo.squeezer.itemlist;
 
+import android.util.Log;
 import android.view.View;
 
 import uk.org.ngo.squeezer.framework.BaseItemView;
