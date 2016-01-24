@@ -124,7 +124,8 @@ public class SearchAdapter<Child extends Item, K extends BaseItemView> extends R
     }
 
     public <T extends Item> void setChildItems(String ClassType, List<T> items){
-        for(Object parent: getParentItems()){
+        List parentItems = getParentItems();
+        for(Object parent: parentItems){
             ExpandableParentListItem ParentItem = (ExpandableParentListItem) parent;
             String loopClass= ParentItem.getItemClassName();
 
@@ -132,16 +133,13 @@ public class SearchAdapter<Child extends Item, K extends BaseItemView> extends R
             String currentClassName = String.valueOf(loopClass.substring(loopClass.lastIndexOf('.') + 1)).toLowerCase().trim().toString();
 
             if(currentClassName.contains(searchClassName)){
-                Log.d("check", "Dit is goed");
-
                 ParentItem.setItemCount(items.size());
                 ArrayList<Object> childList = new ArrayList<>();
 
+                //TODO-stefan controle toevoegen of het item al bestata zo ja vervangen
                 for(T childItem: items) {
-
                     childList.add(childItem);
                 }
-
                 ParentItem.setChildObjectList(childList);
             }
         }

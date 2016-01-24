@@ -85,7 +85,6 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
             R.drawable.ic_genres
     };
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,13 +93,12 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
 
         resultsExpandableListView = (RecyclerView) findViewById(R.id.item_list);
         resultsExpandableListView.setLayoutManager(new LinearLayoutManager(this));
-        mExpandableAdapter = new SearchAdapter(this, generateCrimes());
+        mExpandableAdapter = new SearchAdapter(this, generateSearchEngines());
         mExpandableAdapter.setSearchEngines(SearchTypes);
 
         mExpandableAdapter.setCustomParentAnimationViewId(R.id.parent_list_item_expand_arrow);
         mExpandableAdapter.setParentClickableViewAnimationDefaultDuration();
         mExpandableAdapter.setParentAndIconExpandOnClick(true);
-
 
         registerForContextMenu(resultsExpandableListView);
         resultsExpandableListView.setLongClickable(true);
@@ -170,10 +168,7 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private ArrayList<ParentObject> generateCrimes() {
-
-        CrimeLab crimeLab = CrimeLab.get(this);
-
+    private ArrayList<ParentObject> generateSearchEngines() {
         SearchTypes = new ArrayList<>();
 
         SearchTypes.add(new SearchType("Songs", R.drawable.ic_songs, new SongViewWithArt(this), "Song"));
@@ -187,15 +182,18 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
         ((AlbumView) SearchTypes.get(1).getViewBuilder()).setDetails(
                 AlbumView.DETAILS_ARTIST | AlbumView.DETAILS_YEAR);
 
-        int index = 0;
-        for(SearchType search : SearchTypes) {
-            ExpandableParentListItem crime = new ExpandableParentListItem();
-            crime.setTitle(search.getTitle());
-            crime.setIcon(search.getIconResourse());
-            crime.setItemClassName(String.valueOf(search.getViewBuilder().getItemClass()));
-            crime.setSearchEngineId(index);
-            crimeLab.setCrime(crime);
-            index++;
+        CrimeLab crimeLab = CrimeLab.get(this);
+        if(crimeLab.getCrimes().size() == 0){
+            int index = 0;
+            for(SearchType search : SearchTypes) {
+                ExpandableParentListItem crime = new ExpandableParentListItem();
+                crime.setTitle(search.getTitle());
+                crime.setIcon(search.getIconResourse());
+                crime.setItemClassName(String.valueOf(search.getViewBuilder().getItemClass()));
+                crime.setSearchEngineId(index);
+                crimeLab.setCrime(crime);
+                index++;
+            }
         }
 
         List<ExpandableParentListItem> crimes = crimeLab.getCrimes();
