@@ -639,7 +639,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
                             } else if (drawerItem.getIdentifier() == 10) {
                                 intent = new Intent(BaseActivity.this, RadioListActivity.class);
                             } else if (drawerItem.getIdentifier() == 11) {
-                                intent = new Intent(BaseActivity.this, FavoriteListActivity.class);
+                                FavoriteListActivity.show(BaseActivity.this);
                             } else if (drawerItem.getIdentifier() == 12) {
                                 intent = new Intent(BaseActivity.this, ApplicationListActivity.class);
                             } else if (drawerItem.getIdentifier() == 20) {
