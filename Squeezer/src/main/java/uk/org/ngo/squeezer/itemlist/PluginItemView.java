@@ -77,23 +77,19 @@ public class PluginItemView extends BaseItemView<PluginItem> {
 
     @Override
     public String getQuantityString(int quantity) {
-        Log.d("flow" , "pluginitemview | getQuantityString");
         return null;
     }
 
     @Override
     public boolean isSelectable(PluginItem item) {
-        Log.d("flow" , "pluginitemview | isSelectable");
         return item.isHasitems();
     }
 
     @Override
     public void onItemSelected(int index, final PluginItem item) {
-        Log.d("flow" , "pluginitemview | onItemSelected");
 
         //TODOme controleren op type search en dan popup tonen voor zoekvraag die ook mee posten naar de show
         if(item.getType() != null && item.getType().toString().toLowerCase().contains("search")){
-            Log.d("click-item","search item");
             AlertDialog.Builder alert = new AlertDialog.Builder(mActivity);
 
             final EditText edittext= new EditText(mActivity);
@@ -125,7 +121,6 @@ public class PluginItemView extends BaseItemView<PluginItem> {
     // : Make this a menu resource.
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        Log.d("flow" , "pluginitemview | onCreateContextMenu");
         if (((PluginItem) menuInfo.item).isAudio()) {
             super.onCreateContextMenu(menu, v, menuInfo);
 
@@ -137,8 +132,6 @@ public class PluginItemView extends BaseItemView<PluginItem> {
 
     @Override
     public boolean doItemContext(MenuItem menuItem, int index, PluginItem selectedItem) {
-        Log.d("context-function-debug", "PluginItemView doItemContext (menuitem, index, selectedItem)");
-        Log.d("flow" , "pluginitemview | doItemContext");
         switch (menuItem.getItemId()) {
             case R.id.play_now:
                 if (mActivity.play(selectedItem)) {

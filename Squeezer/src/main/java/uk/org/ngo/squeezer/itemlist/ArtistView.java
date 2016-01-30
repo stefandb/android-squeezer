@@ -42,7 +42,6 @@ public class ArtistView extends BaseItemView<Artist> {
     // XXX: Make this a menu resource.
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        Log.d("context-function-debug", "ArtistView onCreateContextMenu (menu, v, menuInfo)");
         super.onCreateContextMenu(menu, v, menuInfo);
 
         menu.add(Menu.NONE, BROWSE_ALBUMS, 0, R.string.BROWSE_ALBUMS);

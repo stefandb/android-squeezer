@@ -401,7 +401,6 @@ public class SongListActivity extends BaseListActivity<Song>
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
             ContextMenu.ContextMenuInfo menuInfo) {
-        Log.d("context-function-debug", "SongListActivity onCreateContextMenu (menu, v, menuInfo)");
         super.onCreateContextMenu(menu, v, menuInfo);
 
         if (album != null) {

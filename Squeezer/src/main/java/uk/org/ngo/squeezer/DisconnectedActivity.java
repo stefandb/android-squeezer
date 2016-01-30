@@ -75,7 +75,6 @@ public class DisconnectedActivity extends BaseActivity {
         mHeaderMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("click-search", "disconnectedactivity - onCreate | mHeaderMessage");
                 InfoDialog.show(getSupportFragmentManager(), R.string.login_failed_info_text);
             }
         });

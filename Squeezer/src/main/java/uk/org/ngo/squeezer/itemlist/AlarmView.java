@@ -277,7 +277,7 @@ public class AlarmView extends BaseItemView<Alarm> {
 
     @Override
     public void onItemSelected(int index, Alarm item) {
-        Log.d("xlick", String.valueOf(item));
+        //TODO-stefan check
 //        super.onItemSelected(index, item);
     }
 

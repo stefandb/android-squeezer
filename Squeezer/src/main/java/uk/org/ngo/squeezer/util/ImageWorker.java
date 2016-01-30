@@ -115,19 +115,12 @@ public abstract class ImageWorker {
      * @param imageView The ImageView to bind the downloaded image to
      */
     public void loadImage(final Object data, final ImageView imageView) {
-        Log.d("imagedebug-1", "imageworker");
-        Log.d("imagedebug-1", data.toString());
-
         if (data == null) {
             return;
         }
 
         int width = imageView.getWidth();
         int height = imageView.getHeight();
-
-        Log.d("imagedebug-1", "width: " + String.valueOf(width));
-        Log.d("imagedebug-1", "height: " + String.valueOf(height));
-
 
         // If the dimensions aren't known yet then the view hasn't been measured. Get a
         // ViewTreeObserver and listen for the PreDraw message. Using a GlobalLayoutListener
@@ -169,14 +162,9 @@ public abstract class ImageWorker {
         Bitmap bitmap = null;
         String memCacheKey = hashKeyForMemory(String.valueOf(data), width, height);
 
-        Log.d("imagedebug-1", "cache key:" + memCacheKey);
-
         if (mImageCache != null) {
             bitmap = mImageCache.getBitmapFromMemCache(memCacheKey);
         }
-
-        Log.d("imagedebug-1", String.valueOf((bitmap != null)));
-
 
         if (bitmap != null) {
             // Bitmap found in memory cache

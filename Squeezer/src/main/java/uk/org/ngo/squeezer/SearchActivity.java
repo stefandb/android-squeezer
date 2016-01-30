@@ -59,8 +59,6 @@ import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
 
 /**
- * TODO-stefan PlaylistItemView -> onSelectAction dynamisch maken voor elk type zoek engine het goede type pakken
- *
  * @param <Child>
  * @param <K>
  */
@@ -220,27 +218,18 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
     }
 
     /**
-     * TODO-stefan BUG
      * @param menuItem
      * @return
      */
     @Override
     public boolean onContextItemSelected(MenuItem menuItem) {
         if (getService() != null) {
-            Log.d("context-function-debug", "BseListActivity onContextItemSelected (item)");
-
             AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) menuItem.getMenuInfo();
-            Log.d("context-function-debug", "click menuitem () " + menuItem);
-            Log.d("context-function-debug", "click menuitem (getitemid) " + menuItem.getItemId());
-            Log.d("context-function-debug", "click menuitem (tostring) " + menuItem.toString());
-            Log.d("context-function-debug", "click menuitem (getmenuinfo) " + menuItem.getMenuInfo());
-            Log.d("context-function-debug", "click menuinfo () " + menuInfo);
 
             int position = -1;
             try {
                 position = mExpandableAdapter.getPosition();   //((BackupRestoreListAdapter)getAdapter()).getPosition();
             } catch (Exception e) {
-                Log.d("SEARCH ACTIVITY", e.getLocalizedMessage(), e);
                 return super.onContextItemSelected(menuItem);
             }
 

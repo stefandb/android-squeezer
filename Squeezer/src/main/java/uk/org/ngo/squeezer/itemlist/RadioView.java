@@ -38,7 +38,6 @@ public class RadioView extends PluginView {
 
     @Override
     public void onItemSelected(int index, Plugin item) {
-        Log.d("xxx", item.getName());
         PluginItemListActivity.show(getActivity(), item);
     }
 

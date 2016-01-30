@@ -102,8 +102,7 @@ public class PlayerView extends BaseItemView<Player> {
 
     @Override
     public void onItemSelected(int index, Player item) {
-        Log.d("xxx", String.valueOf(index));
-        Log.d("xxx", item.toString());
+        //TODO-stefan check
     }
 
     @Override
@@ -145,7 +144,7 @@ public class PlayerView extends BaseItemView<Player> {
 
     @Override
     public boolean doItemContext(MenuItem menuItem, int index, Player selectedItem) {
-        Log.d("context-function-debug", "PlayerView doItemContext (menuitem, index, selectedItem)");
+        //TODO-stefan check
 //        activity.setCurrentPlayer(selectedItem);
 //        ISqueezeService service = activity.getService();
 //        if (service == null) {
@@ -177,8 +176,6 @@ public class PlayerView extends BaseItemView<Player> {
 
     @Override
     public boolean doItemContext(MenuItem menuItem) {
-        Log.d("context-function-debug", "PlayerView doItemContext (menuitem)");
-        Log.d("click", String.valueOf(menuItem));
         ISqueezeService service = activity.getService();
         if (service == null) {
             return super.doItemContext(menuItem);

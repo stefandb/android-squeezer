@@ -87,7 +87,6 @@ public class PluginListActivity extends BaseListActivity<Plugin>
             searchButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d("click-search", "plugnilistActivity - onCreate | searchButton");
                     if (getService() != null) {
                         clearAndReOrderItems(searchCriteriaText.getText().toString());
                     }

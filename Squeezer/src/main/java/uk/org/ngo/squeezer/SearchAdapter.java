@@ -136,7 +136,7 @@ public class SearchAdapter<Child extends Item, K extends BaseItemView> extends R
                 ParentItem.setItemCount(items.size());
                 ArrayList<Object> childList = new ArrayList<>();
 
-                //TODO-stefan controle toevoegen of het item al bestata zo ja vervangen
+                //TODO-stefan controle toevoegen of het item al bestaat zo ja vervangen
                 for(T childItem: items) {
                     childList.add(childItem);
                 }

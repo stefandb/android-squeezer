@@ -126,7 +126,6 @@ public class PlaylistSongsActivity extends BaseListActivity<Song> {
 
             @Override
             public boolean doItemContext(MenuItem menuItem, int index, Song selectedItem) {
-                Log.d("context-function-debug", "PlaylistItemSongsActivity doItemContext (menuitem, index, selectedItem)");
                 ISqueezeService service = getService();
                 if (service == null) {
                     return super.doItemContext(menuItem, index, selectedItem);

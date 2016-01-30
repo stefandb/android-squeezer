@@ -59,12 +59,9 @@ public class YearSpinner {
 
         @Override
         public void onItemsReceived(final int count, final int start, Map<String, String> parameters, final List<Year> list, Class<Year> dataType) {
-            Log.d("debug-code", "YearSpinner.onItemsReceived");
-
             callback.getUIThreadHandler().post(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d("debug-code", "YearSpinner.onItemsReceived.getUIThreadHandler.run");
                     if (adapter == null) {
                         YearView itemView = new YearView(activity) {
                             @Override

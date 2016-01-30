@@ -368,7 +368,6 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
             ItemView.ContextMenuInfo menuInfo) {
-        Log.d("context-function-debug", "BaseItemView onCreateContextMenu (menu, v, menuInfo)");
         menu.setHeaderTitle(menuInfo.item.getName());
     }
 
@@ -377,8 +376,6 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
      */
     @Override
     public boolean doItemContext(MenuItem menuItem, int index, T selectedItem) {
-        Log.d("context-function-debug", "BaseItemView doItemContext (menuitem, index, selectedItem)");
-        Log.d("click", String.valueOf(menuItem));
         switch (menuItem.getItemId()) {
             case R.id.browse_songs:
                 SongListActivity.show(mActivity, selectedItem);
@@ -415,8 +412,6 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
     /** Empty default context-sub-menu implementation, as most context menus doesn't have subs */
     @Override
     public boolean doItemContext(MenuItem menuItem) {
-        Log.d("context-function-debug", "BaseItemView doItemContext (menuItem)");
-        Log.d("cïckl", String.valueOf(menuItem));
         return false;
     }
 }

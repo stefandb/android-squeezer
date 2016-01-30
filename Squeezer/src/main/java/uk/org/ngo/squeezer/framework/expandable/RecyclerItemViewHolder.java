@@ -295,11 +295,6 @@ public class RecyclerItemViewHolder<T extends Item, K extends BaseItemView> exte
     }
 
     public T getItem(int position){
-        Log.d("DEBUG-X-klik", String.valueOf(mItems.size()));
-        Log.d("DEBUG-X-klik", mItems.toString());
-        Log.d("DEBUG-X-klik", String.valueOf(position));
-
-
         if(mItems.size() == 0){
             return mSingleItem;
         }else{

@@ -141,8 +141,6 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
 
             @Override
             public boolean doItemContext(MenuItem menuItem, int index, Song selectedItem) {
-                Log.d("context-function-debug", "CurrentPlaylistActivity doItemContext (menuitem, index, selectedItem)");
-                Log.d("click", String.valueOf(selectedItem));
                 ISqueezeService service = getService();
                 if (service == null) {
                     return true;
@@ -182,10 +180,7 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
             public void bindView(RecyclerItemViewHolder viewHolder, Song item) {
                 super.bindView(viewHolder, item);
 
-//                if(currentSongId == ""){
-                    currentSongId = (player.getPlayerState().getCurrentSong().getId());
-                    Log.d("current-playlist", "current" + player.getPlayerState().getCurrentSong().getId());
-//                }
+                currentSongId = (player.getPlayerState().getCurrentSong().getId());
 
                 if(Integer.parseInt(currentSongId) == Integer.parseInt(item.getId())){
                     viewHolder.getItemView().setBackgroundColor(getResources().getColor(R.color.squeezer_second));
@@ -258,7 +253,6 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
 
     public void onEventMainThread(MusicChanged event) {
         if (event.player.equals(getService().getActivePlayer())) {
-            Log.d(getTag(), "onMusicChanged " + event.playerState.getCurrentSong());
             currentPlaylistIndex = event.playerState.getCurrentPlaylistIndex();
             getItemAdapter().notifyDataSetChanged();
         }
@@ -266,7 +260,6 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
 
     public void onEventMainThread(PlayersChanged event) {
         supportInvalidateOptionsMenu();
-        Log.d("event", "PlayersChanged");
 
         Player activePlayer = getService().getActivePlayer();
 
@@ -283,14 +276,11 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
     }
 
     public void onEventMainThread(PlaylistTracksAdded event) {
-        Log.d("event", "playlistcracksadded");
         clearAndReOrderItems();
         getItemAdapter().notifyDataSetChanged();
     }
 
     public void onEventMainThread(PlaylistTracksDeleted event) {
-        Log.d("event", "PlaylistTracksDeleted");
-
         // TODO: Investigate feasibility of deleting single items from the adapter.
         clearAndReOrderItems();
         getItemAdapter().notifyDataSetChanged();
@@ -328,7 +318,6 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
     @Override
     public void onEventMainThread(HandshakeComplete event) {
         super.onEventMainThread(event);
-        Log.d("event", "currentplaylist -> onEventMainThread");
     }
 
 }

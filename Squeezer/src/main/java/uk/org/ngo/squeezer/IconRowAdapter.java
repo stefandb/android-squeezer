@@ -59,7 +59,6 @@ public class IconRowAdapter extends RecyclerView.Adapter<IconRowAdapter.SimpleHo
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("clikc", "frdfrrfd");
             }
         });
         return viewHolder;

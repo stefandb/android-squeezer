@@ -109,7 +109,6 @@ public class AlbumView extends AlbumArtView<Album> {
      */
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        Log.d("context-function-debug", "AlbumView onCreateContextMenu (menu, v, menuInfo)");
         super.onCreateContextMenu(menu, v, menuInfo);
 
         menuInfo.menuInflater.inflate(R.menu.albumcontextmenu, menu);

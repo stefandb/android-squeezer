@@ -151,7 +151,6 @@ public class ItemAdapter<T extends Item> extends BaseAdapter implements
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
             ContextMenu.ContextMenuInfo menuInfo) {
-        Log.d("context-function-debug", "ItemAdapter onCreateContextMenu (menu, v, menuInfo)");
         AdapterContextMenuInfo adapterMenuInfo = (AdapterContextMenuInfo) menuInfo;
         final T selectedItem = getItem(adapterMenuInfo.position);
 
@@ -165,19 +164,10 @@ public class ItemAdapter<T extends Item> extends BaseAdapter implements
     }
 
     public boolean doItemContext(MenuItem menuItem, int position) {
-        Log.d("context-function-debug", "ItemAdapyter doItemContext (menuitem, position)");
-
-        Log.d("debug-xxx", menuItem.toString());
-        Log.d("debug-xxx", String.valueOf(menuItem.getTitle()));
-        Log.d("debug-xxx", String.valueOf(menuItem));
-
-        Log.d("click", String.valueOf(menuItem));
         return mItemView.doItemContext(menuItem, position, getItem(position));
     }
 
     public boolean doItemContext(MenuItem menuItem) {
-        Log.d("context-function-debug", "ItemAdapter doItemContext (menuItem)");
-        Log.d("click", String.valueOf(menuItem));
         return mItemView.doItemContext(menuItem);
     }
 

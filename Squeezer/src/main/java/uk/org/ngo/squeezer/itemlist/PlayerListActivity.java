@@ -134,50 +134,22 @@ public class PlayerListActivity extends ItemListActivity implements
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        Log.d("XXX-player", "playerlistactivity - onSaveInstanceState");
         outState.putParcelable(CURRENT_PLAYER, currentPlayer);
         super.onSaveInstanceState(outState);
     }
 
-//    @Override
-    public final boolean onContextItemSelectedOLD(MenuItem item) {
-        /*
-        if (getService() != null) {
-            ExpandableListView.ExpandableListContextMenuInfo contextMenuInfo = (ExpandableListView.ExpandableListContextMenuInfo) item
-                    .getMenuInfo();
-
-            if (contextMenuInfo == null) {
-                return mResultsAdapter.doItemContext(item);
-            } else {
-
-                long packedPosition = contextMenuInfo.packedPosition;
-                int groupPosition = ExpandableListView.getPackedPositionGroup(packedPosition);
-                int childPosition = ExpandableListView.getPackedPositionChild(packedPosition);
-                if (ExpandableListView.getPackedPositionType(packedPosition)
-                        == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-                    return mResultsAdapter.doItemContext(item, groupPosition, childPosition);
-                }
-            }
-        }
-        */
-        return false;
-    }
-
     @Override
     protected void orderPage(@NonNull ISqueezeService service, int start) {
-        Log.d("XXX-player", "playerlistactivity - orderPage");
         // Do nothing -- the service has been tracking players from the time it
         // initially connected to the server.
     }
 
     public void onEventMainThread(HandshakeComplete event) {
-        Log.d("XXX-player", "playerlistactivity - onEventMainThread 1 ");
             mResultsExpandableListView.setAdapter(mExpandableAdapter);
         updateAndExpandPlayerList();
     }
 
     public void onEventMainThread(PlayerStateChanged event) {
-        Log.d("XXX-player", "playerlistactivity - onEventMainThread 2 ");
         if (!mTrackingTouch) {
             updateAndExpandPlayerList();
         } else {
@@ -238,29 +210,22 @@ public class PlayerListActivity extends ItemListActivity implements
     @Override
     @NonNull
     public Multimap<String, Player> getPlayerSyncGroups() {
-        Log.d("XXX-player", "playerlistactivity - Multimap");
-        Log.d("XXX-player", "playerlistactivity - Multimap " + mPlayerSyncGroups.toString());
-
         return mPlayerSyncGroups;
     }
 
     public PlayerState getPlayerState(String id) {
-        Log.d("XXX-player", "playerlistactivity - getPlayerState");
         return getService().getPlayerState(id);
     }
 
     @Override
     public Player getCurrentPlayer() {
-        Log.d("XXX-player", "playerlistactivity - getCurrentPlayer");
         return currentPlayer;
     }
     public void setCurrentPlayer(Player currentPlayer) {
-        Log.d("XXX-player", "playerlistactivity - setCurrentPlayer");
         this.currentPlayer = currentPlayer;
     }
 
     public void setTrackingTouch(boolean trackingTouch) {
-        Log.d("XXX-player", "playerlistactivity - setTrackingTouch");
         mTrackingTouch = trackingTouch;
         if (!mTrackingTouch) {
             if (mUpdateWhileTracking) {
@@ -271,7 +236,6 @@ public class PlayerListActivity extends ItemListActivity implements
     }
 
     public void playerRename(String newName) {
-        Log.d("XXX-player", "playerlistactivity - playerRename");
         ISqueezeService service = getService();
         if (service == null) {
             return;
@@ -284,7 +248,6 @@ public class PlayerListActivity extends ItemListActivity implements
 
     @Override
     protected void clearItemAdapter() {
-        Log.d("XXX-player", "playerlistactivity - clearItemAdapter");
 //        mExpandableAdapter.clear();
     }
 
@@ -296,7 +259,6 @@ public class PlayerListActivity extends ItemListActivity implements
      */
     @Override
     public void syncPlayerToPlayer(@NonNull Player slave, @NonNull String masterId) {
-        Log.d("XXX-player", "playerlistactivity - syncPlayerToPlayer");
         getService().syncPlayerToPlayer(slave, masterId);
     }
 
@@ -307,12 +269,10 @@ public class PlayerListActivity extends ItemListActivity implements
      */
     @Override
     public void unsyncPlayer(@NonNull Player player) {
-        Log.d("XXX-player", "playerlistactivity - unsyncPlayer");
         getService().unsyncPlayer(player);
     }
 
     public static void show(Context context) {
-        Log.d("XXX-player", "playerlistactivity - show");
         final Intent intent = new Intent(context, PlayerListActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         context.startActivity(intent);

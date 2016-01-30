@@ -124,8 +124,6 @@ public class MusicFolderView extends PlaylistItemView<MusicFolderItem> {
 
     @Override
     public boolean doItemContext(MenuItem menuItem, int index, MusicFolderItem selectedItem) {
-        Log.d("context-function-debug", "MusicFolderView doItemContext (menuitem, index, selectedItem)");
-        Log.d("click", String.valueOf(selectedItem));
         switch (menuItem.getItemId()) {
             case R.id.browse_songs:
                 MusicFolderListActivity.show(getActivity(), selectedItem);

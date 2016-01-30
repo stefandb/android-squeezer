@@ -97,7 +97,6 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : onCreate");
         super.onCreate(savedInstanceState);
 
         mRetainFragment = RetainFragment.getInstance(TAG, getSupportFragmentManager());
@@ -125,7 +124,6 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
             new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
-                    Log.d("debug-xxx", "klik position " + String.valueOf(position));
                     getItemAdapter().onItemSelected(position);
                 }
             })
@@ -195,8 +193,7 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
 
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-            //TODO
-            Log.d("SWIPED", "direction" + String.valueOf(direction));
+            //TODO-stefan check
         }
 
         //defines the enabled move directions in each state (idle, swiping, dragging).
@@ -208,7 +205,6 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
     };
 
     public void onEventMainThread(HandshakeComplete event) {
-        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : onEventMainThread");
         maybeOrderVisiblePages(mrecyclerView);
         setAdapter();
     }
@@ -222,7 +218,6 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
      * @return The ID
      */
     protected int getContentView() {
-        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : getContentView");
         return R.layout.item_list;
     }
 
@@ -233,14 +228,7 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
 
     @Override
     public boolean onContextItemSelected(MenuItem menuItem) {
-        Log.d("context-function-debug", "BseListActivity onContextItemSelected (item)");
-
         AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) menuItem.getMenuInfo();
-        Log.d("context-function-debug", "click menuitem () " + menuItem);
-        Log.d("context-function-debug", "click menuitem (getitemid) " + menuItem.getItemId());
-        Log.d("context-function-debug", "click menuitem (tostring) " + menuItem.toString());
-        Log.d("context-function-debug", "click menuitem (getmenuinfo) " + menuItem.getMenuInfo());
-        Log.d("context-function-debug", "click menuinfo () " + menuInfo);
 
         int position = -1;
         try {
@@ -265,7 +253,6 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
      * Call this method after the handshake is complete.
      */
     private void setAdapter() {
-        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : setAdapter");
         // setAdapter is not defined for AbsListView before API level 11, but
         // it is for concrete implementations, so we call it by reflection
         try {
@@ -288,7 +275,6 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : onSaveInstanceState");
         super.onSaveInstanceState(outState);
         saveVisiblePosition();
     }
@@ -300,7 +286,6 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
      * @see android.widget.AbsListView#getFirstVisiblePosition()
      */
     private void saveVisiblePosition() {
-        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : saveVisiblePosition");
         mRetainFragment.put(TAG_POSITION, mrecyclerView.getVerticalScrollbarPosition());
     }
 
@@ -308,7 +293,6 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
      * @return The current {@link ItemAdapter}'s {@link ItemView}
      */
     public ItemView<T> getItemView() {
-        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : getItemView");
         return getItemAdapter().getItemView();
     }
 
@@ -316,7 +300,6 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
      * @return The current {@link ItemAdapter}, creating it if necessary.
      */
     public recyclerViewListAdapter<T> getItemAdapter() {
-        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : getItemAdapter");
         if (itemAdapter == null) {
             //noinspection unchecked
             itemAdapter = (recyclerViewListAdapter<T>) mRetainFragment.get(TAG_ADAPTER);
@@ -337,7 +320,6 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
 
     @Override
     protected void clearItemAdapter() {
-        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : clearItemAdapter");
         // TODO: This should be removed in favour of showing a progress spinner in the actionbar.
         mrecyclerView.setVisibility(View.GONE);
         loadingProgress.setVisibility(View.VISIBLE);
@@ -349,23 +331,19 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
      * @return The {@link AbsListView} used by this activity
      */
     public RecyclerView getListView() {
-        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : getListView");
         return mrecyclerView;
     }
 
     protected recyclerViewListAdapter<T> createItemListAdapter(ItemView<T> itemView) {
-        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : createItemListAdapter");
         return new recyclerViewListAdapter<T>(this, itemView);
     }
 
     public void onItemsReceived(final int count, final int start, final List<T> items) {
-        Log.d("debug-code", "BaselistActivity.onItemsReceived 2");
         super.onItemsReceived(count, start, items.size());
 
         getUIThreadHandler().post(new Runnable() {
             @Override
             public void run() {
-                Log.d("debug-code", "BaselistActivity.onItemsReceived.getUIThreadHandler.post");
                 mrecyclerView.setVisibility(View.VISIBLE);
                 loadingProgress.setVisibility(View.GONE);
                 getItemAdapter().update(count, start, items);
@@ -377,13 +355,11 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
 
     @Override
     public void onItemsReceived(int count, int start, Map<String, String> parameters, List<T> items, Class<T> dataType) {
-        Log.d("debug-code", "Baselistactivity.onItemsReceived 1");
         onItemsReceived(count, start, items);
     }
 
     @Override
     public Object getClient() {
-        Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity : getClient");
         return this;
     }
 
@@ -416,7 +392,6 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
 
         public RecyclerScrollListener(){
             super();
-            Log.d("function-debug", "uk.org.ngo.squeezer.framework BaseListActivity - RecyclerScrollListener : RecyclerScrollListener");
         }
 
         @Override
