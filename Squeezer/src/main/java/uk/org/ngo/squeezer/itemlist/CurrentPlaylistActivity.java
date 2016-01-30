@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -47,6 +48,7 @@ import uk.org.ngo.squeezer.model.Song;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
 import uk.org.ngo.squeezer.service.event.MusicChanged;
+import uk.org.ngo.squeezer.service.event.PlayerVolume;
 import uk.org.ngo.squeezer.service.event.PlayersChanged;
 import uk.org.ngo.squeezer.service.event.PlaylistTracksAdded;
 import uk.org.ngo.squeezer.service.event.PlaylistTracksDeleted;
@@ -73,9 +75,6 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-
         NavigationDrawer(savedInstanceState);
 
         getSupportActionBar().setTitle(R.string.menu_item_playlist);
@@ -92,36 +91,6 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
         public HighlightingListAdapter(ItemView<Song> itemView) {
             super(itemView);
         }
-
-////            View view = super.getView(position, convertView, parent);
-////            Object viewTag = view.getTag();
-////
-////            // This test because the view tag wont be set until the album is received from the server
-////            if (viewTag instanceof ViewHolder) {
-////                ViewHolder viewHolder = (ViewHolder) viewTag;
-//                if (position == currentPlaylistIndex) {
-//                    viewHolder.getText1()
-//                            .setTextAppearance(getActivity(), R.style.SqueezerTextAppearance_ListItem_Primary);
-//
-//                    // Changing the background resource to a 9-patch drawable causes the padding
-//                    // to be reset. See http://www.mail-archive.com/android-developers@googlegroups.com/msg09595.html
-//                    // for details. Save the current padding before setting the drawable, and
-//                    // restore afterwards.
-//                    int paddingLeft = viewHolder.getItemView().getPaddingLeft();
-//                    int paddingTop = viewHolder.getItemView().getPaddingTop();
-//                    int paddingRight = viewHolder.getItemView().getPaddingRight();
-//                    int paddingBottom = viewHolder.getItemView().getPaddingBottom();
-//
-//                    viewHolder.getItemView().setBackgroundResource(getAttributeValue(R.attr.playing_item));
-//
-//                    viewHolder.getItemView().setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
-//                } else {
-//                    viewHolder.getText1().setTextAppearance(getActivity(), R.style.SqueezerTextAppearance_ListItem_Primary);
-//                    viewHolder.getItemView().setBackgroundColor(getAttributeValue(R.attr.background));
-//                }
-////            }
-//            return viewHolder;
-//        }
     }
 
     @Override
@@ -213,13 +182,10 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
             public void bindView(RecyclerItemViewHolder viewHolder, Song item) {
                 super.bindView(viewHolder, item);
 
-                if(currentSongId == ""){
+//                if(currentSongId == ""){
                     currentSongId = (player.getPlayerState().getCurrentSong().getId());
                     Log.d("current-playlist", "current" + player.getPlayerState().getCurrentSong().getId());
-                }
-
-                Log.d("current-playlist", "list-item " + item.getId());
-                Log.d("current-playlist", String.valueOf("check " + currentSongId == item.getId()));
+//                }
 
                 if(Integer.parseInt(currentSongId) == Integer.parseInt(item.getId())){
                     viewHolder.getItemView().setBackgroundColor(getResources().getColor(R.color.squeezer_second));
@@ -300,6 +266,7 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
 
     public void onEventMainThread(PlayersChanged event) {
         supportInvalidateOptionsMenu();
+        Log.d("event", "PlayersChanged");
 
         Player activePlayer = getService().getActivePlayer();
 
@@ -316,11 +283,14 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
     }
 
     public void onEventMainThread(PlaylistTracksAdded event) {
+        Log.d("event", "playlistcracksadded");
         clearAndReOrderItems();
         getItemAdapter().notifyDataSetChanged();
     }
 
     public void onEventMainThread(PlaylistTracksDeleted event) {
+        Log.d("event", "PlaylistTracksDeleted");
+
         // TODO: Investigate feasibility of deleting single items from the adapter.
         clearAndReOrderItems();
         getItemAdapter().notifyDataSetChanged();
@@ -353,6 +323,12 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
 //                ((RecyclerView) getListView()).setSelectionFromTop(currentPlaylistIndex, 0);
             }
         });
+    }
+
+    @Override
+    public void onEventMainThread(HandshakeComplete event) {
+        super.onEventMainThread(event);
+        Log.d("event", "currentplaylist -> onEventMainThread");
     }
 
 }
