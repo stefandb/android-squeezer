@@ -32,6 +32,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,7 @@ import uk.org.ngo.squeezer.model.ExpandableParentListItem;
 import uk.org.ngo.squeezer.model.Player;
 import uk.org.ngo.squeezer.model.PlayerState;
 import uk.org.ngo.squeezer.model.SearchType;
+import uk.org.ngo.squeezer.model.Song;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
 import uk.org.ngo.squeezer.service.event.PlayerStateChanged;
@@ -64,24 +66,31 @@ public class PlayerListActivity extends ItemListActivity implements
 
     /** Map from player IDs to Players synced to that player ID. */
     private final Multimap<String, Player> mPlayerSyncGroups = HashMultimap.create();
-    private PlayerListAdapter mExpandableAdapter;
+    private PlayerListAdapter mExpandableAdapter = null;
 
     /**
      * Updates the adapter with the current players, and ensures that the list view is
      * expanded.
      */
-    private void updateAndExpandPlayerList() {
+    private boolean updateAndExpandPlayerList() {
         if (mResultsExpandableListView.getAdapter() == null) {
-            return;
+            return false;
         }
 
         updateSyncGroups(getService().getPlayers(), getService().getActivePlayer());
 
-        mExpandableAdapter.updatePlayers(mPlayerSyncGroups);
-
-//        for (int i = 0; i < mResultsAdapter.getGroupCount(); i++) {
-//            mResultsExpandableListView.expandGroup(i);
-//        }
+        if(mExpandableAdapter == null){
+            mExpandableAdapter = new PlayerListAdapter(this, createPLayerListObject());
+            mExpandableAdapter.setItemView(new PlayerView(this));
+            mExpandableAdapter.setCustomParentAnimationViewId(R.id.parent_list_item_expand_arrow);
+            mExpandableAdapter.setParentClickableViewAnimationDefaultDuration();
+            mExpandableAdapter.setParentAndIconExpandOnClick(true);
+        }else{
+            //TODO-stefan functie in adapter aanroepen die de data vervangt en update
+            mExpandableAdapter.notifyDataSetChanged();
+        }
+//        mExpandableAdapter.updatePlayers(mPlayerSyncGroups);
+        return true;
     }
 
     @Override
@@ -96,36 +105,41 @@ public class PlayerListActivity extends ItemListActivity implements
         mResultsExpandableListView = (RecyclerView) findViewById(R.id.item_list);
         mResultsExpandableListView.setLayoutManager(new LinearLayoutManager(this));
 
-        mExpandableAdapter = new PlayerListAdapter(this, generateCrimes());
-        mExpandableAdapter.setItemView(new PlayerView(this));
-        mExpandableAdapter.setCustomParentAnimationViewId(R.id.parent_list_item_expand_arrow);
-        mExpandableAdapter.setParentClickableViewAnimationDefaultDuration();
-        mExpandableAdapter.setParentAndIconExpandOnClick(true);
-
         setIgnoreVolumeChange(true);
 
         NavigationDrawer(savedInstanceState);
         navigationDrawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(R.string.home_item_songs);
+        getSupportActionBar().setTitle("Players");
     }
 
-    private ArrayList<ParentObject> generateCrimes() {
+    private ArrayList<ParentObject> createPLayerListObject() {
         CrimeLab crimeLab = CrimeLab.get(this);
 
-        for (int i = 0; i < 4; i++) {
-            ExpandableParentListItem crime = new ExpandableParentListItem();
-            crime.setTitle(String.format("Groeps titel %d", i));
-            crime.setSolved(i % 2 == 0);
-            crimeLab.setCrime(crime);
+        List<String> masters = new ArrayList<String>(mPlayerSyncGroups.keySet());
+        Collections.sort(masters);
+
+        for (String masterId : masters) {
+            ExpandableParentListItem playerGroup = new ExpandableParentListItem();
+            playerGroup.setTitle(String.format("Groep naam %s", masterId));
+            playerGroup.setsubTitle(String.format("Sub Groep naam %s", masterId));
+
+            List<Player> slaves = new ArrayList<Player>(mPlayerSyncGroups.get(masterId));
+            Collections.sort(slaves, Player.compareById);
+
+            ArrayList<Object> childList = new ArrayList<>();
+
+            for(Player childItem: slaves) {
+                childList.add(childItem);
+            }
+            playerGroup.setChildObjectList(childList);
+            crimeLab.setCrime(playerGroup);
         }
 
         List<ExpandableParentListItem> crimes = crimeLab.getCrimes();
         ArrayList<ParentObject> parentObjects = new ArrayList<>();
-        for (ExpandableParentListItem crime : crimes) {
-            ArrayList<Object> childList = new ArrayList<>();
 
-            crime.setChildObjectList(childList);
+        for (ExpandableParentListItem crime : crimes) {
             parentObjects.add(crime);
         }
         return parentObjects;
@@ -145,8 +159,9 @@ public class PlayerListActivity extends ItemListActivity implements
     }
 
     public void onEventMainThread(HandshakeComplete event) {
-            mResultsExpandableListView.setAdapter(mExpandableAdapter);
-        updateAndExpandPlayerList();
+        boolean result = updateAndExpandPlayerList();
+        mResultsExpandableListView.setAdapter(mExpandableAdapter);
+//        mExpandableAdapter.notifyDataSetChanged();
     }
 
     public void onEventMainThread(PlayerStateChanged event) {

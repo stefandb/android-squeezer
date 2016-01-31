@@ -118,7 +118,11 @@ public class RecyclerItemViewHolder<T extends Item, K extends BaseItemView> exte
         return text2;
     }
 
-    //TODO-stefan als tijdelijke oplossing hier alle noldijke velden van de templates zetten
+    //TODO-stefan sub class werkend maken
+    public ChildViewHolder getHolder(){
+        return mItemView.getViewHolderInstance(itemView);
+    }
+
 
     public SeekBar getVolumeBar() {
         return volumeBar;
@@ -139,6 +143,7 @@ public class RecyclerItemViewHolder<T extends Item, K extends BaseItemView> exte
     public View getItemView() {
         return itemView;
     }
+
 
     public boolean is24HourFormat() {
         return is24HourFormat;

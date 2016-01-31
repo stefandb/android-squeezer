@@ -36,6 +36,7 @@ import uk.org.ngo.squeezer.itemlist.GenreSpinner.GenreSpinnerCallback;
 import uk.org.ngo.squeezer.itemlist.YearSpinner.YearSpinnerCallback;
 import uk.org.ngo.squeezer.itemlist.dialog.AlbumFilterDialog;
 import uk.org.ngo.squeezer.itemlist.dialog.AlbumViewDialog;
+import uk.org.ngo.squeezer.itemlist.dialog.SongViewDialog;
 import uk.org.ngo.squeezer.menu.BaseMenuFragment;
 import uk.org.ngo.squeezer.menu.FilterMenuFragment;
 import uk.org.ngo.squeezer.menu.FilterMenuFragment.FilterableListActivity;
@@ -155,7 +156,6 @@ public class AlbumListActivity extends BaseListActivity<Album>
 
         getSupportActionBar().setTitle( R.string.home_item_albums);
 
-        TextView header = (TextView) findViewById(R.id.header);
         @AlbumView.SecondLineDetails int details = AlbumView.DETAILS_ALL;
         if (artist != null) {
             details &= ~AlbumView.DETAILS_ARTIST;
@@ -188,6 +188,10 @@ public class AlbumListActivity extends BaseListActivity<Album>
     protected int getContentView() {
         return (listLayout == AlbumViewDialog.AlbumListLayout.grid) ? R.layout.item_grid
                 : R.layout.item_list_albums;
+    }
+
+    protected boolean isGrid(){
+        return listLayout == AlbumViewDialog.AlbumListLayout.grid;
     }
 
     @Override

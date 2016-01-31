@@ -102,7 +102,7 @@ public class PlayerView extends BaseItemView<Player> {
 
     @Override
     public void onItemSelected(int index, Player item) {
-        //TODO-stefan check
+        //TODO-stefan add implementation
     }
 
     @Override

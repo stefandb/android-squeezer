@@ -149,9 +149,6 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
        return 0;
     }
 
-    /**
-     * TODO-stefan code ombouwen van ItemAdapter
-     */
     public boolean doItemContext(MenuItem menuItem, int position) {
         return mItemView.doItemContext(menuItem, position, getItem(position));
     }
@@ -256,7 +253,7 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
 
 
     /**
-     * TODO-stefan ombouwen naar swipe to delete
+     * TODO-stefan ombouwen naar swipe to delete (for specific activities)
      * Remove the item at the specified position, update the count and notify the change.
      */
     public void removeItem(int position) {

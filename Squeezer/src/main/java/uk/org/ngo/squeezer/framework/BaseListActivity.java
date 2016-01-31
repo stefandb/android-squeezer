@@ -22,6 +22,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -101,16 +102,22 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
 
         mRetainFragment = RetainFragment.getInstance(TAG, getSupportFragmentManager());
 
-
         setContentView(getContentView());
 
         mrecyclerView = checkNotNull((RecyclerView) findViewById(R.id.item_list),
                 "getContentView() did not return a view containing R.id.item_list");
+
         registerForContextMenu(mrecyclerView);
         mrecyclerView.setLongClickable(true);
 
-        mrecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mrecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getResources()));
+        if(isGrid()){
+            mrecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+//            mrecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getResources()));
+            mrecyclerView.addItemDecoration(new ItemOffsetDecoration(this, R.dimen.item_offset));
+        }else{
+            mrecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            mrecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getResources()));
+        }
 
         loadingProgress = checkNotNull((ProgressBar) findViewById(R.id.loading_progress),
         "getContentView() did not return a view containing R.id.loading_progress");
@@ -219,6 +226,10 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
      */
     protected int getContentView() {
         return R.layout.item_list;
+    }
+
+    protected boolean isGrid(){
+        return false;
     }
 
     /**

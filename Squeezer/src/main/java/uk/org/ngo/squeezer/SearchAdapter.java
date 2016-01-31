@@ -66,13 +66,13 @@ public class SearchAdapter<Child extends Item, K extends BaseItemView> extends R
 
     @Override
     public RecyclerItemViewHolder onCreateChildViewHolder(ViewGroup viewGroup) {
-        //TODO-stefan R.layout dynamisch maken
-        View view = mInflater.inflate(R.layout.list_item, viewGroup, false);
-
         HashMap<String, K> enginesViews = new HashMap<String, K>();
         for (int i = 0; i < searchTypes.size(); i++) {
             enginesViews.put(searchTypes.get(i).getModelClassName(), (K) searchTypes.get(i).getViewBuilder());
         }
+        //TODO-stefan layout dynamisch maken
+        View view = mInflater.inflate(R.layout.list_item, viewGroup, false);
+
         RecyclerItemViewHolder viewHolderInstance = new RecyclerItemViewHolder(view, this);
         viewHolderInstance.setItemViews(enginesViews);
 
@@ -106,10 +106,6 @@ public class SearchAdapter<Child extends Item, K extends BaseItemView> extends R
         searchTypes = st;
     }
 
-
-    /**
-     * TODO-stefan code ombouwen van ItemAdapter
-     */
     public boolean doItemContext(MenuItem menuItem, int position) {
         Child Item = (Child) mItemList.get(position);
         String Classname = Item.getClass().getName().toString().toLowerCase().trim();

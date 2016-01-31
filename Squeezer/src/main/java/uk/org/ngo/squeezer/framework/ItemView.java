@@ -89,6 +89,8 @@ public interface ItemView<T extends Item> {
 
     View getAdapterView(View convertView, ViewGroup parent, String text);
 
+    ChildViewHolder getViewHolderInstance(View view);
+
     /**
      * @return The generic argument of the implementation
      */

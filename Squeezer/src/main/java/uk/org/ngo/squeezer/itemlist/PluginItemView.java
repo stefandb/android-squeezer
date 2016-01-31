@@ -87,8 +87,6 @@ public class PluginItemView extends BaseItemView<PluginItem> {
 
     @Override
     public void onItemSelected(int index, final PluginItem item) {
-
-        //TODOme controleren op type search en dan popup tonen voor zoekvraag die ook mee posten naar de show
         if(item.getType() != null && item.getType().toString().toLowerCase().contains("search")){
             AlertDialog.Builder alert = new AlertDialog.Builder(mActivity);
 

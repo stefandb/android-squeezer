@@ -16,6 +16,7 @@
 
 package uk.org.ngo.squeezer.framework;
 
+import android.content.SharedPreferences;
 import android.os.Parcelable.Creator;
 import android.support.annotation.IntDef;
 import android.support.v7.widget.RecyclerView;
@@ -36,11 +37,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
 
+import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.itemlist.AlbumListActivity;
 import uk.org.ngo.squeezer.itemlist.ArtistListActivity;
 import uk.org.ngo.squeezer.itemlist.SongListActivity;
+import uk.org.ngo.squeezer.itemlist.dialog.SongViewDialog;
+import uk.org.ngo.squeezer.model.Alarm;
 import uk.org.ngo.squeezer.util.Reflection;
 import uk.org.ngo.squeezer.widget.ListItemImageButton;
 import uk.org.ngo.squeezer.widget.SquareImageView;
@@ -115,7 +119,7 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
     /**
      * A ViewHolder for the views that make up a complete list item.
      */
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends ChildViewHolder {
 
         public ImageButton btnContextMenu;
 
@@ -343,9 +347,6 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
 //                        v.showContextMenu();
 //                    }
 //                });
-//                /**
-//                 * TODO misschien een click voor context
-//                 */
 //            } else {
 //                viewHolder.btnContextMenu.setVisibility(View.GONE);
 //            }
@@ -413,5 +414,10 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
     @Override
     public boolean doItemContext(MenuItem menuItem) {
         return false;
+    }
+
+    @Override
+    public ChildViewHolder getViewHolderInstance(View view) {
+        return new ViewHolder();
     }
 }

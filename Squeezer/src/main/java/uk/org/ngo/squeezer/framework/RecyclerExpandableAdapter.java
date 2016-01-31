@@ -41,6 +41,7 @@ public class RecyclerExpandableAdapter<Child extends Item, K extends BaseItemVie
 
     @Override
     public ParentHolder onCreateParentViewHolder(ViewGroup viewGroup) {
+        //TODO-stefan R.layout dynamisch maken
         View view = mInflater.inflate(R.layout.expandable_parent, viewGroup, false);
         return new ParentHolder(view);
     }
@@ -58,8 +59,9 @@ public class RecyclerExpandableAdapter<Child extends Item, K extends BaseItemVie
         ExpandableParentListItem crime = (ExpandableParentListItem) o;
         parentHolder.mCrimeTitleTextView.setText(crime.getTitle());
         parentHolder.mIcon.setImageResource(crime.getIcon());
-        parentHolder.mItemCount.setText("9876");
-//        parentHolder.mItemCount.setText(crime.getChildObjectList().size());
+
+        int size = crime.getChildObjectList().size();
+        parentHolder.mItemCount.setText(String.valueOf(size));
     }
 
     @Override
@@ -92,9 +94,6 @@ public class RecyclerExpandableAdapter<Child extends Item, K extends BaseItemVie
         this.position = position;
     }
 
-    /**
-     * TODO-stefan code ombouwen van ItemAdapter
-     */
     public boolean doItemContext(MenuItem menuItem, int position) {
         return false;
     }

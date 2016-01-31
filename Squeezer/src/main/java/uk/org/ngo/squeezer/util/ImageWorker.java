@@ -307,7 +307,7 @@ public abstract class ImageWorker {
     }
 
     /**
-     * TODOME oplossen debug modus tijdelijk de functie aanroep weggehaald
+     * TODO-stefan oplossen debug modus tijdelijk de functie aanroep weggehaald
      *
      * Adds a debug swatch to a canvas. The marker is a triangle pointing north-west
      * on the top left corner, the edges are 25% of the canvas' width and height.

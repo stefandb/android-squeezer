@@ -274,6 +274,10 @@ public class SongListActivity extends BaseListActivity<Song>
                 : super.getContentView();
     }
 
+    protected boolean isGrid(){
+        return listLayout == SongViewDialog.SongListLayout.grid;
+    }
+
     /**
      * Updates the artwork in the UI. Can only be called after the server handshake has
      * completed, as the IP port is required to construct the artwork URL.
@@ -401,6 +405,7 @@ public class SongListActivity extends BaseListActivity<Song>
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
             ContextMenu.ContextMenuInfo menuInfo) {
+        Log.d("context-function-debug", "SongListActivity onCreateContextMenu (menu, v, menuInfo)");
         super.onCreateContextMenu(menu, v, menuInfo);
 
         if (album != null) {

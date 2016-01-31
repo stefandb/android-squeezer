@@ -45,6 +45,7 @@ import uk.org.ngo.squeezer.framework.Item;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.framework.PlaylistItem;
 import uk.org.ngo.squeezer.framework.RecyclerExpandableAdapter;
+import uk.org.ngo.squeezer.framework.expandable.ParentHolder;
 import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.itemlist.AlbumView;
 import uk.org.ngo.squeezer.itemlist.ArtistView;
@@ -72,6 +73,13 @@ public class PlayerListAdapter<Child extends Item, K extends BaseItemView> exten
 
     public PlayerListAdapter(Context context, List parentItemList) {
         super(context, parentItemList);
+    }
+
+    @Override
+    public ParentHolder onCreateParentViewHolder(ViewGroup viewGroup) {
+        //TODO-stefan R.layout dynamisch maken
+        View view = mInflater.inflate(R.layout.expandable_parent, viewGroup, false);
+        return new ParentHolder(view);
     }
 
     @Override
@@ -120,9 +128,6 @@ public class PlayerListAdapter<Child extends Item, K extends BaseItemView> exten
      *     generated.
      */
     public void updatePlayers(Multimap<String, Player> playerSyncGroups) {
-        // The players might not have changed (so there's no need to reset the contents of the
-        // adapter) but information about an individual player might have done.
-
 
         if (prevPlayerSyncGroups != null && prevPlayerSyncGroups.equals(playerSyncGroups)) {
             notifyDataSetChanged();
@@ -132,29 +137,11 @@ public class PlayerListAdapter<Child extends Item, K extends BaseItemView> exten
         prevPlayerSyncGroups = HashMultimap.create(playerSyncGroups);
 //        clear();
 
-        List<String> masters = new ArrayList<String>(playerSyncGroups.keySet());
-        Collections.sort(masters);
+
 
         ArrayList<ParentObject> parentObjects = new ArrayList<>();
 
-        for (String masterId : masters) {
-            ExpandableParentListItem playerGroup = new ExpandableParentListItem();
-            playerGroup.setTitle(String.format("Groep naam %s", masterId));
-            playerGroup.setsubTitle(String.format("Sub Groep naam %s", masterId));
 
-            List<Player> slaves = new ArrayList<Player>(playerSyncGroups.get(masterId));
-            Collections.sort(slaves, Player.compareById);
-
-            ArrayList<Object> childList = new ArrayList<>();
-
-            for(Player childItem: slaves) {
-                childList.add(childItem);
-            }
-            playerGroup.setChildObjectList(childList);
-
-            parentObjects.add(playerGroup);
-//            mParentItemList.add(playerGroup);
-        }
 
         this.mParentItemList = parentObjects;
         this.mItemList = generateObjectList(parentObjects);

@@ -39,4 +39,9 @@ public class SongGridView extends SongViewWithArt {
         mIconHeight = getActivity().getResources().getDimensionPixelSize(R.dimen.album_art_icon_grid_height);
         return getAdapterView(convertView, viewParams, R.layout.grid_item);
     }
+
+    @Override
+    public int getListItemLayout() {
+        return R.layout.grid_item;
+    }
 }

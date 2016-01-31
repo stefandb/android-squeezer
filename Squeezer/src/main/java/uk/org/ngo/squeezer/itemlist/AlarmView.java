@@ -46,6 +46,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.android.datetimepicker.time.RadialPickerLayout;
@@ -59,6 +60,7 @@ import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Util;
 import uk.org.ngo.squeezer.framework.BaseItemView;
 import uk.org.ngo.squeezer.framework.BaseListActivity;
+import uk.org.ngo.squeezer.framework.ItemView;
 import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.model.Alarm;
@@ -67,6 +69,9 @@ import uk.org.ngo.squeezer.service.ServerString;
 import uk.org.ngo.squeezer.util.CompoundButtonWrapper;
 import uk.org.ngo.squeezer.widget.AnimationEndListener;
 import uk.org.ngo.squeezer.widget.UndoBarController;
+import com.bignerdranch.expandablerecyclerview.ViewHolder.ChildViewHolder;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class AlarmView extends BaseItemView<Alarm> {
     private static final int ANIMATION_DURATION = 300;
@@ -103,6 +108,148 @@ public class AlarmView extends BaseItemView<Alarm> {
         return R.layout.list_item_alarm;
     }
 
+    @Override
+    public ChildViewHolder getViewHolderInstance(View view) {
+        return new viewHolder(view);
+    }
+
+    private class viewHolder extends ChildViewHolder {
+
+        public boolean is24HourFormat;
+        String timeFormat;
+        String am;
+        String pm;
+        Alarm alarm;
+        TextView time;
+        TextView amPm;
+        Switch enabled;
+        CompoundButtonWrapper repeat;
+        ImageView delete;
+        Spinner playlist;
+        LinearLayout dowHolder;
+        final TextView[] dowTexts = new TextView[7];
+
+        public viewHolder(View itemView) {
+            super(itemView);
+        }
+
+
+        public boolean is24HourFormat() {
+            return is24HourFormat;
+        }
+
+        public void setIs24HourFormat(boolean is24HourFormat) {
+            this.is24HourFormat = is24HourFormat;
+        }
+
+        public String getTimeFormat() {
+            return timeFormat;
+        }
+
+        public void setTimeFormat(String timeFormat) {
+            this.timeFormat = timeFormat;
+        }
+
+        public String getAm() {
+            return am;
+        }
+
+        public void setAm(String am) {
+            this.am = am;
+        }
+
+        public String getPm() {
+            return pm;
+        }
+
+        public void setPm(String pm) {
+            this.pm = pm;
+        }
+
+        public Alarm getAlarm() {
+            return alarm;
+        }
+
+        public void setAlarm(Alarm alarm) {
+            this.alarm = alarm;
+        }
+
+        public TextView getTime() {
+            return time;
+        }
+
+        public void setTime(int time) {
+            this.time = (TextView) itemView.findViewById(time);
+        }
+
+        public TextView getAmPm() {
+            return amPm;
+        }
+
+        public void setAmPm(int amPm) {
+            this.amPm = (TextView) itemView.findViewById(amPm);
+        }
+
+        public Switch getEnabled() {
+            return this.enabled;
+        }
+
+        public Switch setEnabled(int enabled) {
+            int a = itemView.getId();
+            Object b = itemView.getTag();
+
+            this.enabled = checkNotNull((Switch) itemView.findViewById(enabled),
+                    "setEnabled() did not return a view containing R.id.enabled");
+
+            return this.enabled;
+        }
+
+        public CompoundButtonWrapper getRepeat() {
+            return repeat;
+        }
+
+        public void setRepeat(CompoundButtonWrapper repeat) {
+            this.repeat = repeat;
+        }
+
+        public ImageView getDelete() {
+            return delete;
+        }
+
+        public void setDelete(int delete) {
+            this.delete = (ImageView) itemView.findViewById(delete);
+        }
+
+        public Spinner getPlaylist() {
+            return playlist;
+        }
+
+        public void setPlaylist(int playlist) {
+            this.playlist = (Spinner) itemView.findViewById(playlist);
+        }
+
+        public LinearLayout getDowHolder() {
+            return dowHolder;
+        }
+
+        public void setDowHolder(int dowHolder) {
+            this.dowHolder = (LinearLayout) itemView.findViewById(dowHolder);
+        }
+
+        public TextView[] getDowTexts() {
+            return dowTexts;
+        }
+
+        public void setDowTexts(int position, TextView text) {
+            this.dowTexts[position] = text;
+        }
+
+        public void setDowHolder(LinearLayout dowHolder) {
+            this.dowHolder = dowHolder;
+        }
+    }
+
+
     private RecyclerItemViewHolder getAdapterView(final RecyclerItemViewHolder viewHolder) {
 //        AlarmViewHolder currentViewHolder =
 //                (convertView != null && convertView.getTag() instanceof AlarmViewHolder)
@@ -113,8 +260,7 @@ public class AlarmView extends BaseItemView<Alarm> {
 //            convertView = getLayoutInflater().inflate(R.layout.list_item_alarm, parent, false);
 //            final View alarmView = convertView;
 
-
-            viewHolder.setIs24HourFormat(DateFormat.is24HourFormat(getActivity()));
+        viewHolder.setIs24HourFormat(DateFormat.is24HourFormat(getActivity()));
             viewHolder.setTimeFormat(viewHolder.is24HourFormat ? "%02d:%02d" : "%d:%02d");
             String[] amPmStrings = new DateFormatSymbols().getAmPmStrings();
             viewHolder.setAm(amPmStrings[0]);
@@ -348,13 +494,6 @@ public class AlarmView extends BaseItemView<Alarm> {
         public boolean isEnabled(int position) {
             return (mAlarmPlaylists.get(position).getId() != null);
         }
-
-        //TODO-stefan mischien toch fixen
-//
-//        @Override
-//        public View getView(int position, View convertView, ViewGroup parent) {
-//           return Util.getSpinnerItemView(getActivity(), convertView, getItem(position).getName());
-//        }
 
         @Override
         public View getDropDownView(int position, View convertView, ViewGroup parent) {

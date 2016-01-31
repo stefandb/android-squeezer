@@ -42,6 +42,7 @@ import uk.org.ngo.squeezer.dialog.AlarmSettingsDialog;
 import uk.org.ngo.squeezer.framework.BaseItemView;
 import uk.org.ngo.squeezer.framework.BaseListActivity;
 import uk.org.ngo.squeezer.framework.ItemView;
+import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.itemlist.dialog.AlbumViewDialog;
 import uk.org.ngo.squeezer.model.Alarm;
@@ -312,5 +313,4 @@ public class AlarmsActivity extends BaseListActivity<Alarm> implements AlarmSett
             }
         }
     }
-
 }
