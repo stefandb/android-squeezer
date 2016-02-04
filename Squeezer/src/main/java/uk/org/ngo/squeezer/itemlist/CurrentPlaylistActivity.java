@@ -129,6 +129,8 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
                 }
 
                 // Last item? Disable "move down" menu entry.
+                Log.d("ebug-current", menuInfo.item.toString());
+                Log.d("ebug-current", menuInfo.adapter.toString());
                 if (menuInfo.position == menuInfo.adapter.getCount() - 1) {
                     menu.findItem(R.id.playlist_move_down).setVisible(false);
                 }

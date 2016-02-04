@@ -1,6 +1,5 @@
 package uk.org.ngo.squeezer.framework.expandable;
 
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,7 +24,6 @@ import uk.org.ngo.squeezer.framework.ItemView;
 import uk.org.ngo.squeezer.framework.RecyclerExpandableAdapter;
 import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.model.Alarm;
-import uk.org.ngo.squeezer.model.SearchType;
 import uk.org.ngo.squeezer.util.CompoundButtonWrapper;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -74,6 +72,7 @@ public class RecyclerItemViewHolder<T extends Item, K extends BaseItemView> exte
     LinearLayout dowHolder;
     final TextView[] dowTexts = new TextView[7];
     private T mSingleItem;
+    private recyclerViewListAdapter<T> adapter;
 
 
     public RecyclerItemViewHolder(View v) {
@@ -275,9 +274,16 @@ public class RecyclerItemViewHolder<T extends Item, K extends BaseItemView> exte
         AdapterView.AdapterContextMenuInfo adapterMenuInfo = (AdapterView.AdapterContextMenuInfo) menuInfo;
         final T selectedItem = (T) getItem(position);
 
-        ItemView.ContextMenuInfo c = new ItemView.ContextMenuInfo(position, selectedItem, getItemView(selectedItem).getActivity().getMenuInflater());
+        ItemView.ContextMenuInfo c;
+        //int position, Item item, recyclerViewListAdapter<?> adapter, MenuInflater menuInflater
+        if(adapter != null){
+            c = new ItemView.ContextMenuInfo(position, selectedItem, adapter, getItemView(selectedItem).getActivity().getMenuInflater());
+        }else{
+            c = new ItemView.ContextMenuInfo(position, selectedItem, getItemView(selectedItem).getActivity().getMenuInflater());
+        }
 
         if (selectedItem != null && selectedItem.getId() != null) {
+
             getItemView(selectedItem).onCreateContextMenu(menu, v, c);
         }
     }
@@ -322,5 +328,9 @@ public class RecyclerItemViewHolder<T extends Item, K extends BaseItemView> exte
 
     public void setItemViews(HashMap<String, K> enginesViews){
         mItemViews = enginesViews;
+    }
+
+    public void setAdapter(recyclerViewListAdapter<T> a) {
+        adapter = a;
     }
 }
