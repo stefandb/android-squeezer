@@ -72,6 +72,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.org.ngo.squeezer.AboutActiviy;
 import uk.org.ngo.squeezer.IconRowAdapter;
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
@@ -602,7 +603,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
                             } else if (drawerItem.getIdentifier() == 21) {
                                 intent = new Intent(BaseActivity.this, SettingsActivity.class);
                             } else if (drawerItem.getIdentifier() == 22) {
-                                intent = new Intent(BaseActivity.this, AboutDialog.class);
+                                intent = new Intent(BaseActivity.this, AboutActiviy.class);
                             }
 
                             if (intent != null) {

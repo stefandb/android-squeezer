@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--<ScrollView--><!--xmlns:android="http://schemas.android.com/apk/res/android"--><!--android:layout_width="fill_parent"--><!--android:layout_height="wrap_content">-->
+
+<!--<RelativeLayout--><!--android:layout_width="fill_parent"--><!--android:layout_height="wrap_content"--><!--android:orientation="vertical"--><!--android:padding="8dp">-->
+
+<!--<ImageView--><!--android:id="@+id/icon"--><!--android:layout_width="48dp"--><!--android:layout_height="48dp"--><!--android:layout_gravity="center_vertical"--><!--android:src="@drawable/ic_launcher"/>-->
+
+<!--<TextView--><!--android:id="@+id/about_title"--><!--style="@style/SqueezerTextAppearance.Large"--><!--android:layout_width="fill_parent"--><!--android:layout_height="wrap_content"--><!--android:layout_toRightOf="@id/icon"--><!--android:paddingLeft="8dp"--><!--android:text="@string/app_name"/>-->
+
+<!--<TextView--><!--android:id="@+id/version_text"--><!--android:textAppearance="@style/SqueezerTextAppearance.Small"--><!--android:layout_width="fill_parent"--><!--android:layout_height="wrap_content"--><!--android:layout_below="@id/about_title"--><!--android:layout_toRightOf="@id/icon"--><!--android:paddingLeft="8dp"/>-->
+
+<!--<TextView--><!--android:id="@+id/copyright"--><!--android:textAppearance="@style/SqueezerTextAppearance.Small"--><!--android:layout_width="fill_parent"--><!--android:layout_height="wrap_content"--><!--android:layout_below="@id/icon"--><!--android:paddingBottom="8dp"--><!--android:paddingTop="8dp"--><!--android:text="@string/copyright_text"/>-->
+
+<!--<TextView--><!--android:id="@+id/team"--><!--android:textAppearance="@style/SqueezerTextAppearance.Medium"--><!--android:layout_width="wrap_content"--><!--android:layout_height="wrap_content"--><!--android:layout_below="@id/copyright"--><!--android:paddingTop="8dp"--><!--android:text="Team"/>-->
+
+<!--<TextView--><!--android:id="@+id/authors"--><!--android:textAppearance="@style/SqueezerTextAppearance.Small"--><!--android:layout_width="wrap_content"--><!--android:layout_height="wrap_content"--><!--android:layout_below="@id/team"--><!--android:paddingLeft="8dp"--><!--android:text="Kurt Aaholst\nNik Clayton\nBrad Fitzpatrick"/>-->
+
+<!--<TextView--><!--android:id="@+id/support"--><!--android:textAppearance="@style/SqueezerTextAppearance.Medium"--><!--android:layout_width="wrap_content"--><!--android:layout_height="wrap_content"--><!--android:layout_below="@id/authors"--><!--android:paddingTop="16dp"--><!--android:text="Support"/>-->
+
+<!--<TextView--><!--android:textAppearance="@style/SqueezerTextAppearance.Small"--><!--android:layout_width="wrap_content"--><!--android:layout_height="wrap_content"--><!--android:layout_below="@id/support"--><!--android:autoLink="web"--><!--android:paddingBottom="8dp"--><!--android:paddingLeft="8dp"--><!--android:text="http://groups.google.com/group/android-squeezer\n\nhttps://nikclayton.github.io/android-squeezer/"/>--><!--</RelativeLayout>--><!--</ScrollView>-->
+
+
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinator_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!--app:layout_scrollFlags="scroll|enterAlways"-->
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_collapseMode="pin"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:id="@+id/search_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <uk.org.ngo.squeezer.widget.FloatLabelLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:floatLabelTextAppearance="@style/SqueezerTextAppearance.FloatLabel"
+            app:floatLabelTrigger="focus">
+
+            <EditText
+                android:id="@+id/search_input"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/search_text_hint"
+                android:inputType="textNoSuggestions" />
+        </uk.org.ngo.squeezer.widget.FloatLabelLayout>
+
+        <ImageButton
+            android:id="@+id/search_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_search" />
+    </LinearLayout>
+
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="?attr/actionBarSize">
+        <!---->
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+            <!---->
+            <ImageView
+                android:id="@+id/icon"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_launcher" />
+            <!---->
+            <TextView
+                android:id="@+id/about_title"
+                style="@style/SqueezerTextAppearance.Large"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/icon"
+                android:paddingLeft="8dp"
+                android:text="@string/app_name" />
+            <!---->
+            <TextView
+                android:id="@+id/version_text"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/about_title"
+                android:layout_toRightOf="@id/icon"
+                android:paddingLeft="8dp"
+                android:textAppearance="@style/SqueezerTextAppearance.Small" />
+            <!---->
+            <TextView
+                android:id="@+id/copyright"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/icon"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:text="@string/copyright_text"
+                android:textAppearance="@style/SqueezerTextAppearance.Small" />
+            <!---->
+            <TextView
+                android:id="@+id/team"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/copyright"
+                android:paddingTop="8dp"
+                android:text="Team"
+                android:textAppearance="@style/SqueezerTextAppearance.Medium" />
+            <!---->
+            <TextView
+                android:id="@+id/authors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/team"
+                android:paddingLeft="8dp"
+                android:text="Kurt Aaholst\nNik Clayton\nBrad Fitzpatrick"
+                android:textAppearance="@style/SqueezerTextAppearance.Small" />
+            <!---->
+            <TextView
+                android:id="@+id/support"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/authors"
+                android:paddingTop="16dp"
+                android:text="Support"
+                android:textAppearance="@style/SqueezerTextAppearance.Medium" />
+            <!---->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/support"
+                android:autoLink="web"
+                android:paddingBottom="8dp"
+                android:paddingLeft="8dp"
+                android:text="http://groups.google.com/group/android-squeezer\n\nhttps://nikclayton.github.io/android-squeezer/"
+                android:textAppearance="@style/SqueezerTextAppearance.Small" />
+        </RelativeLayout>
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/loading_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/controls_container"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:background="?attr/colorAccent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_behavior=".behavior.TransformingToolbarBehavior"
+        custom:cardElevation="8dp">
+
+        <fragment
+            android:id="@+id/now_playing_fragment"
+            android:name="uk.org.ngo.squeezer.NowPlayingFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            tools:layout="@layout/now_playing_fragment_mini" />
+    </android.support.v7.widget.CardView>
+
+</android.support.design.widget.CoordinatorLayout>

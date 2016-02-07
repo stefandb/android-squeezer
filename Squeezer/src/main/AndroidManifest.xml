@@ -119,6 +119,9 @@
         <activity
             android:name=".service.CancelDownloadsActivity"
             android:theme="@android:style/Theme.Dialog" />
+        <activity
+            android:name=".AboutActiviy"
+            android:label="@string/app_name" />
         <service
             android:name=".service.SqueezeService"
             android:exported="false"

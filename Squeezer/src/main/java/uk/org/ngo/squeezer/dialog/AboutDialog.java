@@ -20,7 +20,6 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
-import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -41,7 +40,7 @@ public class AboutDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         @SuppressLint({"InflateParams"}) // OK, as view is passed to AlertDialog.Builder.setView()
-        final View view = getActivity().getLayoutInflater().inflate(R.layout.about_dialog, null);
+        final View view = getActivity().getLayoutInflater().inflate(R.layout.about, null);
         final TextView titleText = (TextView) view.findViewById(R.id.about_title);
         final TextView versionText = (TextView) view.findViewById(R.id.version_text);
 
@@ -77,4 +76,6 @@ public class AboutDialog extends DialogFragment {
         });
         return builder.create();
     }
+
+
 }
