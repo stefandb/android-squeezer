@@ -91,7 +91,7 @@ public class SettingsActivity extends PreferenceActivity implements
         Toolbar bar = (Toolbar) LayoutInflater.from(this).inflate(R.layout.settings_toolbar, root, false);
         root.addView(bar, 0);// insert at top
 
-        bar.PaddingTop(0, 56, 0, 0);
+        bar.setPadding(0, 56, 0, 0);
 
 //        bar.setNavigationOnClickListener(new View.OnClickListener() {
 //            @Override
