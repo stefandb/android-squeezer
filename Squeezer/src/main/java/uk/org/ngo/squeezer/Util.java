@@ -211,7 +211,7 @@ public class Util {
 //                && TextView.class.isAssignableFrom(convertView.getClass())
 //                ? convertView
 //                : ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(layout, false));
-        convertView.getText1().setText(label + " AA");
+        convertView.getText1().setText(label);
         return convertView;
     }
 

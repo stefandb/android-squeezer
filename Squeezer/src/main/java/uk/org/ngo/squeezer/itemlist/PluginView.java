@@ -36,7 +36,7 @@ public abstract class PluginView extends BaseItemView<Plugin> {
 
     @Override
     public void bindView(RecyclerItemViewHolder viewHolder, Plugin item) {
-        viewHolder.getText1().setText(item.getName() + " II");
+        viewHolder.getText1().setText(item.getName());
         ImageFetcher.getInstance(getActivity()).loadImage(item.getIcon(), viewHolder.getIcon(), mIconWidth, mIconHeight);
     }
 }

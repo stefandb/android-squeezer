@@ -48,7 +48,7 @@ public class PluginItemView extends BaseItemView<PluginItem> {
 
     @Override
     public void bindView(RecyclerItemViewHolder viewHolder, PluginItem item) {
-        viewHolder.getText1().setText(item.getName() + " HH");
+        viewHolder.getText1().setText(item.getName());
         // Show/hide the context menu if this item is playable.
 //        viewHolder.btnContextMenu.setVisibility(item.isAudio() ? View.VISIBLE : View.GONE);
 

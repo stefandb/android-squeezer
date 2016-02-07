@@ -75,7 +75,7 @@ public class PlayerView extends BaseItemView<Player> {
         final PlayerListActivity activity = (PlayerListActivity) getActivity();
         PlayerState playerState = activity.getPlayerState(item.getId());
 
-        viewHolder.getText1().setText(item.getName()  + " GG");
+        viewHolder.getText1().setText(item.getName());
         viewHolder.getIcon().setImageResource(getModelIcon(item.getModel()));
 
         if (viewHolder.getVolumeBar() == null) {

@@ -52,7 +52,7 @@ public abstract class AlbumArtView<T extends ArtworkItem> extends
     @Override
     public void bindView(RecyclerItemViewHolder viewHolder, String text) {
         viewHolder.getIcon().setImageResource(R.drawable.icon_pending_artwork);
-        viewHolder.getText1().setText(text + " DD");
+        viewHolder.getText1().setText(text);
         viewHolder.getText2().setText("");
     }
 }

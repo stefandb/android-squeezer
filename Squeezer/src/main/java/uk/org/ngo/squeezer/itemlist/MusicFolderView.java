@@ -53,7 +53,7 @@ public class MusicFolderView extends PlaylistItemView<MusicFolderItem> {
 
     @Override
     public void bindView(RecyclerItemViewHolder viewHolder, MusicFolderItem item) {
-        viewHolder.getText1().setText(item.getName()  + " FF");
+        viewHolder.getText1().setText(item.getName());
 
         String type = item.getType();
         int icon_resource = R.drawable.ic_unknown;

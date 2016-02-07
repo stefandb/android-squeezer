@@ -101,7 +101,7 @@ public class SongView extends PlaylistItemView<Song> {
 
     @Override
     public void bindView(RecyclerItemViewHolder viewHolder, Song item) {
-        viewHolder.getText1().setText(item.getName() + " JJ");
+        viewHolder.getText1().setText(item.getName());
 
         viewHolder.getText2().setText(mJoiner.join(
                 (mDetails & DETAILS_TRACK_NO) > 0 ? item.getTrackNum() : null,

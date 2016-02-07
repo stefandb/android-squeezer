@@ -77,7 +77,7 @@ public class AlbumView extends AlbumArtView<Album> {
 
     @Override
     public void bindView(RecyclerItemViewHolder viewHolder, Album item) {
-        viewHolder.getText1().setText(item.getName()  + " EE");
+        viewHolder.getText1().setText(item.getName());
 
         String text2 = "";
         if (item.getId() != null) {
