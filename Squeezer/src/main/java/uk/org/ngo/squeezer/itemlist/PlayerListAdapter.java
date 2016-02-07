@@ -78,7 +78,7 @@ public class PlayerListAdapter<Child extends Item, K extends BaseItemView> exten
     @Override
     public ParentHolder onCreateParentViewHolder(ViewGroup viewGroup) {
         //TODO-stefan R.layout dynamisch maken
-        View view = mInflater.inflate(R.layout.expandable_parent, viewGroup, false);
+        View view = mInflater.inflate(R.layout.group_player, viewGroup, false);
         return new ParentHolder(view);
     }
 
@@ -89,6 +89,13 @@ public class PlayerListAdapter<Child extends Item, K extends BaseItemView> exten
 
         RecyclerItemViewHolder viewHolderInstance = new RecyclerItemViewHolder(view, this);
         return viewHolderInstance;
+    }
+
+    @Override
+    public void onBindParentViewHolder(ParentHolder parentHolder, int i, Object o) {
+        ExpandableParentListItem crime = (ExpandableParentListItem) o;
+        parentHolder.mTitle.setText(crime.getTitle());
+        parentHolder.mSubTitle.setText(crime.getsubTitle());
     }
 
     @Override

@@ -73,9 +73,9 @@ public class PlayerListActivity extends ItemListActivity implements
      * expanded.
      */
     private boolean updateAndExpandPlayerList() {
-        if (mResultsExpandableListView.getAdapter() == null) {
-            return false;
-        }
+//        if (mResultsExpandableListView.getAdapter() == null) {
+//            return false;
+//        }
 
         updateSyncGroups(getService().getPlayers(), getService().getActivePlayer());
 
@@ -120,18 +120,23 @@ public class PlayerListActivity extends ItemListActivity implements
         Collections.sort(masters);
 
         for (String masterId : masters) {
-            ExpandableParentListItem playerGroup = new ExpandableParentListItem();
-            playerGroup.setTitle(String.format("Groep naam %s", masterId));
-            playerGroup.setsubTitle(String.format("Sub Groep naam %s", masterId));
-
             List<Player> slaves = new ArrayList<Player>(mPlayerSyncGroups.get(masterId));
             Collections.sort(slaves, Player.compareById);
 
-            ArrayList<Object> childList = new ArrayList<>();
+            ExpandableParentListItem playerGroup = new ExpandableParentListItem();
 
+            String GroupTitle = "";
+            String Song = "";
+            ArrayList<Object> childList = new ArrayList<>();
             for(Player childItem: slaves) {
                 childList.add(childItem);
+                GroupTitle += childItem.getName() + ", ";
+                Song = childItem.getPlayerState().getCurrentSong().getArtist() + " - " + childItem.getPlayerState().getCurrentSongName() + " - " + childItem.getPlayerState().getCurrentSong().getAlbumName() ;
             }
+
+            playerGroup.setTitle(String.format("Groep: %s", GroupTitle.replaceAll(", $", "")));
+            playerGroup.setsubTitle(Song);
+
             playerGroup.setChildObjectList(childList);
             crimeLab.setCrime(playerGroup);
         }
