@@ -581,8 +581,10 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
                             } else if (drawerItem.getIdentifier() == 5) {
                                 intent = new Intent(BaseActivity.this, YearListActivity.class);
                             } else if (drawerItem.getIdentifier() == 6) {
-                                intent = new Intent(BaseActivity.this, AlbumListActivity.class);
-                                intent.putExtra(AlbumViewDialog.AlbumsSortOrder.class.getName(), AlbumViewDialog.AlbumsSortOrder.__new.name());
+//                                intent = new Intent(BaseActivity.this, AlbumListActivity.class);
+//                                intent.putExtra(AlbumViewDialog.AlbumsSortOrder.class.getName(), AlbumViewDialog.AlbumsSortOrder.__new.name());
+
+                                AlbumListActivity.show(BaseActivity.this,AlbumViewDialog.AlbumsSortOrder.__new);
                             } else if (drawerItem.getIdentifier() == 7) {
                                 intent = new Intent(BaseActivity.this, RandomplayActivity.class);
                             } else if (drawerItem.getIdentifier() == 8) {

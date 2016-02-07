@@ -177,8 +177,11 @@ public class AlbumListActivity extends BaseListActivity<Album>
 //            header.setVisibility(View.VISIBLE);
         }
         if(sortOrder != null){
-            if(sortOrder.toString() == "sortOrder"){
+            if(sortOrder.toString() == "__new"){
                 getSupportActionBar().setTitle( R.string.home_item_new_music);
+                if (savedInstanceState == null) {
+                    navigationDrawer.setSelection(6, false);
+                }
             }
         }
         ((AlbumView) getItemView()).setDetails(details);
