@@ -69,6 +69,7 @@ public class DisconnectedActivity extends BaseActivity {
         }
 
         setContentView(R.layout.disconnected);
+        findViewById(R.id.controls_container).setVisibility(View.GONE);
         serverAddressView = (ServerAddressView) findViewById(R.id.server_address_view);
         mHeaderMessage = (TextView) findViewById(R.id.header_message);
         setHeaderMessageFromReason(mDisconnectionReason);
