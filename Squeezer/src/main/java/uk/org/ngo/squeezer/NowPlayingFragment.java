@@ -878,9 +878,12 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
 //            menu_item_players.setVisible(haveConnectedPlayers);
             menu_item_playlist.setVisible(haveConnectedPlayers);
 //            menu_item_alarm.setVisible(haveConnectedPlayers);
-            if (connected)
+//            if (connected)
 //                menu_item_alarm.setTitle(ServerString.ALARM.getLocalizedString());
             menu_item_search.setEnabled(connected);
+            menu_item_search.setVisible(haveConnectedPlayers);
+            menu_item_connect.setVisible(haveConnectedPlayers);
+//            }
         }
 
         // Don't show the item to go to CurrentPlaylistActivity if in CurrentPlaylistActivity.
