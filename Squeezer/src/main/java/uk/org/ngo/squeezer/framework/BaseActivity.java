@@ -54,6 +54,8 @@ import android.widget.Toast;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.context.IconicsContextWrapper;
+import com.mikepenz.iconics.context.IconicsLayoutInflater;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -189,8 +191,12 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
     };
 
     @Override
-    protected void onCreate(android.os.Bundle savedInstanceState) {
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(IconicsContextWrapper.wrap(newBase));
+    }
 
+    @Override
+    protected void onCreate(android.os.Bundle savedInstanceState) {
         _savedInstanceState = savedInstanceState;
         super.onCreate(savedInstanceState);
 

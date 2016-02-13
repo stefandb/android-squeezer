@@ -24,6 +24,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Color;
+import android.graphics.drawable.StateListDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
@@ -36,6 +38,9 @@ import android.support.annotation.UiThread;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -54,6 +59,11 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.mikepenz.fontawesome_typeface_library.FontAwesome;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.Iconics;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -147,6 +157,9 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
 
     // Updating the seekbar
     private boolean updateSeekBar = true;
+
+    private int fontColorCode;
+
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -251,7 +264,9 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
             mFullHeightLayout = true;
         }
 
+        fontColorCode = Color.parseColor("#aa000000");
         if (mFullHeightLayout) {
+            fontColorCode = Color.parseColor("#aaffffff");
             v = inflater.inflate(R.layout.now_playing_fragment_full, container, false);
 
             artistText = (TextView) v.findViewById(R.id.artistname);
@@ -408,10 +423,18 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
 
     @UiThread
     private void updatePlayPauseIcon(@PlayerState.PlayState String playStatus) {
-        playPauseButton
-                .setImageResource((PlayerState.PLAY_STATE_PLAY.equals(playStatus)) ?
-                        mActivity.getAttributeValue(R.attr.ic_action_av_pause)
-                        : mActivity.getAttributeValue(R.attr.ic_action_av_play));
+        if(PlayerState.PLAY_STATE_PLAY.equals(playStatus)){
+            StateListDrawable iconStateListDrawable = new StateListDrawable();
+            iconStateListDrawable.addState(new int[]{android.R.attr.state_pressed}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_play_arrow).sizeDp(30).color(Color.parseColor("#aaCC4C1A")).contourWidthDp(1));
+            iconStateListDrawable.addState(new int[]{}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_play_arrow).sizeDp(30).color(fontColorCode).contourWidthDp(2));
+            playPauseButton.setImageDrawable(iconStateListDrawable);
+        }else{
+            StateListDrawable iconStateListDrawable = new StateListDrawable();
+            iconStateListDrawable.addState(new int[]{android.R.attr.state_pressed}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_pause).sizeDp(30).color(Color.parseColor("#aaCC4C1A")).contourWidthDp(1));
+            iconStateListDrawable.addState(new int[]{}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_pause).sizeDp(30).color(fontColorCode).contourWidthDp(2));
+            playPauseButton.setImageDrawable(iconStateListDrawable);
+        }
+
     }
 
     @UiThread
@@ -1035,6 +1058,11 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
         playPauseButton.setImageResource(
                 mActivity.getAttributeValue(R.attr.ic_action_av_connect));
 
+        StateListDrawable iconStateListDrawable = new StateListDrawable();
+        iconStateListDrawable.addState(new int[]{android.R.attr.state_pressed}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_play_arrow).sizeDp(30).color(Color.parseColor("#aaCC4C1A")).contourWidthDp(1));
+        iconStateListDrawable.addState(new int[]{}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_play_arrow).sizeDp(30).color(fontColorCode).contourWidthDp(2));
+        playPauseButton.setImageDrawable(iconStateListDrawable);
+
         if (mFullHeightLayout) {
             nextButton.setEnabled(false);
             prevButton.setEnabled(false);
@@ -1079,8 +1107,15 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
             shuffleButton.setEnabled(true);
             repeatButton.setEnabled(true);
 
-            nextButton.setImageResource(mActivity.getAttributeValue(R.attr.ic_action_av_next));
-            prevButton.setImageResource(mActivity.getAttributeValue(R.attr.ic_action_av_previous));
+            StateListDrawable iconStateListDrawableNext = new StateListDrawable();
+            iconStateListDrawableNext.addState(new int[]{android.R.attr.state_pressed}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_skip_next).sizeDp(30).color(Color.parseColor("#aaCC4C1A")).contourWidthDp(1));
+            iconStateListDrawableNext.addState(new int[]{}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_skip_next).sizeDp(30).color(fontColorCode).contourWidthDp(2));
+            nextButton.setImageDrawable(iconStateListDrawableNext);
+
+            StateListDrawable iconStateListDrawablePrevious = new StateListDrawable();
+            iconStateListDrawablePrevious.addState(new int[]{android.R.attr.state_pressed}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_skip_previous).sizeDp(30).color(Color.parseColor("#aaCC4C1A")).contourWidthDp(1));
+            iconStateListDrawablePrevious.addState(new int[]{}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_skip_previous).sizeDp(30).color(fontColorCode).contourWidthDp(2));
+            nextButton.setImageDrawable(iconStateListDrawablePrevious);
             seekBar.setEnabled(true);
         } else {
             mProgressBar.setEnabled(true);
