@@ -1,119 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--
- Copyright (c) 2011 Kurt Aaholst <kaaholst@gmail.com>
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
--->
-
-<!--<LinearLayout-->
-    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
-    <!--xmlns:tools="http://schemas.android.com/tools"-->
-    <!--xmlns:custom="http://schemas.android.com/apk/res-auto"-->
-    <!--android:layout_width="fill_parent"-->
-    <!--android:layout_height="fill_parent"-->
-    <!--android:orientation="vertical">-->
-
-    <!--<android.support.v7.widget.Toolbar-->
-        <!--android:id="@+id/toolbar"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="?attr/actionBarSize"-->
-        <!--android:background="?attr/colorPrimary"-->
-        <!--android:elevation="4dp" />-->
-
-    <!--<TextView-->
-        <!--android:id="@+id/header"-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:focusable="true"-->
-        <!--android:focusableInTouchMode="true"-->
-        <!--android:marqueeRepeatLimit="marquee_forever"-->
-        <!--android:minHeight="48dp"-->
-        <!--android:paddingBottom="4dp"-->
-        <!--android:paddingLeft="16dp"-->
-        <!--android:paddingRight="16dp"-->
-        <!--android:paddingTop="4dp"-->
-        <!--android:textAppearance="@style/SqueezerTextAppearance.Medium"-->
-        <!--android:visibility="gone"/>-->
-
-    <!--<LinearLayout-->
-        <!--android:id="@+id/search_view"-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:visibility="gone"-->
-        <!--android:orientation="horizontal">-->
-
-        <!--<uk.org.ngo.squeezer.widget.FloatLabelLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginTop="16dp"-->
-            <!--app:floatLabelTextAppearance="@style/SqueezerTextAppearance.FloatLabel"-->
-            <!--app:floatLabelTrigger="focus">-->
-
-            <!--<EditText-->
-                <!--android:id="@+id/search_input"-->
-                <!--android:hint="@string/search_text_hint"-->
-                <!--android:inputType="textNoSuggestions"-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_weight="1"/>-->
-        <!--</uk.org.ngo.squeezer.widget.FloatLabelLayout>-->
-
-        <!--<ImageButton-->
-            <!--android:id="@+id/search_button"-->
-            <!--android:src="@drawable/icon_search"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"/>-->
-    <!--</LinearLayout>-->
-
-    <!--<ListView android:id="@+id/item_list"-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="0dip"-->
-        <!--android:fastScrollEnabled="true"-->
-        <!--android:layout_weight="1"-->
-        <!--android:paddingTop="8dp" />-->
-
-    <!--<ProgressBar-->
-        <!--android:id="@+id/loading_progress"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="fill_parent"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:visibility="gone"/>-->
-
-    <!--<android.support.v7.widget.CardView-->
-        <!--android:id="@+id/controls_container"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--custom:cardElevation="8dp">-->
-
-        <!--<fragment-->
-            <!--android:name="uk.org.ngo.squeezer.NowPlayingFragment"-->
-            <!--android:id="@+id/now_playing_fragment"-->
-            <!--tools:layout="@layout/now_playing_fragment_mini"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentBottom="true"/>-->
-    <!--</android.support.v7.widget.CardView>-->
-<!--</LinearLayout>-->
-
-
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -138,8 +28,8 @@
         android:id="@+id/search_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <uk.org.ngo.squeezer.widget.FloatLabelLayout
             android:layout_width="match_parent"
@@ -150,38 +40,27 @@
 
             <EditText
                 android:id="@+id/search_input"
-                android:hint="@string/search_text_hint"
-                android:inputType="textNoSuggestions"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:hint="@string/search_text_hint"
+                android:inputType="textNoSuggestions" />
         </uk.org.ngo.squeezer.widget.FloatLabelLayout>
 
         <ImageButton
             android:id="@+id/search_button"
-            android:src="@drawable/icon_search"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_search" />
     </LinearLayout>
 
 
     <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/item_list"
-        android:paddingTop="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-         />
-
-    <!--<android.support.design.widget.FloatingActionButton-->
-        <!--android:id="@+id/fab"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="bottom|right"-->
-        <!--android:layout_margin="16dp"-->
-        <!--android:clickable="true"-->
-        <!--android:src="@drawable/ic_share_white_24dp"-->
-        <!--android:visibility="invisible" />-->
+        android:paddingTop="?attr/actionBarSize" />
 
     <ProgressBar
         android:id="@+id/loading_progress"
@@ -190,26 +69,26 @@
         android:layout_gravity="center"
         android:visibility="gone" />
 
-    <!--app:layout_behavior=".behavior.TransformingToolbarBehavior"-->
     <android.support.v7.widget.CardView
-        custom:cardElevation="8dp"
-        android:layout_alignParentBottom="true"
         android:id="@+id/controls_container"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
         android:background="?attr/colorAccent"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        app:layout_behavior=".behavior.TransformingToolbarBehavior">
+        app:layout_behavior=".behavior.TransformingToolbarBehavior"
+        custom:cardElevation="8dp">
 
         <fragment
             android:id="@+id/now_playing_fragment"
             android:name="uk.org.ngo.squeezer.NowPlayingFragment"
-            tools:layout="@layout/now_playing_fragment_mini"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true" />
+            android:layout_alignParentBottom="true"
+            tools:layout="@layout/now_playing_fragment_mini" />
     </android.support.v7.widget.CardView>
+
 
 </android.support.design.widget.CoordinatorLayout>

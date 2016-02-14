@@ -423,15 +423,15 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
 
     @UiThread
     private void updatePlayPauseIcon(@PlayerState.PlayState String playStatus) {
-        if(PlayerState.PLAY_STATE_PLAY.equals(playStatus)){
+        if(!PlayerState.PLAY_STATE_PLAY.equals(playStatus)){
             StateListDrawable iconStateListDrawable = new StateListDrawable();
-            iconStateListDrawable.addState(new int[]{android.R.attr.state_pressed}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_play_arrow).sizeDp(30).color(Color.parseColor("#aaCC4C1A")).contourWidthDp(1));
-            iconStateListDrawable.addState(new int[]{}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_play_arrow).sizeDp(30).color(fontColorCode).contourWidthDp(2));
+            iconStateListDrawable.addState(new int[]{android.R.attr.state_pressed}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_play_arrow).sizeDp(30).color(Color.parseColor("#aaCC4C1A")));
+            iconStateListDrawable.addState(new int[]{}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_play_arrow).sizeDp(30).color(fontColorCode));
             playPauseButton.setImageDrawable(iconStateListDrawable);
         }else{
             StateListDrawable iconStateListDrawable = new StateListDrawable();
-            iconStateListDrawable.addState(new int[]{android.R.attr.state_pressed}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_pause).sizeDp(30).color(Color.parseColor("#aaCC4C1A")).contourWidthDp(1));
-            iconStateListDrawable.addState(new int[]{}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_pause).sizeDp(30).color(fontColorCode).contourWidthDp(2));
+            iconStateListDrawable.addState(new int[]{android.R.attr.state_pressed}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_pause).sizeDp(30).color(Color.parseColor("#aaCC4C1A")));
+            iconStateListDrawable.addState(new int[]{}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_pause).sizeDp(30).color(fontColorCode));
             playPauseButton.setImageDrawable(iconStateListDrawable);
         }
 
