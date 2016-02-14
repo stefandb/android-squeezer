@@ -116,7 +116,7 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
             mrecyclerView.addItemDecoration(new ItemOffsetDecoration(this, R.dimen.item_offset));
         }else{
             mrecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            mrecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getResources()));
+//            mrecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getResources()));
         }
 
         loadingProgress = checkNotNull((ProgressBar) findViewById(R.id.loading_progress),
