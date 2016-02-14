@@ -17,6 +17,7 @@
 package uk.org.ngo.squeezer.model;
 
 
+import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -26,6 +27,8 @@ import android.util.SparseArray;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.materialdrawer.icons.MaterialDrawerFont;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -386,23 +389,38 @@ public class PlayerState implements Parcelable {
     public static final String PLAY_STATE_STOP = "stop";
 
     public enum ShuffleStatus implements EnumWithId {
-        SHUFFLE_OFF(0, R.attr.ic_action_av_shuffle_off, ServerString.SHUFFLE_OFF),
-        SHUFFLE_SONG(1, R.attr.ic_action_av_shuffle_song, ServerString.SHUFFLE_ON_SONGS),
-        SHUFFLE_ALBUM(2, R.attr.ic_action_av_shuffle_album, ServerString.SHUFFLE_ON_ALBUMS);
+//        SHUFFLE_OFF(0, R.attr.ic_action_av_shuffle_off, ServerString.SHUFFLE_OFF),
+//        SHUFFLE_SONG(1, R.attr.ic_action_av_shuffle_song, ServerString.SHUFFLE_ON_SONGS),
+//        SHUFFLE_ALBUM(2, R.attr.ic_action_av_shuffle_album, ServerString.SHUFFLE_ON_ALBUMS);
+        SHUFFLE_OFF(0, GoogleMaterial.Icon.gmd_shuffle, Color.parseColor("#aaffffff") ,ServerString.SHUFFLE_OFF),
+        SHUFFLE_SONG(1, GoogleMaterial.Icon.gmd_shuffle, Color.parseColor("#aaCC4C1A") ,ServerString.SHUFFLE_ON_SONGS),
+        SHUFFLE_ALBUM(2, GoogleMaterial.Icon.gmd_shuffle, Color.parseColor("#aa000000") ,ServerString.SHUFFLE_ON_ALBUMS);
 
         private final int id;
 
-        private final int icon;
+        private int icon;
+        private GoogleMaterial.Icon fonticon;
+
+        private int color;
 
         private final ServerString text;
 
+
         private static final EnumIdLookup<ShuffleStatus> lookup = new EnumIdLookup<ShuffleStatus>(
                 ShuffleStatus.class);
+
 
         ShuffleStatus(int id, int icon, ServerString text) {
             this.id = id;
             this.icon = icon;
             this.text = text;
+        }
+
+        ShuffleStatus(int id, GoogleMaterial.Icon icon, int c, ServerString text) {
+            this.id = id;
+            this.fonticon = icon;
+            this.text = text;
+            color = c;
         }
 
         @Override
@@ -418,20 +436,30 @@ public class PlayerState implements Parcelable {
             return text;
         }
 
+        public int getColor(){
+            return color;
+        }
+
+        public GoogleMaterial.Icon getFontIcon(){
+            return fonticon;
+        }
+
         public static ShuffleStatus valueOf(int id) {
             return lookup.get(id);
         }
     }
 
     public enum RepeatStatus implements EnumWithId {
-        REPEAT_OFF(0, R.attr.ic_action_av_repeat_off, ServerString.REPEAT_OFF),
-        REPEAT_ONE(1, R.attr.ic_action_av_repeat_one, ServerString.REPEAT_ONE),
-        REPEAT_ALL(2, R.attr.ic_action_av_repeat_all, ServerString.REPEAT_ALL);
+        REPEAT_OFF(0, GoogleMaterial.Icon.gmd_repeat, Color.parseColor("#aaffffff") ,ServerString.REPEAT_OFF),
+        REPEAT_ONE(1, GoogleMaterial.Icon.gmd_repeat_one, Color.parseColor("#aaCC4C1A") ,ServerString.REPEAT_ONE),
+        REPEAT_ALL(2, GoogleMaterial.Icon.gmd_repeat, Color.parseColor("#aaCC4C1A") ,ServerString.REPEAT_ALL);
 
         private final int id;
 
-        private final int icon;
+        private int icon;
+        private GoogleMaterial.Icon fonticon;
 
+        private int color;
         private final ServerString text;
 
         private static final EnumIdLookup<RepeatStatus> lookup = new EnumIdLookup<RepeatStatus>(
@@ -443,6 +471,13 @@ public class PlayerState implements Parcelable {
             this.text = text;
         }
 
+        RepeatStatus(int id, GoogleMaterial.Icon icon, int c, ServerString text) {
+            this.id = id;
+            this.fonticon = icon;
+            this.text = text;
+            color = c;
+        }
+
         @Override
         public int getId() {
             return id;
@@ -455,6 +490,15 @@ public class PlayerState implements Parcelable {
         public ServerString getText() {
             return text;
         }
+
+        public int getColor(){
+            return color;
+        }
+
+        public GoogleMaterial.Icon getFontIcon(){
+            return fonticon;
+        }
+
 
         public static RepeatStatus valueOf(int id) {
             return lookup.get(id);

@@ -297,12 +297,12 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
         albumArt = (ImageView) v.findViewById(R.id.album);
         if (mFullHeightLayout) {
             albumArt.setOnCreateContextMenuListener(this);
-            albumArt.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    v.showContextMenu();
-                }
-            });
+//            albumArt.setOnClickListener(new OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    v.showContextMenu();
+//                }
+//            });
         }
         trackText = (TextView) v.findViewById(R.id.trackname);
         albumText = (TextView) v.findViewById(R.id.albumname);
@@ -439,17 +439,34 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
 
     @UiThread
     private void updateShuffleStatus(ShuffleStatus shuffleStatus) {
+        Log.d("shuffle-icon", String.valueOf(shuffleStatus.getFontIcon()));
+        Log.d("shuffle-color", String.valueOf(shuffleStatus.getColor()));
+        Log.d("shuffle-text", String.valueOf(shuffleStatus.getText()));
+        Log.d("shuffle-id", String.valueOf(shuffleStatus.getId()));
         if (mFullHeightLayout && shuffleStatus != null) {
-            shuffleButton.setImageResource(
-                    mActivity.getAttributeValue(shuffleStatus.getIcon()));
+
+            StateListDrawable iconStateListDrawable = new StateListDrawable();
+            iconStateListDrawable.addState(new int[]{android.R.attr.state_pressed}, new IconicsDrawable(mActivity, shuffleStatus.getFontIcon()).sizeDp(30).color(shuffleStatus.getColor()).contourWidthDp(1));
+            iconStateListDrawable.addState(new int[]{}, new IconicsDrawable(mActivity, shuffleStatus.getFontIcon()).sizeDp(30).color(shuffleStatus.getColor()).contourWidthDp(2));
+            shuffleButton.setImageDrawable(iconStateListDrawable);
         }
     }
 
     @UiThread
     private void updateRepeatStatus(RepeatStatus repeatStatus) {
+        Log.d("repeat-icon", String.valueOf(repeatStatus.getIcon()));
+        Log.d("repeat-text", String.valueOf(repeatStatus.getText()));
+        Log.d("repeat-id", String.valueOf(repeatStatus.getId()));
+
         if (mFullHeightLayout && repeatStatus != null) {
             repeatButton.setImageResource(
                     mActivity.getAttributeValue(repeatStatus.getIcon()));
+
+            StateListDrawable iconStateListDrawable = new StateListDrawable();
+            iconStateListDrawable.addState(new int[]{android.R.attr.state_pressed}, new IconicsDrawable(mActivity, repeatStatus.getFontIcon()).sizeDp(30).color(repeatStatus.getColor()).contourWidthDp(1));
+            iconStateListDrawable.addState(new int[]{}, new IconicsDrawable(mActivity, repeatStatus.getFontIcon()).sizeDp(30).color(repeatStatus.getColor()).contourWidthDp(2));
+            repeatButton.setImageDrawable(iconStateListDrawable);
+
         }
     }
 
@@ -1107,15 +1124,16 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
             shuffleButton.setEnabled(true);
             repeatButton.setEnabled(true);
 
+            StateListDrawable iconStateListDrawablePrevious = new StateListDrawable();
+            iconStateListDrawablePrevious.addState(new int[]{android.R.attr.state_pressed}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_skip_previous).sizeDp(30).color(Color.parseColor("#aaCC4C1A")).contourWidthDp(1));
+            iconStateListDrawablePrevious.addState(new int[]{}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_skip_previous).sizeDp(30).color(fontColorCode).contourWidthDp(2));
+            prevButton.setImageDrawable(iconStateListDrawablePrevious);
+
             StateListDrawable iconStateListDrawableNext = new StateListDrawable();
             iconStateListDrawableNext.addState(new int[]{android.R.attr.state_pressed}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_skip_next).sizeDp(30).color(Color.parseColor("#aaCC4C1A")).contourWidthDp(1));
             iconStateListDrawableNext.addState(new int[]{}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_skip_next).sizeDp(30).color(fontColorCode).contourWidthDp(2));
             nextButton.setImageDrawable(iconStateListDrawableNext);
 
-            StateListDrawable iconStateListDrawablePrevious = new StateListDrawable();
-            iconStateListDrawablePrevious.addState(new int[]{android.R.attr.state_pressed}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_skip_previous).sizeDp(30).color(Color.parseColor("#aaCC4C1A")).contourWidthDp(1));
-            iconStateListDrawablePrevious.addState(new int[]{}, new IconicsDrawable(mActivity, GoogleMaterial.Icon.gmd_skip_previous).sizeDp(30).color(fontColorCode).contourWidthDp(2));
-            nextButton.setImageDrawable(iconStateListDrawablePrevious);
             seekBar.setEnabled(true);
         } else {
             mProgressBar.setEnabled(true);

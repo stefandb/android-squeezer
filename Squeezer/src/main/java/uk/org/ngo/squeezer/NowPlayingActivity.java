@@ -36,7 +36,7 @@ public class NowPlayingActivity extends BaseActivity {
 
 
         NavigationDrawer(savedInstanceState);
-        getSupportActionBar().setTitle(R.string.menu_item_search_label);
+        getSupportActionBar().setTitle(R.string.now_playing);
 
         navigationDrawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
