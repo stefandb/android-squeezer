@@ -19,6 +19,7 @@ package uk.org.ngo.squeezer.framework;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
@@ -111,7 +112,11 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
         mrecyclerView.setLongClickable(true);
 
         if(isGrid()){
-            mrecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+            int rowItems = 2;
+            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+                rowItems = 3;
+            }
+            mrecyclerView.setLayoutManager(new GridLayoutManager(this, rowItems));
 //            mrecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getResources()));
             mrecyclerView.addItemDecoration(new ItemOffsetDecoration(this, R.dimen.item_offset));
         }else{

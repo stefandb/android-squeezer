@@ -49,5 +49,5 @@
 
     <dimen name="expanded_toolbar_title_margin_start">64dp</dimen>
 
-    <dimen name="item_offset">5dp</dimen>
+    <dimen name="item_offset">0dp</dimen>
 </resources>
