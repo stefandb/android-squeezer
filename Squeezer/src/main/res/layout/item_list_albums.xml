@@ -75,6 +75,7 @@
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
+    android:descendantFocusability="blocksDescendants"
     android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
