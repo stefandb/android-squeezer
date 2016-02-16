@@ -20,6 +20,7 @@ package uk.org.ngo.squeezer.framework;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.res.Configuration;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
@@ -43,6 +44,8 @@ import java.util.Map;
 
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.behavior.TransformingToolbarBehavior;
+import uk.org.ngo.squeezer.framework.TouchHelpers.OnStartDragListener;
+import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.itemlist.IServiceItemListCallback;
 import uk.org.ngo.squeezer.model.Album;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
@@ -65,7 +68,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @author Kurt Aaholst
  */
-public abstract class BaseListActivity<T extends Item> extends ItemListActivity implements IServiceItemListCallback<T> {
+public abstract class BaseListActivity<T extends Item> extends ItemListActivity implements IServiceItemListCallback<T>, OnStartDragListener {
 
     private static final String TAG = BaseListActivity.class.getName();
 
@@ -96,6 +99,7 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
      * Fragment to retain information across the activity lifecycle.
      */
     private RetainFragment mRetainFragment;
+    private ItemTouchHelper touchHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -133,13 +137,14 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
 //        ith.attachToRecyclerView(mrecyclerView);
 
         mrecyclerView.addOnItemTouchListener(
-            new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
-                @Override
-                public void onItemClick(View view, int position) {
-                    getItemAdapter().onItemSelected(position);
-                }
-            })
+                new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        getItemAdapter().onItemSelected(position);
+                    }
+                })
         );
+
 
 //        mListView.setRecyclerListener(new RecyclerListener() {
 //            @Override
@@ -193,28 +198,10 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
 //        });
     }
 
-    ItemTouchHelper.Callback _ithCallback = new ItemTouchHelper.Callback() {
-        //and in your imlpementaion of
-        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-            // get the viewHolder's and target's positions in your adapter data, swap them
-            Collections.swap(getItemAdapter().getItems(), viewHolder.getAdapterPosition(), target.getAdapterPosition());
-            // and notify the adapter that its dataset has changed
-            getItemAdapter().notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
-            return true;
-        }
-
-        @Override
-        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-            //TODO-stefan check
-        }
-
-        //defines the enabled move directions in each state (idle, swiping, dragging).
-        @Override
-        public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-            return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG,
-                    ItemTouchHelper.DOWN | ItemTouchHelper.UP | ItemTouchHelper.START | ItemTouchHelper.END);
-        }
-    };
+    @Override
+    public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
+        touchHelper.startDrag(viewHolder);
+    }
 
     public void onEventMainThread(HandshakeComplete event) {
         maybeOrderVisiblePages(mrecyclerView);
@@ -330,6 +317,11 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
                 itemAdapter.onCountUpdated();
             }
         }
+
+        ItemTouchHelper.Callback callback = new SwipeItemTouchHelper(itemAdapter);
+        touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(mrecyclerView);
+
 
         return itemAdapter;
     }

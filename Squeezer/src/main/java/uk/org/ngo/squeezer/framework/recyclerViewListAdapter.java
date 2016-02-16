@@ -7,6 +7,7 @@ import android.util.SparseArray;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -18,6 +19,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.framework.TouchHelpers.OnStartDragListener;
 import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.model.Alarm;
 import uk.org.ngo.squeezer.util.CompoundButtonWrapper;
@@ -26,12 +28,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import android.support.v4.view.MotionEventCompat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by Stefan on 7-11-2015.
  */
-public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapter<RecyclerItemViewHolder> {
+public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapter<RecyclerItemViewHolder> implements ItemTouchHelperAdapter  {
 
+    private Context mContext;
     /**
      * View logic for this adapter
      */
@@ -78,12 +86,15 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
         this.position = position;
     }
 
+    private OnStartDragListener mDragStartListener;
+
     public interface OnItemClickListener {
         void onItemClicked(Item simpleItem);
     }
 
     public recyclerViewListAdapter(ItemView<T> itemView) {
         mItemView = itemView;
+
         mEmptyItem = true;
         loadingText = itemView.getActivity().getString(R.string.loading_text);
         pageSize = itemView.getActivity().getResources().getInteger(R.integer.PageSize);
@@ -92,6 +103,9 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
 
     public recyclerViewListAdapter(Context context, ItemView<T> itemView) {
         mItemView = itemView;
+        mContext = context;
+        mDragStartListener = (OnStartDragListener) context;
+
         mEmptyItem = true;
         loadingText = itemView.getActivity().getString(R.string.loading_text);
         pageSize = itemView.getActivity().getResources().getInteger(R.integer.PageSize);
@@ -121,17 +135,21 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
 
     @Override
     public void onBindViewHolder(final RecyclerItemViewHolder viewHolder, int position) {
-
         viewHolder.setPosition(position);
 
-        Log.d("item-debug", "position " + String.valueOf(position));
-        Log.d("item-debug", "mItems " + mItems.get(position).toString());
-
         T item = mItems.get(position);
-        Log.d("item-debug", "item " + String.valueOf(item));
-//        if (mItems.) {
-            mItemView.getAdapterView(viewHolder, position, item);
-//        }
+        mItemView.getAdapterView(viewHolder, position, item);
+
+        viewHolder.getHandleView().setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (MotionEventCompat.getActionMasked(event) ==
+                        MotionEvent.ACTION_DOWN) {
+                    mDragStartListener.onStartDrag(viewHolder);
+                }
+                return false;
+            }
+        });
 
         viewHolder.getItemView().setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -335,4 +353,16 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
         return mItems;
     }
 
+
+    @Override
+    public void onItemDismiss(int position) {
+        mItems.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    @Override
+    public void onItemMove(int fromPosition, int toPosition) {
+        Collections.swap(mItems, fromPosition, toPosition);
+        notifyItemMoved(fromPosition, toPosition);
+    }
 }

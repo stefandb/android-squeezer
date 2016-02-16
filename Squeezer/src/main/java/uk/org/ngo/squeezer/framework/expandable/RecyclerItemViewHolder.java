@@ -74,6 +74,7 @@ public class RecyclerItemViewHolder<T extends Item, K extends BaseItemView> exte
     private T mSingleItem;
     private recyclerViewListAdapter<T> adapter;
 
+    private ImageView handleView;
 
     public RecyclerItemViewHolder(View v) {
         super(v);
@@ -82,6 +83,7 @@ public class RecyclerItemViewHolder<T extends Item, K extends BaseItemView> exte
         text1 = (TextView) v.findViewById(R.id.text1);
         text2 = (TextView) v.findViewById(R.id.text2);
         icon = (ImageView) v.findViewById(R.id.icon);
+        handleView = (ImageView) itemView.findViewById(R.id.handle);
 
         itemView.setLongClickable(true);
         itemView.setOnCreateContextMenuListener(this);
@@ -94,6 +96,7 @@ public class RecyclerItemViewHolder<T extends Item, K extends BaseItemView> exte
         text1 = (TextView) v.findViewById(R.id.text1);
         text2 = (TextView) v.findViewById(R.id.text2);
         icon = (ImageView) v.findViewById(R.id.icon);
+        handleView = (ImageView) itemView.findViewById(R.id.handle);
 
         itemView.setLongClickable(true);
         itemView.setOnCreateContextMenuListener(this);
@@ -332,5 +335,9 @@ public class RecyclerItemViewHolder<T extends Item, K extends BaseItemView> exte
 
     public void setAdapter(recyclerViewListAdapter<T> a) {
         adapter = a;
+    }
+
+    public ImageView getHandleView() {
+        return handleView;
     }
 }
