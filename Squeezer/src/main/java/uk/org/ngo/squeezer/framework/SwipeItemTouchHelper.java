@@ -106,13 +106,22 @@ public class SwipeItemTouchHelper extends ItemTouchHelper.Callback {
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-        Log.d("touchHelper", "SwipeItemTouchHelper -> onSwiped 64");
+        Log.d("touchHelper", "SwipeItemTouchHelper -> onSwiped 109");
         mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
     }
 
     @Override
     public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+        Log.d("touchHelper", "SwipeItemTouchHelper -> onChildDraw 115");
         //TODO-stefan controleren welke richting voor welke actie
+        /**
+         * http://stackoverflow.com/questions/30850494/confirmation-and-undo-removing-in-recyclerview
+         * http://stackoverflow.com/questions/30549703/how-to-use-swipedismissbehavior-ondismisslistener-on-recyclerview/32071882
+         * https://github.com/iPaulPro/Android-ItemTouchHelper-Demo/issues/11
+         * http://blog.grafixartist.com/swipe-to-dismiss-recyclerview-itemtouchhelper/
+         */
+
+
         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
             // Fade out the view as it is swiped out of the parent's bounds
             final float alpha = ALPHA_FULL - Math.abs(dX) / (float) viewHolder.itemView.getWidth();
@@ -127,6 +136,7 @@ public class SwipeItemTouchHelper extends ItemTouchHelper.Callback {
     public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
 
         Log.d("touchHelper", "SwipeItemTouchHelper -> onSelectedChanged 81");
+        Log.d("touchHelper", String.valueOf(actionState));
         // We only want the active item to change
         if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
             if (viewHolder instanceof ItemTouchHelperViewHolder) {

@@ -170,7 +170,7 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
             }
 
             public int getSwipeDirections(){
-                return 0;
+                return ItemTouchHelper.START;
             }
         };
 
