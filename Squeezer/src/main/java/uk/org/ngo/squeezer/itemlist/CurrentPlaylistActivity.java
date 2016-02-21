@@ -24,6 +24,7 @@ import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -93,11 +94,11 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
         }
     }
 
-    @Override
-    protected recyclerViewListAdapter<Song> createItemListAdapter(
-            ItemView<Song> itemView) {
-        return new HighlightingListAdapter(itemView);
-    }
+//    @Override
+//    protected recyclerViewListAdapter<Song> createItemListAdapter(
+//            ItemView<Song> itemView) {
+//        return new HighlightingListAdapter(itemView);
+//    }
 
     @Override
     public ItemView<Song> createItemView() {
@@ -122,23 +123,6 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
                 menu.setGroupVisible(R.id.group_playlist, true);
                 menu.findItem(R.id.add_to_playlist).setVisible(false);
                 menu.findItem(R.id.play_next).setVisible(false);
-
-                // First item? Disable "move up" menu entry.
-                if (menuInfo.position == 0) {
-                    menu.findItem(R.id.playlist_move_up).setVisible(false);
-                }
-
-                // Last item? Disable "move down" menu entry.
-                Log.d("ebug-current", menuInfo.item.toString());
-                Log.d("ebug-current", menuInfo.adapter.toString());
-                if (menuInfo.position == menuInfo.adapter.getCount() - 1) {
-                    menu.findItem(R.id.playlist_move_down).setVisible(false);
-                }
-
-                // Only item? Disable "move" menu entry.
-                if (menuInfo.adapter.getCount() == 1) {
-                    menu.findItem(R.id.playlist_move).setVisible(false);
-                }
             }
 
             @Override
@@ -156,20 +140,6 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
                     case R.id.remove_from_playlist:
                         service.playlistRemove(index);
                         clearAndReOrderItems();
-                        return true;
-
-                    case R.id.playlist_move_up:
-                        service.playlistMove(index, index - 1);
-                        clearAndReOrderItems();
-                        return true;
-
-                    case R.id.playlist_move_down:
-                        service.playlistMove(index, index + 1);
-                        clearAndReOrderItems();
-                        return true;
-
-                    case R.id.playlist_move:
-                        PlaylistItemMoveDialog.addTo(CurrentPlaylistActivity.this, index, selectedItem.getName());
                         return true;
                 }
 
@@ -189,6 +159,18 @@ public class CurrentPlaylistActivity extends BaseListActivity<Song> {
                 }else{
                     viewHolder.getItemView().setBackgroundColor(getResources().getColor(R.color.white));
                 }
+            }
+
+            public boolean isSwipable(){
+                return true;
+            }
+
+            public int getDragDirections(){
+                return ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+            }
+
+            public int getSwipeDirections(){
+                return 0;
             }
         };
 

@@ -133,9 +133,6 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
 
         mrecyclerView.setOnScrollListener(new RecyclerScrollListener());
 
-//        ItemTouchHelper ith = new ItemTouchHelper(_ithCallback);
-//        ith.attachToRecyclerView(mrecyclerView);
-
         mrecyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
@@ -144,62 +141,11 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
                     }
                 })
         );
-
-
-//        mListView.setRecyclerListener(new RecyclerListener() {
-//            @Override
-//            public void onMovedToScrapHeap(View view) {
-//                 Release strong reference when a view is recycled
-//                final ImageView imageView = (ImageView) view.findViewById(R.id.icon);
-//                if (imageView != null) {
-//                    imageView.setImageBitmap(null);
-//                }
-//            }
-//        });
-
-        // Delegate context menu creation to the adapter.
-//        mListView.setOnCreateContextMenuListener(getItemAdapter());
-//
-//        mListView.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//                v.showContextMenu();
-//                return false;
-//            }
-//        });
-
-//        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//
-//            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-//                                           int pos, long id) {
-//                arg0.showContextMenu();
-//
-//                Log.d("click search", "baselistactivity | oncreate mlistview");
-//                return true;
-//            }
-//
-//        });
-
-
-//
-//        controls_container = findViewById(R.id.controls_container);
-//        CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) controls_container.getLayoutParams();
-//        TransformingToolbarBehavior transformingToolbarBehavior = (TransformingToolbarBehavior) layoutParams.getBehavior();
-//        transformingToolbarBehavior.setToolbarChangeListener(new TransformingToolbarBehavior.ToolbarChangeListener() {
-//            @Override
-//            public void onToolbarCollapse() {
-//                hideToolbar();
-//            }
-//
-//            @Override
-//            public void onToolbarShown() {
-//                showToolbar();
-//            }
-//        });
     }
 
     @Override
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
+        Log.d("touchHelper", "BaseListActivity -> onStartDrag 148");
         touchHelper.startDrag(viewHolder);
     }
 
@@ -318,12 +264,23 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
             }
         }
 
-        ItemTouchHelper.Callback callback = new SwipeItemTouchHelper(itemAdapter);
+        //TODO-de callback class dynamisch maken door een functie aan te roepen voor de playlist
+        ItemTouchHelper.Callback callback = CreateTouchCallBackHelper(itemAdapter);
         touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(mrecyclerView);
 
 
         return itemAdapter;
+    }
+
+    public SwipeItemTouchHelper CreateTouchCallBackHelper(recyclerViewListAdapter<T> itemAdapter){
+        SwipeItemTouchHelper callback = new SwipeItemTouchHelper(itemAdapter, this, createItemView());
+        addCallBackAttributes(callback);
+        return callback;
+    }
+
+    public void addCallBackAttributes(SwipeItemTouchHelper callback){
+
     }
 
     @Override

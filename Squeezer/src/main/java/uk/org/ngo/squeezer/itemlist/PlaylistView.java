@@ -83,5 +83,4 @@ public class PlaylistView extends BaseItemView<Playlist> {
         }
         return super.doItemContext(menuItem, index, selectedItem);
     }
-
 }

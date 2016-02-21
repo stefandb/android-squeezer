@@ -140,16 +140,17 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
         T item = mItems.get(position);
         mItemView.getAdapterView(viewHolder, position, item);
 
-        viewHolder.getHandleView().setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (MotionEventCompat.getActionMasked(event) ==
-                        MotionEvent.ACTION_DOWN) {
-                    mDragStartListener.onStartDrag(viewHolder);
+        if(mItemView.isSwipable()) {
+            viewHolder.getHandleView().setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                        mDragStartListener.onStartDrag(viewHolder);
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
+            });
+        }
 
         viewHolder.getItemView().setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -356,6 +357,8 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
 
     @Override
     public void onItemDismiss(int position) {
+
+        Log.d("touchHelper", "recyclerviewlistadapter -> onItemDismiss 360");
         mItems.remove(position);
         notifyItemRemoved(position);
     }

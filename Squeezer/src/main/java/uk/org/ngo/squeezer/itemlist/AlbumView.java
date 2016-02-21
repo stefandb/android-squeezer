@@ -95,6 +95,10 @@ public class AlbumView extends AlbumArtView<Album> {
             ImageFetcher.getInstance(getActivity()).loadImage(artworkUrl, viewHolder.getIcon(),
                     mIconWidth, mIconHeight);
         }
+
+        if(!isSwipable() && viewHolder.getHandleView() != null){
+            viewHolder.getHandleView().setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -128,4 +132,8 @@ public class AlbumView extends AlbumArtView<Album> {
 //    public void onItemSelected(int index, Album item) {
 //        Log.d("DEBUG-click", "ALBUM VIEW");
 //    }
+
+    public boolean isSwipable(){
+        return false;
+    }
 }

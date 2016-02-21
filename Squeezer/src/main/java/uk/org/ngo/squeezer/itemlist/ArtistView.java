@@ -55,4 +55,8 @@ public class ArtistView extends BaseItemView<Artist> {
     public String getQuantityString(int quantity) {
         return getActivity().getResources().getQuantityString(R.plurals.artist, quantity);
     }
+
+    public boolean isSwipable(){
+        return false;
+    }
 }

@@ -1,5 +1,6 @@
 package uk.org.ngo.squeezer.framework.expandable;
 
+import android.graphics.Color;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +23,7 @@ import uk.org.ngo.squeezer.framework.BaseItemView;
 import uk.org.ngo.squeezer.framework.Item;
 import uk.org.ngo.squeezer.framework.ItemView;
 import uk.org.ngo.squeezer.framework.RecyclerExpandableAdapter;
+import uk.org.ngo.squeezer.framework.TouchHelpers.ItemTouchHelperViewHolder;
 import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.model.Alarm;
 import uk.org.ngo.squeezer.util.CompoundButtonWrapper;
@@ -36,7 +38,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Created by Stefan on 6-1-2016.
  */
-public class RecyclerItemViewHolder<T extends Item, K extends BaseItemView> extends ChildViewHolder implements View.OnCreateContextMenuListener {
+public class RecyclerItemViewHolder<T extends Item, K extends BaseItemView> extends ChildViewHolder implements View.OnCreateContextMenuListener, ItemTouchHelperViewHolder {
 
     private List<T> mItems = new ArrayList<>();
     /**
@@ -339,5 +341,15 @@ public class RecyclerItemViewHolder<T extends Item, K extends BaseItemView> exte
 
     public ImageView getHandleView() {
         return handleView;
+    }
+
+    @Override
+    public void onItemSelected() {
+        itemView.setBackgroundColor(Color.LTGRAY);
+    }
+
+    @Override
+    public void onItemClear() {
+        itemView.setBackgroundColor(0);
     }
 }

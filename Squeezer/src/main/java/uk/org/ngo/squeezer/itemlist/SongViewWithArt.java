@@ -68,4 +68,8 @@ public class SongViewWithArt extends SongView {
 
         viewHolder.getIcon().setImageResource(R.drawable.icon_pending_artwork);
     }
+
+    public boolean isSwipable(){
+        return false;
+    }
 }

@@ -439,10 +439,6 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
 
     @UiThread
     private void updateShuffleStatus(ShuffleStatus shuffleStatus) {
-        Log.d("shuffle-icon", String.valueOf(shuffleStatus.getFontIcon()));
-        Log.d("shuffle-color", String.valueOf(shuffleStatus.getColor()));
-        Log.d("shuffle-text", String.valueOf(shuffleStatus.getText()));
-        Log.d("shuffle-id", String.valueOf(shuffleStatus.getId()));
         if (mFullHeightLayout && shuffleStatus != null) {
 
             StateListDrawable iconStateListDrawable = new StateListDrawable();
@@ -454,10 +450,6 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
 
     @UiThread
     private void updateRepeatStatus(RepeatStatus repeatStatus) {
-        Log.d("repeat-icon", String.valueOf(repeatStatus.getIcon()));
-        Log.d("repeat-text", String.valueOf(repeatStatus.getText()));
-        Log.d("repeat-id", String.valueOf(repeatStatus.getId()));
-
         if (mFullHeightLayout && repeatStatus != null) {
             repeatButton.setImageResource(
                     mActivity.getAttributeValue(repeatStatus.getIcon()));

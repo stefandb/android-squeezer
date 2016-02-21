@@ -69,6 +69,10 @@ public class MusicFolderView extends PlaylistItemView<MusicFolderItem> {
         }
 
         viewHolder.getIcon().setImageResource(icon_resource);
+
+        if(!isSwipable()){
+            viewHolder.getHandleView().setVisibility(View.GONE);
+        }
     }
 
     @Override

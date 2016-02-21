@@ -112,6 +112,10 @@ public class SongView extends PlaylistItemView<Song> {
                 (mDetails & DETAILS_ALBUM) > 0 ? item.getAlbumName() : null,
                 (mDetails & DETAILS_YEAR) > 0 ? item.getYear() : null
         ));
+
+        if(!isSwipable()){
+            viewHolder.getHandleView().setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -186,5 +190,9 @@ public class SongView extends PlaylistItemView<Song> {
     @Override
     public String getQuantityString(int quantity) {
         return getActivity().getResources().getQuantityString(R.plurals.song, quantity);
+    }
+
+    public boolean isSwipable(){
+        return false;
     }
 }

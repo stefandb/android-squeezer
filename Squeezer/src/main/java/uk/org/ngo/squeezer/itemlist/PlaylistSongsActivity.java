@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -29,7 +30,10 @@ import android.widget.Toast;
 
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.BaseListActivity;
+import uk.org.ngo.squeezer.framework.Item;
 import uk.org.ngo.squeezer.framework.ItemView;
+import uk.org.ngo.squeezer.framework.SwipeItemTouchHelper;
+import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.itemlist.dialog.PlaylistDeleteDialog;
 import uk.org.ngo.squeezer.itemlist.dialog.PlaylistItemMoveDialog;
 import uk.org.ngo.squeezer.itemlist.dialog.PlaylistRenameDialog;
@@ -42,7 +46,7 @@ import uk.org.ngo.squeezer.service.event.PlaylistRenameFailed;
 /**
  * Shows the songs in a playlist.
  */
-public class PlaylistSongsActivity extends BaseListActivity<Song> {
+public class PlaylistSongsActivity<T extends Item> extends BaseListActivity<Song> {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -110,18 +114,18 @@ public class PlaylistSongsActivity extends BaseListActivity<Song> {
                 super.onCreateContextMenu(menu, v, menuInfo);
 
                 menu.setGroupVisible(R.id.group_playlist, true);
+            }
 
-                if (menuInfo.position == 0) {
-                    menu.findItem(R.id.playlist_move_up).setVisible(false);
-                }
+            public boolean isSwipable(){
+                return true;
+            }
 
-                if (menuInfo.position == menuInfo.adapter.getCount() - 1) {
-                    menu.findItem(R.id.playlist_move_down).setVisible(false);
-                }
+            public int getDragDirections(){
+                return ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+            }
 
-                if (menuInfo.adapter.getCount() == 1) {
-                    menu.findItem(R.id.playlist_move).setVisible(false);
-                }
+            public int getSwipeDirections(){
+                return 0;
             }
 
             @Override
@@ -147,21 +151,6 @@ public class PlaylistSongsActivity extends BaseListActivity<Song> {
                     case R.id.remove_from_playlist:
                         service.playlistsRemove(playlist, index);
                         clearAndReOrderItems();
-                        return true;
-
-                    case R.id.playlist_move_up:
-                        service.playlistsMove(playlist, index, index - 1);
-                        clearAndReOrderItems();
-                        return true;
-
-                    case R.id.playlist_move_down:
-                        service.playlistsMove(playlist, index, index + 1);
-                        clearAndReOrderItems();
-                        return true;
-
-                    case R.id.playlist_move:
-                        PlaylistItemMoveDialog.addTo(PlaylistSongsActivity.this,
-                                playlist, index);
                         return true;
                 }
 
@@ -252,5 +241,9 @@ public class PlaylistSongsActivity extends BaseListActivity<Song> {
         playlist.setName(oldName);
         getIntent().putExtra("playlist", playlist);
         showServiceMessage(event.failureMessage);
+    }
+
+    public void addCallBackAttributes(SwipeItemTouchHelper callback){
+        callback.setPlaylist(playlist);
     }
 }

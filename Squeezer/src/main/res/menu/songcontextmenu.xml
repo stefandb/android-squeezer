@@ -54,14 +54,5 @@
 
         <item android:id="@+id/remove_from_playlist"
             android:title="@string/PLAYLIST_REMOVE_ITEM"/>
-
-        <item android:id="@+id/playlist_move_up"
-            android:title="@string/PLAYLIST_MOVE_UP"/>
-
-        <item android:id="@+id/playlist_move_down"
-            android:title="@string/PLAYLIST_MOVE_DOWN"/>
-
-        <item android:id="@+id/playlist_move"
-            android:title="@string/PLAYLIST_MOVE"/>
     </group>
 </menu>

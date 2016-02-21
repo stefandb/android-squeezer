@@ -156,6 +156,10 @@ public interface ItemView<T extends Item> {
      */
     boolean doItemContext(MenuItem menuItem);
 
+    boolean isSwipable();
+
+    int getDragDirections();
+    int getSwipeDirections();
 
     /**
      * Extra menu information provided to the {@link android.view.View.OnCreateContextMenuListener#onCreateContextMenu(ContextMenu,

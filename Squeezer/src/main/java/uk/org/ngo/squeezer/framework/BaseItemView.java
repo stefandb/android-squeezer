@@ -254,6 +254,9 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
      */
     public void bindView(RecyclerItemViewHolder viewHolder, T item) {
         viewHolder.getText1().setText(item.getName());
+        if(!isSwipable()){
+            viewHolder.getHandleView().setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -419,5 +422,17 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
     @Override
     public ChildViewHolder getViewHolderInstance(View view) {
         return new ViewHolder();
+    }
+
+    public boolean isSwipable(){
+        return false;
+    }
+
+    public int getDragDirections(){
+        return 0;
+    }
+
+    public int getSwipeDirections(){
+        return 0;
     }
 }

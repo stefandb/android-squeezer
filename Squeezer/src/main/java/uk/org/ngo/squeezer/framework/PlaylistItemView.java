@@ -64,4 +64,8 @@ public abstract class PlaylistItemView<T extends PlaylistItem> extends
         }
     }
 
+
+    public boolean isSwipable(){
+        return true;
+    }
 }

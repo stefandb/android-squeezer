@@ -73,6 +73,10 @@ public class PluginItemView extends BaseItemView<PluginItem> {
                 viewHolder.getIcon().setImageResource(R.drawable.ic_songs);
             }
         }
+
+        if(!isSwipable()){
+            viewHolder.getHandleView().setVisibility(View.GONE);
+        }
     }
 
     @Override
