@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -37,10 +38,11 @@ public class SwipeItemTouchHelper extends ItemTouchHelper.Callback {
     private Playlist playlist = null;
 
 
-    public <T extends Item> SwipeItemTouchHelper(recyclerViewListAdapter adapter, BaseListActivity<T> tBaseListActivity, ItemView<?> iv) {
+    public <T extends Item> SwipeItemTouchHelper(recyclerViewListAdapter adapter, BaseListActivity<T> tBaseListActivity, ItemView<?> iv, RecyclerView rv) {
         mAdapter = adapter;
         activity = tBaseListActivity;
         itemView = iv;
+        mRecyclerView = rv;
     }
 
     public <T extends Item> SwipeItemTouchHelper(recyclerViewListAdapter adapter, BaseListActivity<T> tBaseListActivity, ItemView<?> iv, Playlist pl) {
@@ -110,8 +112,32 @@ public class SwipeItemTouchHelper extends ItemTouchHelper.Callback {
         return itemView.isSwipable();
     }
 
+    private RecyclerView mRecyclerView;
+
+    public void setRecyclerView(RecyclerView View){
+        mRecyclerView = View;
+    }
+
+    public RecyclerView getRecyclerView(){
+        return mRecyclerView;
+    }
+
+
+    private ISqueezeService _service = null;
+
     @Override
     public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
+        RecyclerItemViewHolder vh = (RecyclerItemViewHolder) viewHolder;
+
+        if(_service == null){
+            _service = activity.getService();
+        }
+
+        mAdapter.onItemRemove(viewHolder, viewHolder.getAdapterPosition(), mRecyclerView, _service, playlist);
+    }
+
+//    @Override
+    public void onSwipedOLD(final RecyclerView.ViewHolder viewHolder, int direction) {
         Log.d("touchHelper", "SwipeItemTouchHelper -> onSwiped 109");
         Log.d("touchHelper-direction", String.valueOf(direction));
 

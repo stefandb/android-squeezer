@@ -274,7 +274,7 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
     }
 
     public SwipeItemTouchHelper CreateTouchCallBackHelper(recyclerViewListAdapter<T> itemAdapter){
-        SwipeItemTouchHelper callback = new SwipeItemTouchHelper(itemAdapter, this, createItemView());
+        SwipeItemTouchHelper callback = new SwipeItemTouchHelper(itemAdapter, this, createItemView(), mrecyclerView);
         addCallBackAttributes(callback);
         return callback;
     }

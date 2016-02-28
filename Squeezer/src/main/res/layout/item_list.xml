@@ -80,8 +80,8 @@
         android:background="?attr/colorAccent"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        app:layout_behavior=".behavior.TransformingToolbarBehavior"
-        custom:cardElevation="8dp">
+        android:visibility="gone"
+        app:layout_behavior=".behavior.TransformingToolbarBehavior">
 
         <fragment
             android:id="@+id/now_playing_fragment"

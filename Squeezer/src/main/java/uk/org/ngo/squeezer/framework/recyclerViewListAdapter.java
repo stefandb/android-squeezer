@@ -1,6 +1,7 @@
 package uk.org.ngo.squeezer.framework;
 
 import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseArray;
@@ -13,6 +14,8 @@ import android.view.ViewGroup;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.TouchHelpers.OnStartDragListener;
 import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
+import uk.org.ngo.squeezer.model.Playlist;
+import uk.org.ngo.squeezer.service.ISqueezeService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +61,7 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
     private int pageSize;
 
 
-    private List<T> mItems = new ArrayList<>();;
+    private List<T> mItems = new ArrayList<>();
 
 
     private boolean mShowIcon;
@@ -366,5 +369,49 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
 //            mItems.add(position, _removedItem);
 //        }
 //        notifyDataSetChanged();
+    }
+
+    private List<T> ItemsToDelete = new ArrayList<>();
+
+    public void onItemRemove(final RecyclerView.ViewHolder viewHolder, final int Position, final RecyclerView recyclerView, final ISqueezeService service, final Playlist playlist) {
+        final T mPhoto = mItems.get(Position);
+        Snackbar snackbar = Snackbar
+                .make(recyclerView, "PHOTO REMOVED", Snackbar.LENGTH_LONG)
+                .setAction("UNDO", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mItems.add(Position, mPhoto);
+                        notifyItemInserted(Position);
+                        recyclerView.scrollToPosition(Position);
+                        ItemsToDelete.remove(mPhoto);
+                    }
+                });
+        snackbar.setCallback(new Snackbar.Callback() {
+
+            /**
+             *
+             * @param snackbar
+             * @param event 1 = restore, 2 = delete
+             */
+            @Override
+            public void onDismissed(Snackbar snackbar, int event) {
+
+                if(event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT){
+                    if (playlist == null) {
+                        service.playlistRemove(Position);
+                    }else {
+                        service.playlistsRemove(playlist, Position);
+                    }
+                }
+            }
+
+            @Override
+            public void onShown(Snackbar snackbar) {}
+        });
+
+        snackbar.show();
+        mItems.remove(Position);
+        notifyItemRemoved(Position);
+        ItemsToDelete.add(mPhoto);
     }
 }
