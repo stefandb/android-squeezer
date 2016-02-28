@@ -1,13 +1,19 @@
 package uk.org.ngo.squeezer.framework;
 
+import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.TouchHelpers.ItemTouchHelperViewHolder;
 import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.widget.TextView;
+import android.view.View;
 
 import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.itemlist.PlaylistSongsActivity;
@@ -105,9 +111,32 @@ public class SwipeItemTouchHelper extends ItemTouchHelper.Callback {
     }
 
     @Override
-    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+    public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
         Log.d("touchHelper", "SwipeItemTouchHelper -> onSwiped 109");
+        Log.d("touchHelper-direction", String.valueOf(direction));
+
+        ISqueezeService service = activity.getService();
+
         mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+        if(direction == 32){ //favorite
+            //TODO-stefan add code to add song to favorite list
+            mAdapter.onItemRestore(viewHolder.getAdapterPosition());
+        }else if(direction == 16){
+            if (service != null) {
+                RecyclerItemViewHolder vh = (RecyclerItemViewHolder) viewHolder;
+                Log.d("debug-remove", String.valueOf(vh.getPositionInt()));
+                Log.d("debug-remove", String.valueOf(viewHolder.getAdapterPosition()));
+                if (playlist == null) {
+                    service.playlistRemove(vh.getAdapterPosition());
+                }else {
+                    service.playlistsRemove(playlist, vh.getAdapterPosition());
+                }
+            }else{
+                //TODO-stefan show message with a error text
+            }
+        }
+        RecyclerItemViewHolder vh = (RecyclerItemViewHolder) viewHolder;
+
     }
 
     @Override
@@ -120,15 +149,34 @@ public class SwipeItemTouchHelper extends ItemTouchHelper.Callback {
          * https://github.com/iPaulPro/Android-ItemTouchHelper-Demo/issues/11
          * http://blog.grafixartist.com/swipe-to-dismiss-recyclerview-itemtouchhelper/
          */
-
-
         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-            // Fade out the view as it is swiped out of the parent's bounds
-            final float alpha = ALPHA_FULL - Math.abs(dX) / (float) viewHolder.itemView.getWidth();
-            viewHolder.itemView.setAlpha(alpha);
-            viewHolder.itemView.setTranslationX(dX);
-        } else {
+
+            View itemView = viewHolder.itemView;
+
+            Paint paint = new Paint();
+            Bitmap bitmap;
+
+            if (dX > 0) { // swiping right
+                paint.setColor(activity.getResources().getColor(R.color.child_view_complete));
+                bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.ic_favorites);
+                float height = (itemView.getHeight() / 2) - (bitmap.getHeight() / 2);
+
+                c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX, (float) itemView.getBottom(), paint);
+                c.drawBitmap(bitmap, 96f, (float) itemView.getTop() + height, null);
+
+            } else { // swiping left
+                paint.setColor(activity.getResources().getColor(R.color.primaryColorAccent));
+                bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.ic_action_home);
+                float height = (itemView.getHeight() / 2) - (bitmap.getHeight() / 2);
+                float bitmapWidth = bitmap.getWidth();
+
+                c.drawRect((float) itemView.getRight() + dX, (float) itemView.getTop(), (float) itemView.getRight(), (float) itemView.getBottom(), paint);
+                c.drawBitmap(bitmap, ((float) itemView.getRight() - bitmapWidth) - 96f, (float) itemView.getTop() + height, null);
+            }
+
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+
+
         }
     }
 

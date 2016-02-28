@@ -4,35 +4,23 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseArray;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.SeekBar;
-import android.widget.Spinner;
-import android.widget.Switch;
-import android.widget.TextView;
 
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.TouchHelpers.OnStartDragListener;
 import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
-import uk.org.ngo.squeezer.model.Alarm;
-import uk.org.ngo.squeezer.util.CompoundButtonWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import android.support.v4.view.MotionEventCompat;
-import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by Stefan on 7-11-2015.
@@ -355,10 +343,12 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
     }
 
 
+    private T _removedItem = null;
+
     @Override
     public void onItemDismiss(int position) {
-
         Log.d("touchHelper", "recyclerviewlistadapter -> onItemDismiss 360");
+        _removedItem = mItems.get(position);
         mItems.remove(position);
         notifyItemRemoved(position);
     }
@@ -367,5 +357,14 @@ public class recyclerViewListAdapter<T extends Item>  extends RecyclerView.Adapt
     public void onItemMove(int fromPosition, int toPosition) {
         Collections.swap(mItems, fromPosition, toPosition);
         notifyItemMoved(fromPosition, toPosition);
+    }
+
+    public void onItemRestore(int position) {
+//        if(mItems.size() == 0){
+//            mItems.add(_removedItem);
+//        }else{
+//            mItems.add(position, _removedItem);
+//        }
+//        notifyDataSetChanged();
     }
 }

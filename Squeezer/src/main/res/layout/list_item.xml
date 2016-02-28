@@ -4,9 +4,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp"
-    android:paddingTop="8dp"
     android:descendantFocusability="beforeDescendants">
 
 
@@ -67,4 +64,31 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/undo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/darker_gray"
+        android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/undo_text"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center|start"
+            android:text="Deleted"
+            android:textColor="@android:color/white"/>
+        <TextView
+            android:id="@+id/undo_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center|end"
+            android:text="UNDO"
+            android:textColor="?attr/colorAccent"
+            android:textStyle="bold"/>
+    </LinearLayout>
 </FrameLayout>

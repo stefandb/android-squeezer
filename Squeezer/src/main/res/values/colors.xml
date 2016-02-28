@@ -43,4 +43,7 @@
     <color name="squeezer_main">#008E8A</color>
     <color name="squeezer_main_dark">#003A38</color>
     <color name="squeezer_second">#CC4C1A</color>
+
+    <color name="child_view_complete">#008E8A</color>
+    <color name="primaryColorAccent">#003A38</color>
 </resources>
