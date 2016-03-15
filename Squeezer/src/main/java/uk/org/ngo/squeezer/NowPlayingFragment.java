@@ -35,6 +35,7 @@ import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
@@ -183,6 +184,7 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
 
     /** Dialog displayed while connecting to the server. */
     private ProgressDialog connectingDialog = null;
+    private View pageView;
 
     /**
      * Shows the "connecting" dialog if it's not already showing.
@@ -262,13 +264,14 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
         View v;
         if(getActivity().getLocalClassName().toLowerCase().contains("nowplayingactivity")){
             mFullHeightLayout = true;
+
         }
 
         fontColorCode = Color.parseColor("#aa000000");
         if (mFullHeightLayout) {
             fontColorCode = Color.parseColor("#aaffffff");
             v = inflater.inflate(R.layout.now_playing_fragment_full, container, false);
-
+            pageView = v.findViewById(R.id.pageView);
             artistText = (TextView) v.findViewById(R.id.artistname);
             nextButton = (ImageButton) v.findViewById(R.id.next);
             prevButton = (ImageButton) v.findViewById(R.id.prev);
@@ -1171,8 +1174,8 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
         if (event.player.equals(mService.getActivePlayer())) {
             updateRepeatStatus(event.repeatStatus);
             if (!event.initial) {
-                Toast.makeText(mActivity, mActivity.getServerString(event.repeatStatus.getText()),
-                        Toast.LENGTH_SHORT).show();
+                Snackbar snackbar = Snackbar.make(pageView, mActivity.getServerString(event.repeatStatus.getText()), Snackbar.LENGTH_LONG);
+                snackbar.show();
             }
         }
     }
@@ -1182,9 +1185,8 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
         if (event.player.equals(mService.getActivePlayer())) {
             updateShuffleStatus(event.shuffleStatus);
             if (!event.initial) {
-                Toast.makeText(mActivity,
-                        mActivity.getServerString(event.shuffleStatus.getText()),
-                        Toast.LENGTH_SHORT).show();
+                Snackbar snackbar = Snackbar.make(pageView, mActivity.getServerString(event.shuffleStatus.getText()), Snackbar.LENGTH_LONG);
+                snackbar.show();
             }
         }
     }

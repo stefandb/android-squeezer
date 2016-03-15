@@ -17,6 +17,7 @@
 package uk.org.ngo.squeezer.itemlist;
 
 import android.content.DialogInterface;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -137,25 +138,22 @@ public class PluginItemView extends BaseItemView<PluginItem> {
         switch (menuItem.getItemId()) {
             case R.id.play_now:
                 if (mActivity.play(selectedItem)) {
-                    Toast.makeText(mActivity,
-                            mActivity.getString(R.string.ITEM_PLAYING, selectedItem.getName()),
-                            Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(mActivity,
+//                            mActivity.getString(R.string.ITEM_PLAYING, selectedItem.getName()),
+//                            Toast.LENGTH_SHORT).show();
+                    Snackbar.make(mActivity.getBaseView(), mActivity.getString(R.string.ITEM_PLAYING, selectedItem.getName()), Snackbar.LENGTH_LONG).show();
                 }
                 return true;
 
             case R.id.add_to_playlist:
                 if (mActivity.add(selectedItem)) {
-                    Toast.makeText(mActivity,
-                            mActivity.getString(R.string.ITEM_ADDED, selectedItem.getName()),
-                            Toast.LENGTH_SHORT).show();
+                    Snackbar.make(mActivity.getBaseView(), mActivity.getString(R.string.ITEM_ADDED, selectedItem.getName()), Snackbar.LENGTH_LONG).show();
                 }
                 return true;
 
             case R.id.play_next:
                 if (mActivity.insert(selectedItem)) {
-                    Toast.makeText(mActivity,
-                            mActivity.getString(R.string.ITEM_INSERTED, selectedItem.getName()),
-                            Toast.LENGTH_SHORT).show();
+                    Snackbar.make(mActivity.getBaseView(), mActivity.getString(R.string.ITEM_INSERTED, selectedItem.getName()), Snackbar.LENGTH_LONG).show();
                 }
                 return true;
         }

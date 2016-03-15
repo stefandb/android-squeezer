@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -169,7 +170,7 @@ public class PlaylistsActivity extends BaseListActivity<Playlist> {
             @Override
             public void run() {
                 getItemAdapter().notifyDataSetChanged();
-                Toast.makeText(PlaylistsActivity.this, msg, Toast.LENGTH_SHORT).show();
+                Snackbar.make(base_view, msg, Snackbar.LENGTH_LONG).show();
             }
         });
     }

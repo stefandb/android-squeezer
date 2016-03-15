@@ -132,8 +132,13 @@ public class SwipeItemTouchHelper extends ItemTouchHelper.Callback {
         if(_service == null){
             _service = activity.getService();
         }
+        if(direction == 32){ //favorite
+            //TODO-stefan add code to add song to favorite list
+            mAdapter.onItemRestore(viewHolder.getAdapterPosition());
+        }else if(direction == 16){
+            mAdapter.onItemRemove(viewHolder, viewHolder.getAdapterPosition(), mRecyclerView, _service, playlist);
 
-        mAdapter.onItemRemove(viewHolder, viewHolder.getAdapterPosition(), mRecyclerView, _service, playlist);
+        }
     }
 
 //    @Override
@@ -192,7 +197,7 @@ public class SwipeItemTouchHelper extends ItemTouchHelper.Callback {
 
             } else { // swiping left
                 paint.setColor(activity.getResources().getColor(R.color.primaryColorAccent));
-                bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.ic_action_home);
+                bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.ic_delete);
                 float height = (itemView.getHeight() / 2) - (bitmap.getHeight() / 2);
                 float bitmapWidth = bitmap.getWidth();
 

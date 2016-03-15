@@ -112,6 +112,7 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
         mrecyclerView = checkNotNull((RecyclerView) findViewById(R.id.item_list),
                 "getContentView() did not return a view containing R.id.item_list");
 
+        base_view = findViewById(R.id.coordinator_layout);
         registerForContextMenu(mrecyclerView);
         mrecyclerView.setLongClickable(true);
 

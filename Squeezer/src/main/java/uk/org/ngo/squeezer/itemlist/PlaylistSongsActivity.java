@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -221,7 +222,7 @@ public class PlaylistSongsActivity<T extends Item> extends BaseListActivity<Song
         getUIThreadHandler().post(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(PlaylistSongsActivity.this, msg, Toast.LENGTH_SHORT).show();
+                Snackbar.make(base_view, msg, Snackbar.LENGTH_LONG).show();
             }
         });
     }

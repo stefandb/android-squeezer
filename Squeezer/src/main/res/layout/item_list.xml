@@ -80,7 +80,6 @@
         android:background="?attr/colorAccent"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:visibility="gone"
         app:layout_behavior=".behavior.TransformingToolbarBehavior">
 
         <fragment

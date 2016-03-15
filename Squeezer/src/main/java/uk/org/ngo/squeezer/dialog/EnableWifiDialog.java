@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -36,6 +37,9 @@ public class EnableWifiDialog extends DialogFragment {
                     wifiManager.setWifiEnabled(true);
                     Toast.makeText(getActivity(), R.string.wifi_enabled_text, Toast.LENGTH_LONG)
                             .show();
+
+//                    Snackbar snackbar = Snackbar.make(pageView, R.string.wifi_enabled_text, Snackbar.LENGTH_LONG);
+//                    snackbar.show();
                 }
             }
         });
