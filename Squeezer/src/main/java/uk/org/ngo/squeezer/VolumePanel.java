@@ -27,17 +27,23 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Message;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.view.IconicsImageView;
 
 import uk.org.ngo.squeezer.framework.BaseActivity;
 import uk.org.ngo.squeezer.service.ISqueezeService;
@@ -69,7 +75,7 @@ public class VolumePanel extends Handler implements SeekBar.OnSeekBarChangeListe
 
     private final TextView mAdditionalMessage;
 
-    private final ImageView mLargeStreamIcon;
+    private final IconicsImageView mLargeStreamIcon;
 
     private final SeekBar mSeekbar;
     private final View mLayout;
@@ -89,6 +95,18 @@ public class VolumePanel extends Handler implements SeekBar.OnSeekBarChangeListe
             }
         });
 
+        DisplayMetrics displayMetrics = mActivity.getResources().getDisplayMetrics();
+        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
+        int dpWidth = (int) (displayMetrics.widthPixels / displayMetrics.density);
+
+//
+//        ViewGroup.LayoutParams params = mView.getLayoutParams();
+//// Changes the height and width to the specified *pixels*
+//        params.width = dpWidth;
+//        mView.setLayoutParams(params);
+//        mView.setMinimumWidth(dpWidth);
+//
+
         mLayout = (LinearLayout) mView.findViewById(R.id.volume_adjust_root);
 
         Configuration configuration = activity.getResources().getConfiguration();
@@ -96,7 +114,7 @@ public class VolumePanel extends Handler implements SeekBar.OnSeekBarChangeListe
         mMessage = (TextView) mView.findViewById(R.id.message);
         mAdditionalMessage = (TextView) mView.findViewById(R.id.additional_message);
         mSeekbar = (SeekBar) mView.findViewById(R.id.level);
-        mLargeStreamIcon = (ImageView) mView.findViewById(R.id.ringer_stream_icon);
+        mLargeStreamIcon = (IconicsImageView) mView.findViewById(R.id.ringer_stream_icon);
 
         mSeekbar.setOnSeekBarChangeListener(this);
 
@@ -181,9 +199,13 @@ public class VolumePanel extends Handler implements SeekBar.OnSeekBarChangeListe
                 mActivity.getString(R.string.volume, mActivity.getString(R.string.app_name)));
         mAdditionalMessage.setText(additionalMessage);
 
-        mLargeStreamIcon.setImageResource(newVolume == 0
-                ? R.drawable.ic_volume_off
-                : R.drawable.ic_volume);
+        if(newVolume == 0){
+            mLargeStreamIcon.setIcon(GoogleMaterial.Icon.gmd_volume_off);
+        }else if(newVolume <= 30){
+            mLargeStreamIcon.setIcon(GoogleMaterial.Icon.gmd_volume_down);
+        }else{
+            mLargeStreamIcon.setIcon(GoogleMaterial.Icon.gmd_volume_up);
+        }
 
         if (!mDialog.isShowing() && !mActivity.isFinishing()) {
             mDialog.setContentView(mView);

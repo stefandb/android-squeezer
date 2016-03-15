@@ -46,27 +46,24 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:padding="16dp">
 
         <com.mikepenz.iconics.view.IconicsImageView
             android:id="@+id/ringer_stream_icon"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:visibility="visible"
             app:iiv_color="@android:color/white"
+            android:layout_gravity="bottom|start"
             app:iiv_icon="gmd_volume_up" />
 
-        <!-- <com.mikepenz.iconics.view.IconicsImageView
-
-     /> -->
         <SeekBar
             style="?android:attr/progressBarStyleHorizontal"
             android:id="@+id/level"
+            android:layout_gravity="center_vertical"
             android:layout_width="230dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="14dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="0dp" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </LinearLayout>
