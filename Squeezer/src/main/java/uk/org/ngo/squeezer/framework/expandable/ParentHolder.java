@@ -6,6 +6,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bignerdranch.expandablerecyclerview.ViewHolder.ParentViewHolder;
+import com.mikepenz.iconics.view.IconicsButton;
+import com.mikepenz.iconics.view.IconicsImageView;
 
 import uk.org.ngo.squeezer.R;
 
@@ -18,8 +20,8 @@ public class ParentHolder extends ParentViewHolder {
     public TextView mSubTitle;
     public TextView mItemCount;
 
-    public ImageButton mParentDropDownArrow;
-    public ImageView mIcon;
+    public IconicsImageView mParentDropDownArrow;
+    public IconicsImageView mIcon;
 
     public ParentHolder(View itemView) {
         super(itemView);
@@ -32,8 +34,8 @@ public class ParentHolder extends ParentViewHolder {
             mItemCount = (TextView) itemView.findViewById(R.id.itemcount);
         }
 
-        mParentDropDownArrow = (ImageButton) itemView.findViewById(R.id.parent_list_item_expand_arrow);
-        mIcon = (ImageView) itemView.findViewById(R.id.icon);
+        mParentDropDownArrow = (IconicsImageView) itemView.findViewById(R.id.parent_list_item_expand_arrow);
+        mIcon = (IconicsImageView) itemView.findViewById(R.id.icon);
 
     }
 

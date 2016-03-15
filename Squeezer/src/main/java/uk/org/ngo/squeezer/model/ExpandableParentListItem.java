@@ -2,6 +2,7 @@ package uk.org.ngo.squeezer.model;
 
 
 import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
+import com.mikepenz.iconics.typeface.IIcon;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,7 +24,7 @@ public class ExpandableParentListItem implements ParentObject {
     private int mParentNumber;
     private String mParentText;
     private boolean mInitiallyExpanded;
-    private int mIcon;
+    private IIcon mIcon;
     private int mItemCount = 0;
 
     private int searchEngineId = 0;
@@ -55,11 +56,11 @@ public class ExpandableParentListItem implements ParentObject {
         return mParentText;
     }
 
-    public int getIcon() {
+    public IIcon getIcon() {
         return mIcon;
     }
 
-    public void setIcon(int mIcon) {
+    public void setIcon(IIcon mIcon) {
         this.mIcon = mIcon;
     }
 

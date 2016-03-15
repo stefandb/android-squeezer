@@ -7,10 +7,12 @@
     android:paddingRight="16dp"
     android:paddingTop="16dp">
 
-    <uk.org.ngo.squeezer.widget.SquareImageView
+    <com.mikepenz.iconics.view.IconicsImageView
         android:id="@+id/icon"
         android:layout_width="30dp"
         android:layout_height="30dp"
+        app:iiv_color="@android:color/black"
+        app:iiv_icon="gmd-favorite"
         android:contentDescription="@string/app_name"
         android:maxHeight="30dp"
         android:maxWidth="30dp"
@@ -46,12 +48,20 @@
         android:layout_marginLeft="17dp"
         android:layout_marginStart="17dp" />
 
-    <ImageButton
+    <com.mikepenz.iconics.view.IconicsImageView
         android:id="@+id/parent_list_item_expand_arrow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:iiv_color="@android:color/black"
+        app:iiv_icon="gmd-arrow-drop-down"
+        android:contentDescription="@string/app_name"
+        android:maxHeight="30dp"
+        android:maxWidth="30dp"
+        android:minHeight="30dp"
+        android:minWidth="30dp"
+        android:gravity="end"
         android:layout_centerVertical="true"
-        android:src="@android:drawable/arrow_down_float" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

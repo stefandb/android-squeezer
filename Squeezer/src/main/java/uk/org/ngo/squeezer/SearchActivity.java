@@ -18,6 +18,7 @@ package uk.org.ngo.squeezer;
 
 import android.app.SearchManager;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,6 +33,8 @@ import android.widget.Toast;
 
 import com.bignerdranch.expandablerecyclerview.Adapter.ExpandableRecyclerAdapter;
 import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
+import com.mikepenz.fontawesome_typeface_library.FontAwesome;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +60,7 @@ import uk.org.ngo.squeezer.model.SearchType;
 import uk.org.ngo.squeezer.model.Song;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
+import android.support.v4.widget.SwipeRefreshLayout;
 
 /**
  * @param <Child>
@@ -82,6 +86,7 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
             R.drawable.ic_artists,
             R.drawable.ic_genres
     };
+    private SwipeRefreshLayout refreshLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,12 +103,17 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
         mExpandableAdapter.setParentClickableViewAnimationDefaultDuration();
         mExpandableAdapter.setParentAndIconExpandOnClick(true);
 
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
+        refreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+            }
+        });
+
         registerForContextMenu(resultsExpandableListView);
         resultsExpandableListView.setLongClickable(true);
-
-//        ItemTouchHelper ith = new ItemTouchHelper(_ithCallback);
-//        ith.attachToRecyclerView(resultsExpandableListView);
-
 
         resultsExpandableListView.addOnItemTouchListener(
             new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
@@ -169,10 +179,10 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
     private ArrayList<ParentObject> generateSearchEngines() {
         SearchTypes = new ArrayList<>();
 
-        SearchTypes.add(new SearchType("Songs", R.drawable.ic_songs, new SongViewWithArt(this), "Song"));
-        SearchTypes.add(new SearchType("Albums", R.drawable.ic_albums, new AlbumView(this), "Album"));
-        SearchTypes.add(new SearchType("Artists", R.drawable.ic_artists, new ArtistView(this), "Artist"));
-        SearchTypes.add(new SearchType("Genres", R.drawable.ic_genres, new GenreView(this), "Genre"));
+        SearchTypes.add(new SearchType("Songs", FontAwesome.Icon.faw_music, new SongViewWithArt(this), "Song"));
+        SearchTypes.add(new SearchType("Albums", GoogleMaterial.Icon.gmd_album, new AlbumView(this), "Album"));
+        SearchTypes.add(new SearchType("Artists", FontAwesome.Icon.faw_home, new ArtistView(this), "Artist"));
+        SearchTypes.add(new SearchType("Genres", FontAwesome.Icon.faw_music, new GenreView(this), "Genre"));
 
         ((SongViewWithArt) SearchTypes.get(0).getViewBuilder()).setDetails(
                 SongView.DETAILS_DURATION | SongView.DETAILS_ALBUM | SongView.DETAILS_ARTIST);

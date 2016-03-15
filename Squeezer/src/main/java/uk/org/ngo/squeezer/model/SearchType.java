@@ -18,6 +18,8 @@ package uk.org.ngo.squeezer.model;
 
 import android.os.Parcel;
 
+import com.mikepenz.iconics.typeface.IIcon;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -30,7 +32,7 @@ import uk.org.ngo.squeezer.framework.Item;
 public class SearchType<T extends BaseItemView> {
 
     private String mTitle;
-    private int mIconResourse;
+    private IIcon mIconResourse;
     private T mViewBuilder;
     private String mModelClassName;
     private boolean mExpand = false;
@@ -39,7 +41,7 @@ public class SearchType<T extends BaseItemView> {
 
     }
 
-    public SearchType(String t, int iconr, T view, String m) {
+    public SearchType(String t, IIcon iconr, T view, String m) {
         mTitle = t;
         mIconResourse = iconr;
         mViewBuilder = view;
@@ -54,11 +56,11 @@ public class SearchType<T extends BaseItemView> {
         this.mTitle = mTitle;
     }
 
-    public int getIconResourse() {
+    public IIcon getIconResourse() {
         return mIconResourse;
     }
 
-    public void setIconResourse(int mIconResourse) {
+    public void setIconResourse(IIcon mIconResourse) {
         this.mIconResourse = mIconResourse;
     }
 

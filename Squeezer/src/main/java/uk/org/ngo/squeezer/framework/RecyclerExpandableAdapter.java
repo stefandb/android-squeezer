@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.bignerdranch.expandablerecyclerview.Adapter.ExpandableRecyclerAdapter;
 import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +59,8 @@ public class RecyclerExpandableAdapter<Child extends Item, K extends BaseItemVie
     public void onBindParentViewHolder(ParentHolder parentHolder, int i, Object o) {
         ExpandableParentListItem crime = (ExpandableParentListItem) o;
         parentHolder.mTitle.setText(crime.getTitle());
-        parentHolder.mIcon.setImageResource(crime.getIcon());
+        parentHolder.mIcon.setIcon(crime.getIcon());
+//        parentHolder.mIcon.setIcon(GoogleMaterial.Icon.gmd_volume_off);
 
         int size = crime.getChildObjectList().size();
         parentHolder.mItemCount.setText(String.valueOf(size));
