@@ -65,13 +65,14 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingTop="?attr/actionBarSize"
+        android:background="#f1f1f1"
         android:id="@+id/swipe_layout">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/item_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingTop="?attr/actionBarSize"
             android:background="#f1f1f1" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
