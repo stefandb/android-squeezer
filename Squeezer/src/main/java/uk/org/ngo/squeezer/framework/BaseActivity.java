@@ -18,6 +18,7 @@ package uk.org.ngo.squeezer.framework;
 
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
+import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -415,7 +416,15 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
         if (!isConnected()) {
             return false;
         }
-        return super.onSearchRequested();
+
+
+
+        Bundle data = new Bundle();
+        data.putString("test", "BLA");
+        startSearch(null, false, data, false);
+        return true;
+//
+//        return super.onSearchRequested();
     }
 
     /*

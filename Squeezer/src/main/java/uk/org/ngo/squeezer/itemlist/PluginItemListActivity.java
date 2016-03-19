@@ -21,6 +21,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringDef;
 import android.util.Log;
@@ -31,6 +32,8 @@ import android.view.View.OnKeyListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -119,6 +122,28 @@ public class PluginItemListActivity extends BaseListActivity<PluginItem>
         }
 
 
+    }
+
+    /**
+     * Block searches, when we are not connected.
+     */
+    @Override
+    public boolean onSearchRequested() {
+        if (!isConnected()) {
+            return false;
+        }
+
+        //TODO-stefan data die mee moet
+        Bundle data = new Bundle();
+        data.putString("Label", getPlugin().getName());
+        data.putString("Type", "Plugin");
+        data.putString("ClassType", "Hier moet SqueezeCloud komen te staan (denk ik)");
+        data.putParcelable("View", (Parcelable) createItemView());
+        data.putChar("Icon", FontAwesome.Icon.faw_soundcloud.getCharacter());
+        startSearch(null, false, data, false);
+        return true;
+//
+//        return super.onSearchRequested();
     }
 
     private void updateHeader(String headerText) {

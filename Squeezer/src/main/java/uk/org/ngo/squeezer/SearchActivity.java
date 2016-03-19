@@ -50,6 +50,7 @@ import uk.org.ngo.squeezer.itemlist.AlbumView;
 import uk.org.ngo.squeezer.itemlist.ArtistView;
 import uk.org.ngo.squeezer.itemlist.GenreView;
 import uk.org.ngo.squeezer.itemlist.IServiceItemListCallback;
+import uk.org.ngo.squeezer.itemlist.PluginItemView;
 import uk.org.ngo.squeezer.itemlist.SongView;
 import uk.org.ngo.squeezer.itemlist.SongViewWithArt;
 import uk.org.ngo.squeezer.model.Album;
@@ -80,12 +81,6 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
 
     ArrayList<SearchType> SearchTypes;
 
-    private final int[] groupIcons = {
-            R.drawable.ic_songs,
-            R.drawable.ic_albums,
-            R.drawable.ic_artists,
-            R.drawable.ic_genres
-    };
     private SwipeRefreshLayout refreshLayout;
 
     @Override
@@ -96,12 +91,19 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
 
         resultsExpandableListView = (RecyclerView) findViewById(R.id.item_list);
         resultsExpandableListView.setLayoutManager(new LinearLayoutManager(this));
-        mExpandableAdapter = new SearchAdapter(this, generateSearchEngines());
-        mExpandableAdapter.setSearchEngines(SearchTypes);
 
-        mExpandableAdapter.setCustomParentAnimationViewId(R.id.parent_list_item_expand_arrow);
-        mExpandableAdapter.setParentClickableViewAnimationDefaultDuration();
-        mExpandableAdapter.setParentAndIconExpandOnClick(true);
+        setSearchTypes();
+
+        registerForContextMenu(resultsExpandableListView);
+        resultsExpandableListView.setLongClickable(true);
+        resultsExpandableListView.addOnItemTouchListener(ItemTouchListener());
+
+        handleIntent(getIntent());
+
+        NavigationDrawer(savedInstanceState);
+        getSupportActionBar().setTitle(R.string.menu_item_search_label);
+        navigationDrawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
         refreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW);
@@ -111,94 +113,46 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
 
             }
         });
+    }
 
-        registerForContextMenu(resultsExpandableListView);
-        resultsExpandableListView.setLongClickable(true);
+    private RecyclerView.OnItemTouchListener ItemTouchListener() {
+        return new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                if (mExpandableAdapter.getItemList().get(position) instanceof ParentObject) {
+                    ExpandableParentListItem parent = (ExpandableParentListItem) mExpandableAdapter.getParentItems().get(position);
 
-        resultsExpandableListView.addOnItemTouchListener(
-            new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
-                @Override
-                public void onItemClick(View view, int position) {
-                    if(mExpandableAdapter.getItemList().get(position) instanceof ParentObject) {
-                        ExpandableParentListItem parent = (ExpandableParentListItem) mExpandableAdapter.getParentItems().get(position);
-
-                        int searchEngineId = parent.getSearchEngineId();
-                        SearchType searchEngine = SearchTypes.get(searchEngineId);
-                        searchEngine.toggleExpand();
-                    }else{
-                        int index = 0;
-                        SearchType engine = null;
-                        for(SearchType search : SearchTypes) {
-                            engine = search;
-                            if(!search.isExpand()){
-                                ExpandableParentListItem parentItem = null;
-                                for(Object parent: mExpandableAdapter.getParentItems()){
-                                    parentItem = (ExpandableParentListItem) parent;
-                                    if(parentItem.getSearchEngineId() == index){
-                                        break;
-                                    }
-                                }
-
-                                if(position < parentItem.getItemCountint()){
-                                    position += parentItem.getItemCountint();
-                                }else{
+                    int searchEngineId = parent.getSearchEngineId();
+                    SearchType searchEngine = SearchTypes.get(searchEngineId);
+                    searchEngine.toggleExpand();
+                } else {
+                    int index = 0;
+                    SearchType engine = null;
+                    for (SearchType search : SearchTypes) {
+                        engine = search;
+                        if (!search.isExpand()) {
+                            ExpandableParentListItem parentItem = null;
+                            for (Object parent : mExpandableAdapter.getParentItems()) {
+                                parentItem = (ExpandableParentListItem) parent;
+                                if (parentItem.getSearchEngineId() == index) {
                                     break;
                                 }
                             }
-                            index++;
+
+                            if (position < parentItem.getItemCountint()) {
+                                position += parentItem.getItemCountint();
+                            } else {
+                                break;
+                            }
                         }
-
-                        Object c = mExpandableAdapter.getItemList().get(position);
-                        engine.getViewBuilder().onItemSelected(position, (Child) c);
+                        index++;
                     }
+
+                    Object c = mExpandableAdapter.getItemList().get(position);
+                    engine.getViewBuilder().onItemSelected(position, (Child) c);
                 }
-            })
-        );
-
-        handleIntent(getIntent());
-
-        NavigationDrawer(savedInstanceState);
-        getSupportActionBar().setTitle(R.string.menu_item_search_label);
-        navigationDrawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    private ArrayList<ParentObject> generateSearchEngines() {
-        SearchTypes = new ArrayList<>();
-
-        SearchTypes.add(new SearchType("Songs", FontAwesome.Icon.faw_music, new SongViewWithArt(this), "Song"));
-        SearchTypes.add(new SearchType("Albums", GoogleMaterial.Icon.gmd_album, new AlbumView(this), "Album"));
-        SearchTypes.add(new SearchType("Artists", FontAwesome.Icon.faw_home, new ArtistView(this), "Artist"));
-        SearchTypes.add(new SearchType("Genres", FontAwesome.Icon.faw_music, new GenreView(this), "Genre"));
-
-        ((SongViewWithArt) SearchTypes.get(0).getViewBuilder()).setDetails(
-                SongView.DETAILS_DURATION | SongView.DETAILS_ALBUM | SongView.DETAILS_ARTIST);
-
-        ((AlbumView) SearchTypes.get(1).getViewBuilder()).setDetails(
-                AlbumView.DETAILS_ARTIST | AlbumView.DETAILS_YEAR);
-
-        CrimeLab crimeLab = CrimeLab.get(this);
-        if(crimeLab.getCrimes().size() == 0){
-            int index = 0;
-            for(SearchType search : SearchTypes) {
-                ExpandableParentListItem crime = new ExpandableParentListItem();
-                crime.setTitle(search.getTitle());
-                crime.setIcon(search.getIconResourse());
-                crime.setItemClassName(String.valueOf(search.getViewBuilder().getItemClass()));
-                crime.setSearchEngineId(index);
-                crimeLab.setCrime(crime);
-                index++;
             }
-        }
-
-        List<ExpandableParentListItem> crimes = crimeLab.getCrimes();
-        ArrayList<ParentObject> parentObjects = new ArrayList<>();
-        for (ExpandableParentListItem crime : crimes) {
-            ArrayList<Object> childList = new ArrayList<>();
-            crime.setChildObjectList(childList);
-            parentObjects.add(crime);
-        }
-        return parentObjects;
+        });
     }
 
     @Override
@@ -209,7 +163,32 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
 
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            ArrayList<Object> childList = new ArrayList<>();
+
+            //TODO-stefan dit vervangen tot data die uit het intent object komt
+            SearchTypes.add(new SearchType("SoundCloud", FontAwesome.Icon.faw_soundcloud, new GenreView(this), "PluginItem"));
+
             String query = intent.getStringExtra(SearchManager.QUERY);
+            Log.d("Search-query", query);
+
+
+            //TODO-stefan data die mee moet
+            /*
+            - Label
+            - Icon
+            - View
+            - ClassType
+             */
+            Bundle appData = getIntent().getBundleExtra(SearchManager.APP_DATA);
+            String jargon = "aa";
+            if (appData != null) {
+                jargon = appData.getString("test", "");
+            }
+
+            Log.d("EXTRA-intent", jargon);
+
+            SearchAdapter adapter = createListAdapter();
+
             doSearch(query);
         }
     }
@@ -258,6 +237,7 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
 
     @Override
     protected void orderPage(@NonNull ISqueezeService service, int start) {
+        Log.d("Search", "11 " + searchString);
         service.search(start, searchString, itemListCallback);
     }
 
@@ -270,6 +250,7 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
      */
     private void doSearch(String searchString) {
         this.searchString = searchString;
+        Log.d("Search", this.searchString);
         if (searchString != null && searchString.length() > 0 && getService() != null) {
             clearAndReOrderItems();
         }
@@ -295,10 +276,18 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
         public void onItemsReceived(final int count, final int start, final Map parameters, final List items, final Class dataType) {
             SearchActivity.super.onItemsReceived(count, start, items.size());
 
+            Log.d("Search-data", "nieuw data");
+            Log.d("Search-data", String.valueOf(count));
+            Log.d("Search-data", String.valueOf(start));
+            Log.d("Search-data", parameters.toString());
+            Log.d("Search-data", items.toString());
+            Log.d("Search-data", dataType.getName());
+            Log.d("Search-data", dataType.getPackage().getName());
+            Log.d("Search-data","eind data");
+
             getUIThreadHandler().post(new Runnable() {
                 @Override
                 public void run() {
-
                     mExpandableAdapter.setChildItems(String.valueOf(dataType), items);
                     loadingLabel.setVisibility(View.GONE);
                     resultsExpandableListView.setVisibility(View.VISIBLE);
@@ -312,4 +301,49 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
         }
     };
 
+    private SearchAdapter createListAdapter(){
+        mExpandableAdapter = new SearchAdapter(this, generateSearchEngines());
+        mExpandableAdapter.setSearchEngines(SearchTypes);
+        mExpandableAdapter.setCustomParentAnimationViewId(R.id.parent_list_item_expand_arrow);
+        mExpandableAdapter.setParentClickableViewAnimationDefaultDuration();
+        mExpandableAdapter.setParentAndIconExpandOnClick(true);
+        return mExpandableAdapter;
+    }
+
+    private void setSearchTypes(){
+        SearchTypes = new ArrayList<>();
+
+        SearchTypes.add(new SearchType("Songs", FontAwesome.Icon.faw_music, new SongViewWithArt(this), "Song"));
+        SearchTypes.add(new SearchType("Albums", GoogleMaterial.Icon.gmd_album, new AlbumView(this), "Album"));
+        SearchTypes.add(new SearchType("Artists", FontAwesome.Icon.faw_home, new ArtistView(this), "Artist"));
+        SearchTypes.add(new SearchType("Genres", FontAwesome.Icon.faw_music, new GenreView(this), "Genre"));
+
+        ((SongViewWithArt) SearchTypes.get(0).getViewBuilder()).setDetails(SongView.DETAILS_DURATION | SongView.DETAILS_ALBUM | SongView.DETAILS_ARTIST);
+        ((AlbumView) SearchTypes.get(1).getViewBuilder()).setDetails(AlbumView.DETAILS_ARTIST | AlbumView.DETAILS_YEAR);
+    }
+
+    public ArrayList getSearchTypes(){
+        return SearchTypes;
+    }
+
+    private ArrayList<ParentObject> generateSearchEngines() {
+        ArrayList<ParentObject> Objects = new ArrayList<>();
+
+        int index = 0;
+        for(SearchType search : SearchTypes) {
+            ArrayList<Object> childList = new ArrayList<>();
+
+            ExpandableParentListItem ParentObject = new ExpandableParentListItem();
+            ParentObject.setTitle(search.getTitle());
+            ParentObject.setIcon(search.getIconResourse());
+            ParentObject.setItemClassName(String.valueOf(search.getViewBuilder().getItemClass()));
+            ParentObject.setSearchEngineId(index);
+            ParentObject.setChildObjectList(childList);
+
+            Objects.add(ParentObject);
+            index++;
+        }
+
+        return Objects;
+    }
 }

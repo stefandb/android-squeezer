@@ -32,6 +32,7 @@ import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.TextView;
 
 import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
+import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 
 import java.util.ArrayList;
 import java.util.HashMap;
