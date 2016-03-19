@@ -155,19 +155,6 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
             })
         );
 
-
-//        resultsExpandableListView.setOnChildClickListener(new OnChildClickListener() {
-//            @Override
-//            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
-//                                        int childPosition, long id) {
-//                searchResultsAdapter.onChildClick(groupPosition, childPosition);
-//                return true;
-//            }
-//        });
-
-//        resultsExpandableListView.setOnCreateContextMenuListener(searchResultsAdapter);
-//        resultsExpandableListView.setOnScrollListener(new ScrollListener());
-
         handleIntent(getIntent());
 
         NavigationDrawer(savedInstanceState);
