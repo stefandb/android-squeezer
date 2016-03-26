@@ -416,15 +416,15 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
         if (!isConnected()) {
             return false;
         }
-
-
-
-        Bundle data = new Bundle();
-        data.putString("test", "BLA");
-        startSearch(null, false, data, false);
-        return true;
 //
-//        return super.onSearchRequested();
+//
+//
+//        Bundle data = new Bundle();
+//        data.putString("test", "BLA");
+//        startSearch(null, false, data, false);
+//        return true;
+////
+        return super.onSearchRequested();
     }
 
     /*

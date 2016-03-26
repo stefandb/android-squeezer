@@ -35,11 +35,14 @@ import com.bignerdranch.expandablerecyclerview.Adapter.ExpandableRecyclerAdapter
 import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.typeface.IIcon;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import uk.org.ngo.squeezer.framework.BaseActivity;
 import uk.org.ngo.squeezer.framework.BaseItemView;
 import uk.org.ngo.squeezer.framework.Item;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
@@ -50,6 +53,7 @@ import uk.org.ngo.squeezer.itemlist.AlbumView;
 import uk.org.ngo.squeezer.itemlist.ArtistView;
 import uk.org.ngo.squeezer.itemlist.GenreView;
 import uk.org.ngo.squeezer.itemlist.IServiceItemListCallback;
+import uk.org.ngo.squeezer.itemlist.PluginItemListActivity;
 import uk.org.ngo.squeezer.itemlist.PluginItemView;
 import uk.org.ngo.squeezer.itemlist.SongView;
 import uk.org.ngo.squeezer.itemlist.SongViewWithArt;
@@ -57,6 +61,7 @@ import uk.org.ngo.squeezer.model.Album;
 import uk.org.ngo.squeezer.model.Artist;
 import uk.org.ngo.squeezer.model.ExpandableParentListItem;
 import uk.org.ngo.squeezer.model.Genre;
+import uk.org.ngo.squeezer.model.PluginItem;
 import uk.org.ngo.squeezer.model.SearchType;
 import uk.org.ngo.squeezer.model.Song;
 import uk.org.ngo.squeezer.service.ISqueezeService;
@@ -165,27 +170,44 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             ArrayList<Object> childList = new ArrayList<>();
 
-            //TODO-stefan dit vervangen tot data die uit het intent object komt
-            SearchTypes.add(new SearchType("SoundCloud", FontAwesome.Icon.faw_soundcloud, new GenreView(this), "PluginItem"));
-
             String query = intent.getStringExtra(SearchManager.QUERY);
             Log.d("Search-query", query);
 
-
-            //TODO-stefan data die mee moet
-            /*
-            - Label
-            - Icon
-            - View
-            - ClassType
-             */
             Bundle appData = getIntent().getBundleExtra(SearchManager.APP_DATA);
-            String jargon = "aa";
+
+            Boolean Extra = false;
+            String Label = "aa";
+            String Type = "aa";
+            String ClassType = "aa";
+            BaseItemView View = null;
+            PluginItem PluginItem = null;
+            String Icon = "";
+            PluginItemListActivity Class = null;
             if (appData != null) {
-                jargon = appData.getString("test", "");
+                Extra = appData.getBoolean("Extra", false);
+
+                if(Extra){
+                    Label = appData.getString("Label", "");
+                    Type = appData.getString("Type", "");
+                    ClassType = appData.getString("ClassType", "");
+                    View = (PluginItemView) appData.getParcelable("View");
+
+                    Class = (PluginItemListActivity) appData.getSerializable("Class");
+//                    PluginItem = appData.getParcelable("PluginItem");
+                    Icon = appData.getString("Icon");
+                }
             }
 
-            Log.d("EXTRA-intent", jargon);
+            if(Extra){
+                SearchTypes.add(
+                        new SearchType(
+                                Label,
+                                FontAwesome.Icon.faw_soundcloud,
+                                new SongViewWithArt(this),
+                                ClassType
+                        )
+                );
+            }
 
             SearchAdapter adapter = createListAdapter();
 
@@ -204,7 +226,7 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
 
             int position = -1;
             try {
-                position = mExpandableAdapter.getPosition();   //((BackupRestoreListAdapter)getAdapter()).getPosition();
+                position = mExpandableAdapter.getPosition();
             } catch (Exception e) {
                 return super.onContextItemSelected(menuItem);
             }
@@ -237,7 +259,6 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
 
     @Override
     protected void orderPage(@NonNull ISqueezeService service, int start) {
-        Log.d("Search", "11 " + searchString);
         service.search(start, searchString, itemListCallback);
     }
 
@@ -276,19 +297,12 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
         public void onItemsReceived(final int count, final int start, final Map parameters, final List items, final Class dataType) {
             SearchActivity.super.onItemsReceived(count, start, items.size());
 
-            Log.d("Search-data", "nieuw data");
-            Log.d("Search-data", String.valueOf(count));
-            Log.d("Search-data", String.valueOf(start));
-            Log.d("Search-data", parameters.toString());
-            Log.d("Search-data", items.toString());
-            Log.d("Search-data", dataType.getName());
-            Log.d("Search-data", dataType.getPackage().getName());
-            Log.d("Search-data","eind data");
+            final String ModelClass = String.valueOf(String.valueOf(dataType).substring(String.valueOf(dataType).lastIndexOf('.') + 1)).toLowerCase().trim().toString();
 
             getUIThreadHandler().post(new Runnable() {
                 @Override
                 public void run() {
-                    mExpandableAdapter.setChildItems(String.valueOf(dataType), items);
+                    mExpandableAdapter.setChildItems(ModelClass, items);
                     loadingLabel.setVisibility(View.GONE);
                     resultsExpandableListView.setVisibility(View.VISIBLE);
                 }
@@ -336,7 +350,7 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
             ExpandableParentListItem ParentObject = new ExpandableParentListItem();
             ParentObject.setTitle(search.getTitle());
             ParentObject.setIcon(search.getIconResourse());
-            ParentObject.setItemClassName(String.valueOf(search.getViewBuilder().getItemClass()));
+            ParentObject.setItemClassName(search.getModelClassName());
             ParentObject.setSearchEngineId(index);
             ParentObject.setChildObjectList(childList);
 

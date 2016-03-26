@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -34,7 +35,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
+import com.mikepenz.iconics.Iconics;
+import com.mikepenz.iconics.IconicsDrawable;
 
+import java.io.Serializable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
@@ -42,6 +46,7 @@ import java.util.Map;
 
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.dialog.NetworkErrorDialogFragment;
+import uk.org.ngo.squeezer.framework.BaseItemView;
 import uk.org.ngo.squeezer.framework.BaseListActivity;
 import uk.org.ngo.squeezer.framework.ItemView;
 import uk.org.ngo.squeezer.model.Plugin;
@@ -67,6 +72,11 @@ public class PluginItemListActivity extends BaseListActivity<PluginItem>
     public ItemView<PluginItem> createItemView() {
         return new PluginItemView(this);
     }
+
+    public BaseItemView createItemViewSearch() {
+        return new PluginItemView(this);
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -133,17 +143,18 @@ public class PluginItemListActivity extends BaseListActivity<PluginItem>
             return false;
         }
 
-        //TODO-stefan data die mee moet
+        new IconicsDrawable(this, "faw-adjust");
+
         Bundle data = new Bundle();
+        data.putBoolean("Extra", true);
         data.putString("Label", getPlugin().getName());
         data.putString("Type", "Plugin");
-        data.putString("ClassType", "Hier moet SqueezeCloud komen te staan (denk ik)");
-        data.putParcelable("View", (Parcelable) createItemView());
-        data.putChar("Icon", FontAwesome.Icon.faw_soundcloud.getCharacter());
+        data.putString("ClassType", "PluginItem");
+//        data.putSerializable("View", createItemView());
+        data.putParcelable("PluginItem", getPlugin());
+        data.putString("Icon", "faw_soundcloud");
         startSearch(null, false, data, false);
         return true;
-//
-//        return super.onSearchRequested();
     }
 
     private void updateHeader(String headerText) {
@@ -178,7 +189,6 @@ public class PluginItemListActivity extends BaseListActivity<PluginItem>
     protected void orderPage(@NonNull ISqueezeService service, int start) {
         service.pluginItems(start, plugin, parent, search, this);
     }
-
 
     public void show(PluginItem pluginItem) {
         final Intent intent = new Intent(this, PluginItemListActivity.class);

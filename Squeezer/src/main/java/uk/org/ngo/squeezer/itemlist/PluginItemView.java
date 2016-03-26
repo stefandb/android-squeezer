@@ -93,25 +93,30 @@ public class PluginItemView extends BaseItemView<PluginItem> {
     @Override
     public void onItemSelected(int index, final PluginItem item) {
         if(item.getType() != null && item.getType().toString().toLowerCase().contains("search")){
-            AlertDialog.Builder alert = new AlertDialog.Builder(mActivity);
+            /*
+            mActivity.doSearch(PluginItem);
+             */
 
-            final EditText edittext= new EditText(mActivity);
-            alert.setMessage("Enter Your Message");
-            alert.setTitle("Enter Your Title");
-            alert.setView(edittext);
-            alert.setPositiveButton("Search", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    String YouEditTextValue = String.valueOf(edittext.getText());
-                    Log.d("search-text", YouEditTextValue);
-                    mActivity.show(item, YouEditTextValue);
-                }
-            });
-            alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                }
-            });
-
-            alert.show();
+//
+//            AlertDialog.Builder alert = new AlertDialog.Builder(mActivity);
+//
+//            final EditText edittext= new EditText(mActivity);
+//            alert.setMessage("Enter Your Message");
+//            alert.setTitle("Enter Your Title");
+//            alert.setView(edittext);
+//            alert.setPositiveButton("Search", new DialogInterface.OnClickListener() {
+//                public void onClick(DialogInterface dialog, int whichButton) {
+//                    String YouEditTextValue = String.valueOf(edittext.getText());
+//                    Log.d("search-text", YouEditTextValue);
+//                    mActivity.show(item, YouEditTextValue);
+//                }
+//            });
+//            alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                public void onClick(DialogInterface dialog, int whichButton) {
+//                }
+//            });
+//
+////            alert.show();
         }else if(item.getType() != null && item.getType().toString().toLowerCase().contains("audio") || item.isAudio()){
             mActivity.play((PluginItem) item);
         }else if(!item.isAudio() && !item.isHasitems() && item.getType().toString().toLowerCase().contains("text")){
