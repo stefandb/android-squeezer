@@ -145,6 +145,9 @@ public class PluginItemListActivity extends BaseListActivity<PluginItem>
 
         new IconicsDrawable(this, "faw-adjust");
 
+        PluginItem p = parent;
+        Plugin pl = plugin;
+
         Bundle data = new Bundle();
         data.putBoolean("Extra", true);
         data.putString("Label", getPlugin().getName());
@@ -153,6 +156,48 @@ public class PluginItemListActivity extends BaseListActivity<PluginItem>
 //        data.putSerializable("View", createItemView());
         data.putParcelable("PluginItem", getPlugin());
         data.putString("Icon", "faw_soundcloud");
+
+        if(plugin != null){
+            data.putInt("pluginId", Integer.parseInt(plugin.getId()));
+        }
+
+        if(parent != null){
+            data.putInt("parentPluginId", Integer.parseInt(parent.getId()));
+        }
+
+        startSearch(null, false, data, false);
+        return true;
+    }
+
+    public boolean onSearchRequested(PluginItem item) {
+        if (!isConnected()) {
+            return false;
+        }
+
+        new IconicsDrawable(this, "faw-adjust");
+
+        PluginItem p = parent;
+        Plugin pl = plugin;
+
+        Bundle data = new Bundle();
+        data.putBoolean("Extra", true);
+        data.putString("Label", getPlugin().getName());
+        data.putString("Type", "Plugin");
+        data.putString("ClassType", "PluginItem");
+//        data.putSerializable("View", createItemView());
+        data.putParcelable("PluginItem", getPlugin());
+        data.putString("Icon", "faw_soundcloud");
+        data.putString("caller", "PluginItemListActivity");
+
+
+        if(plugin != null){
+            data.putString("pluginId", plugin.getId());
+        }
+
+        if(item != null){
+            data.putString("parentPluginId", item.getId());
+        }
+
         startSearch(null, false, data, false);
         return true;
     }
@@ -187,6 +232,7 @@ public class PluginItemListActivity extends BaseListActivity<PluginItem>
 
     @Override
     protected void orderPage(@NonNull ISqueezeService service, int start) {
+
         service.pluginItems(start, plugin, parent, search, this);
     }
 

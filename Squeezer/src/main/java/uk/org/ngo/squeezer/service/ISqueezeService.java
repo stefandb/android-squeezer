@@ -215,7 +215,7 @@ public interface ISqueezeService {
     void apps(int start, IServiceItemListCallback<Plugin> callback) throws SqueezeService.HandshakeNotCompleteException;
 
     void pluginItems(int start, Plugin plugin, PluginItem parent, String search, IServiceItemListCallback<PluginItem> callback) throws SqueezeService.HandshakeNotCompleteException;
-
+    void searchPluginItems(int start, String plugin, String parent, String search, IServiceItemListCallback itemListCallback) throws SqueezeService.HandshakeNotCompleteException;
     /**
      * Initiate download of songs for the supplied item.
      *

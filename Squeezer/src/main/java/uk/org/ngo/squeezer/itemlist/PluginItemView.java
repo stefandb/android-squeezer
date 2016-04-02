@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.BaseItemView;
+import uk.org.ngo.squeezer.framework.PlaylistItem;
 import uk.org.ngo.squeezer.framework.expandable.RecyclerItemViewHolder;
 import uk.org.ngo.squeezer.framework.recyclerViewListAdapter;
 import uk.org.ngo.squeezer.model.PluginItem;
@@ -97,6 +98,7 @@ public class PluginItemView extends BaseItemView<PluginItem> {
             mActivity.doSearch(PluginItem);
              */
 
+            mActivity.onSearchRequested(item);
 //
 //            AlertDialog.Builder alert = new AlertDialog.Builder(mActivity);
 //
@@ -116,11 +118,11 @@ public class PluginItemView extends BaseItemView<PluginItem> {
 //                }
 //            });
 //
-////            alert.show();
+//            alert.show();
         }else if(item.getType() != null && item.getType().toString().toLowerCase().contains("audio") || item.isAudio()){
             mActivity.play((PluginItem) item);
         }else if(!item.isAudio() && !item.isHasitems() && item.getType().toString().toLowerCase().contains("text")){
-            
+
         }else{
             mActivity.show(item);
         }

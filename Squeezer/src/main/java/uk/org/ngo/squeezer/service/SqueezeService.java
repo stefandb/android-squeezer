@@ -1592,6 +1592,24 @@ public class SqueezeService extends Service implements ServiceCallbackList.Servi
             albums(itemListCallback, start, albumSortOrder.name().replace("__", ""), searchString);
             genres(start, searchString, itemListCallback);
             songs(itemListCallback, start, SongViewDialog.SongsSortOrder.title.name(), searchString);
+
+//            cli.requestPlayerItems(mActivePlayer.get(), plugin.getId() + " items", start, parameters, callback);
+        }
+
+        @Override
+        public void searchPluginItems(int start, String plugin, String parent, String search, IServiceItemListCallback itemListCallback) throws HandshakeNotCompleteException {
+            if (!mHandshakeComplete) {
+                throw new HandshakeNotCompleteException("Handshake with server has not completed.");
+            }
+            List<String> parameters = new ArrayList<String>();
+            if (parent != null) {
+                parameters.add("item_id:" + parent);
+            }
+            if (search != null && search.length() > 0) {
+                parameters.add("search:" + search);
+            }
+
+            cli.requestPlayerItems(mActivePlayer.get(), plugin + " items", start, parameters, itemListCallback);
         }
 
         /* Start an asynchronous fetch of the squeezeservers radio type plugins */
@@ -1626,6 +1644,8 @@ public class SqueezeService extends Service implements ServiceCallbackList.Servi
             if (search != null && search.length() > 0) {
                 parameters.add("search:" + search);
             }
+
+
             cli.requestPlayerItems(mActivePlayer.get(), plugin.getId() + " items", start, parameters, callback);
         }
 

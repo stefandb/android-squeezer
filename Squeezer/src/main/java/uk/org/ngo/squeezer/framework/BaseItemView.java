@@ -81,7 +81,7 @@ public abstract class BaseItemView<T extends Item> implements ItemView<T> {
 
     private final ItemListActivity mActivity;
 
-    private final LayoutInflater mLayoutInflater;
+    private LayoutInflater mLayoutInflater;
 
     private Class<T> mItemClass;
 

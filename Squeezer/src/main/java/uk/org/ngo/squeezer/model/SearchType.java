@@ -36,6 +36,9 @@ public class SearchType<T extends BaseItemView> {
     private T mViewBuilder;
     private String mModelClassName;
     private boolean mExpand = false;
+    private String pluginId;
+    private String parentPluginId;
+    private boolean custom = false;
 
     public SearchType(){
 
@@ -94,5 +97,29 @@ public class SearchType<T extends BaseItemView> {
         }else{
             this.mExpand = true;
         }
+    }
+
+    public void setPluginId(String pluginId) {
+        this.pluginId = pluginId;
+    }
+
+    public void setParentPluginId(String parentPluginId) {
+        this.parentPluginId = parentPluginId;
+    }
+
+    public void setCustom(boolean custom) {
+        this.custom = custom;
+    }
+
+    public boolean getCustom() {
+        return custom;
+    }
+
+    public String getPluginId() {
+        return pluginId;
+    }
+
+    public String getParentPluginId() {
+        return parentPluginId;
     }
 }

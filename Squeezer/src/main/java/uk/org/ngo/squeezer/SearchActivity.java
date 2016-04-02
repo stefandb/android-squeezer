@@ -17,6 +17,7 @@
 package uk.org.ngo.squeezer;
 
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -27,43 +28,30 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ExpandableListView;
-import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
-import android.widget.Toast;
 
-import com.bignerdranch.expandablerecyclerview.Adapter.ExpandableRecyclerAdapter;
 import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
-import com.mikepenz.iconics.IconicsDrawable;
-import com.mikepenz.iconics.typeface.IIcon;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import uk.org.ngo.squeezer.framework.BaseActivity;
 import uk.org.ngo.squeezer.framework.BaseItemView;
 import uk.org.ngo.squeezer.framework.Item;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
-import uk.org.ngo.squeezer.framework.RecyclerExpandableAdapter;
+import uk.org.ngo.squeezer.framework.ItemView;
 import uk.org.ngo.squeezer.framework.RecyclerItemClickListener;
-import uk.org.ngo.squeezer.framework.expandable.CrimeLab;
 import uk.org.ngo.squeezer.itemlist.AlbumView;
 import uk.org.ngo.squeezer.itemlist.ArtistView;
 import uk.org.ngo.squeezer.itemlist.GenreView;
 import uk.org.ngo.squeezer.itemlist.IServiceItemListCallback;
 import uk.org.ngo.squeezer.itemlist.PluginItemListActivity;
-import uk.org.ngo.squeezer.itemlist.PluginItemView;
 import uk.org.ngo.squeezer.itemlist.SongView;
 import uk.org.ngo.squeezer.itemlist.SongViewWithArt;
-import uk.org.ngo.squeezer.model.Album;
-import uk.org.ngo.squeezer.model.Artist;
 import uk.org.ngo.squeezer.model.ExpandableParentListItem;
-import uk.org.ngo.squeezer.model.Genre;
 import uk.org.ngo.squeezer.model.PluginItem;
 import uk.org.ngo.squeezer.model.SearchType;
-import uk.org.ngo.squeezer.model.Song;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -72,7 +60,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
  * @param <Child>
  * @param <K>
  */
-public class SearchActivity<Child extends Item, K extends BaseItemView> extends ItemListActivity {
+public class SearchActivity<Child extends Item, K extends BaseItemView, T extends BaseItemView> extends ItemListActivity {
 
     private View loadingLabel;
 
@@ -176,9 +164,7 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
             Bundle appData = getIntent().getBundleExtra(SearchManager.APP_DATA);
 
             Boolean Extra = false;
-            String Label = "aa";
             String Type = "aa";
-            String ClassType = "aa";
             BaseItemView View = null;
             PluginItem PluginItem = null;
             String Icon = "";
@@ -186,27 +172,28 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
             if (appData != null) {
                 Extra = appData.getBoolean("Extra", false);
 
+                PluginItemListActivity pluginItemListActivity = new PluginItemListActivity();
+
                 if(Extra){
-                    Label = appData.getString("Label", "");
+                    String caller = appData.getString("caller");
+                    ComponentName prev = this.getCallingActivity();
+
                     Type = appData.getString("Type", "");
-                    ClassType = appData.getString("ClassType", "");
-                    View = (PluginItemView) appData.getParcelable("View");
-
-                    Class = (PluginItemListActivity) appData.getSerializable("Class");
-//                    PluginItem = appData.getParcelable("PluginItem");
                     Icon = appData.getString("Icon");
-                }
-            }
 
-            if(Extra){
-                SearchTypes.add(
-                        new SearchType(
-                                Label,
-                                FontAwesome.Icon.faw_soundcloud,
-                                new SongViewWithArt(this),
-                                ClassType
-                        )
-                );
+                    BaseItemView view = pluginItemListActivity.createItemViewSearch();
+
+                    SearchType object = new SearchType(
+                            appData.getString("Label", ""),
+                            FontAwesome.Icon.faw_soundcloud,
+                            view,
+                            appData.getString("ClassType", "")
+                    );
+                    object.setPluginId(appData.getString("pluginId"));
+                    object.setParentPluginId(appData.getString("parentPluginId"));
+                    object.setCustom(true);
+                    SearchTypes.add(object);
+                }
             }
 
             SearchAdapter adapter = createListAdapter();
@@ -260,6 +247,14 @@ public class SearchActivity<Child extends Item, K extends BaseItemView> extends 
     @Override
     protected void orderPage(@NonNull ISqueezeService service, int start) {
         service.search(start, searchString, itemListCallback);
+
+        SearchType Object = SearchTypes.get(SearchTypes.size() - 1);
+
+        if(Object.getCustom() == true){
+            service.searchPluginItems(1, Object.getPluginId(), Object.getParentPluginId(), searchString, itemListCallback);
+        }
+
+//        service.pluginItems(start, plugin, parent, search, this);
     }
 
     /**
