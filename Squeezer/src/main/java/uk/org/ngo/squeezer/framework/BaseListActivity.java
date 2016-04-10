@@ -151,6 +151,7 @@ public abstract class BaseListActivity<T extends Item> extends ItemListActivity 
     }
 
     public void onEventMainThread(HandshakeComplete event) {
+        super.onEventMainThread(event);
         maybeOrderVisiblePages(mrecyclerView);
         setAdapter();
     }
