@@ -512,4 +512,18 @@ of your accepting any such warranty or additional liability.&lt;/p&gt;</string>
     <string name="alarm_clock">Alarm Clock</string>
     <string name="drawer_item_home">Home</string>
     <string name="drawer_item_settings">Settings</string>
+
+
+    <string name="aboutLibraries_description_special1_name">All Features</string>
+    <string name="aboutLibraries_description_special1_text">
+        <![CDATA[<ul>
+<li><p>Now playing, artwork, seeking within tracks, volume control.</p></li>
+<li><p>Browse the library by artist, album, song title, genre, year, or playlist.</p></li>
+<li><p>Browse the music folders (if supported by the server).</p></li>
+<li><p>Full library search.</p></li>
+<li><p>Manage players (names, synchronisation groups, sleep, alarms)</p></li>
+<li><p>Internet radio support (browse, staff picks, search).</p></li>
+<li><p>Scan the local network for compatible Squeezeservers.</p></li>
+</ul>]]>
+    </string>
 </resources>

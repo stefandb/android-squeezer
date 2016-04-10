@@ -54,6 +54,7 @@ import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
+import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.context.IconicsContextWrapper;
@@ -577,7 +578,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
                         new DividerDrawerItem(),
                         new PrimaryDrawerItem().withName(ServerString.ALARM.getLocalizedString()).withIcon(FontAwesome.Icon.faw_clock_o).withIdentifier(20).withSelectable(false),
                         new PrimaryDrawerItem().withName(R.string.menu_item_settings_label).withIcon(FontAwesome.Icon.faw_cog).withIdentifier(21).withSelectable(false),
-                        new PrimaryDrawerItem().withName(R.string.menu_item_about_label).withIcon(FontAwesome.Icon.faw_cog).withIdentifier(22).withSelectable(false)
+                        new PrimaryDrawerItem().withName(R.string.menu_item_about_label).withIcon(FontAwesome.Icon.faw_github).withIdentifier(22).withSelectable(false)
 
 //                        new SwitchDrawerItem().withName("Switch").withIcon(Octicons.Icon.oct_tools).withChecked(true).withOnCheckedChangeListener(onCheckedChangeListener),
 //                        new SwitchDrawerItem().withName("Switch2").withIcon(Octicons.Icon.oct_tools).withChecked(true).withOnCheckedChangeListener(onCheckedChangeListener),
@@ -626,7 +627,20 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
                             } else if (drawerItem.getIdentifier() == 21) {
                                 intent = new Intent(BaseActivity.this, SettingsActivity.class);
                             } else if (drawerItem.getIdentifier() == 22) {
-                                intent = new Intent(BaseActivity.this, AboutActiviy.class);
+
+                                AboutActiviy AboutActivity = new AboutActiviy();
+
+                                new LibsBuilder()
+                                        .withLibraries("crouton, actionbarsherlock", "showcaseview")
+                                        .withAutoDetect(true)
+                                        .withLicenseShown(true)
+                                        .withVersionShown(true)
+                                        .withActivityTitle(getResources().getString(R.string.menu_item_about_label))
+                                        .withActivityTheme(getThemeId())
+                                        .withListener(AboutActivity.getLibsListener())
+                                        .withLibTaskCallback(AboutActivity.getLibTaskCallback())
+                                        .withUiListener(AboutActivity.getLibsUIListener())
+                                        .start(BaseActivity.this);
                             }
 
                             if (intent != null) {
