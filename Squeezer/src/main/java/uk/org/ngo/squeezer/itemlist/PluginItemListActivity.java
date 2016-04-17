@@ -100,31 +100,31 @@ public class PluginItemListActivity extends BaseListActivity<PluginItem>
                 clearAndReOrderItems(extras.getString(TAG_search));
             }
 
-            findViewById(R.id.search_view).setVisibility(plugin.isSearchable() ? View.VISIBLE : View.GONE);
-
-            ImageButton searchButton = (ImageButton) findViewById(R.id.search_button);
-            final EditText searchCriteriaText = (EditText) findViewById(R.id.search_input);
-
-            searchCriteriaText.setOnKeyListener(new OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if ((event.getAction() == KeyEvent.ACTION_DOWN)
-                            && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                        clearAndReOrderItems(searchCriteriaText.getText().toString());
-                        return true;
-                    }
-                    return false;
-                }
-            });
-
-            searchButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (getService() != null) {
-                        clearAndReOrderItems(searchCriteriaText.getText().toString());
-                    }
-                }
-            });
+//            findViewById(R.id.search_view).setVisibility(plugin.isSearchable() ? View.VISIBLE : View.GONE);
+//
+//            ImageButton searchButton = (ImageButton) findViewById(R.id.search_button);
+//            final EditText searchCriteriaText = (EditText) findViewById(R.id.search_input);
+//
+//            searchCriteriaText.setOnKeyListener(new OnKeyListener() {
+//                @Override
+//                public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                    if ((event.getAction() == KeyEvent.ACTION_DOWN)
+//                            && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+//                        clearAndReOrderItems(searchCriteriaText.getText().toString());
+//                        return true;
+//                    }
+//                    return false;
+//                }
+//            });
+//
+//            searchButton.setOnClickListener(new OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    if (getService() != null) {
+//                        clearAndReOrderItems(searchCriteriaText.getText().toString());
+//                    }
+//                }
+//            });
 
             getSupportActionBar().setTitle(plugin.getName());
         }else{

@@ -26,6 +26,7 @@
         squeezer:showAsAction="ifRoom"
         android:orderInCategory="0"/>
 
+
     <item
         android:id="@+id/menu_item_playlist"
         android:title="@string/menu_item_playlist"
