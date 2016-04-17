@@ -31,10 +31,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.speech.RecognizerIntent;
 import android.support.annotation.CallSuper;
+import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
+import android.support.annotation.UiThread;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
@@ -43,6 +46,7 @@ import android.support.v7.widget.Toolbar;
 //import android.support.v7.app.AppCompatActivity;
 //import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -50,10 +54,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.context.IconicsContextWrapper;
@@ -89,6 +95,7 @@ import uk.org.ngo.squeezer.itemlist.AlarmsActivity;
 import uk.org.ngo.squeezer.itemlist.AlbumListActivity;
 import uk.org.ngo.squeezer.itemlist.ApplicationListActivity;
 import uk.org.ngo.squeezer.itemlist.ArtistListActivity;
+import uk.org.ngo.squeezer.itemlist.CurrentPlaylistActivity;
 import uk.org.ngo.squeezer.itemlist.FavoriteListActivity;
 import uk.org.ngo.squeezer.itemlist.GenreListActivity;
 import uk.org.ngo.squeezer.itemlist.MusicFolderListActivity;
@@ -105,6 +112,7 @@ import uk.org.ngo.squeezer.service.ServerString;
 import uk.org.ngo.squeezer.service.SqueezeService;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
 import uk.org.ngo.squeezer.service.event.PlayerVolume;
+import uk.org.ngo.squeezer.service.event.PowerStatusChanged;
 import uk.org.ngo.squeezer.util.ImageFetcher;
 import uk.org.ngo.squeezer.util.SqueezePlayer;
 import uk.org.ngo.squeezer.util.ThemeManager;
@@ -150,6 +158,8 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
     }
 
     protected Bundle _savedInstanceState = null;
+
+    protected MaterialSearchView searchView = (MaterialSearchView) null;
 
     /**
      * @return The squeezeservice, or null if not bound
@@ -354,24 +364,6 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.base_activity, menu);
-        mMenuItemVolume = menu.findItem(R.id.menu_item_volume);
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean haveConnectedPlayers = isConnected() && mService != null
-                && !mService.getConnectedPlayers().isEmpty();
-        if (mMenuItemVolume != null) {
-            mMenuItemVolume.setVisible(haveConnectedPlayers);
-        }
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -402,6 +394,21 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
 
                     return true;
                 }
+            case R.id.menu_item_search:
+                this.onSearchRequested();
+                return true;
+            case R.id.menu_item_disconnect:
+                mService.disconnect();
+                return true;
+            case R.id.menu_item_poweron:
+                mService.powerOn();
+                return true;
+            case R.id.menu_item_poweroff:
+                mService.powerOff();
+                return true;
+            case R.id.menu_item_playlist:
+                CurrentPlaylistActivity.show(this);
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -416,6 +423,8 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
         if (!isConnected()) {
             return false;
         }
+        Log.d("ZOEKEN", "onSearchRequested");
+
 //
 //
 //
@@ -784,7 +793,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
 
                  TextDrawable image = TextDrawable.builder()
                          .beginConfig()
-                            .width(380)  // width in px
+                         .width(380)  // width in px
                             .height(380) // height in px
                          .endConfig()
                          .buildRound(String.valueOf(name.charAt(0)), R.color.squeezer_main);
@@ -813,5 +822,140 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
     public View getBaseView(){
         return base_view;
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == MaterialSearchView.REQUEST_VOICE && resultCode == RESULT_OK) {
+            ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (matches != null && matches.size() > 0) {
+                String searchWrd = matches.get(0);
+                if (!TextUtils.isEmpty(searchWrd)) {
+                    searchView.setQuery(searchWrd, false);
+                }
+            }
+
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+
+    private MenuItem menu_item_connect;
+    private MenuItem menu_item_disconnect;
+    private MenuItem menu_item_poweron;
+    private MenuItem menu_item_poweroff;
+    private MenuItem menu_item_playlist;
+    private MenuItem menu_item_search;
+
+    @MainThread
+    public void onEventMainThread(PowerStatusChanged event) {
+        if (event.player.equals(mService.getActivePlayer())) {
+            updatePowerMenuItems(event.canPowerOn, event.canPowerOff);
+        }
+    }
+
+    private Player getActivePlayer() {
+        if (mService == null) {
+            return null;
+        }
+        return mService.getActivePlayer();
+    }
+
+    private boolean canPowerOn() {
+        return mService != null && mService.canPowerOn();
+    }
+
+    private boolean canPowerOff() {
+        return mService != null && mService.canPowerOff();
+    }
+
+    @UiThread
+    public void updatePowerMenuItems(boolean canPowerOn, boolean canPowerOff) {
+        boolean connected = isConnected();
+
+        if (menu_item_poweron != null) {
+            if (canPowerOn && connected) {
+                Player player = getActivePlayer();
+                String playerName = player != null ? player.getName() : "";
+                menu_item_poweron.setTitle(getString(R.string.menu_item_poweron, playerName));
+                menu_item_poweron.setVisible(true);
+            } else {
+                menu_item_poweron.setVisible(false);
+            }
+        }
+
+        if (menu_item_poweroff != null) {
+            if (canPowerOff && connected) {
+                Player player = getActivePlayer();
+                String playerName = player != null ? player.getName() : "";
+                menu_item_poweroff.setTitle(getString(R.string.menu_item_poweroff, playerName));
+                menu_item_poweroff.setVisible(true);
+            } else {
+                menu_item_poweroff.setVisible(false);
+            }
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.base_activity, menu);
+        mMenuItemVolume = menu.findItem(R.id.menu_item_volume);
+
+        inflater.inflate(R.menu.now_playing_fragment, menu);
+
+        menu_item_connect = menu.findItem(R.id.menu_item_connect);
+        menu_item_disconnect = menu.findItem(R.id.menu_item_disconnect);
+        menu_item_poweron = menu.findItem(R.id.menu_item_poweron);
+        menu_item_poweroff = menu.findItem(R.id.menu_item_poweroff);
+        menu_item_playlist = menu.findItem(R.id.menu_item_playlist);
+        menu_item_search = menu.findItem(R.id.menu_item_search);
+
+        return true;
+    }
+
+    /**
+     * Sets the state of assorted option menu items based on whether or not there is a connection to
+     * the server, and if so, whether any players are connected.
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        boolean haveConnectedPlayers = isConnected() && mService != null
+                && !mService.getConnectedPlayers().isEmpty();
+        if (mMenuItemVolume != null) {
+            mMenuItemVolume.setVisible(haveConnectedPlayers);
+        }
+        boolean connected = isConnected();
+
+        // Don't show an option to connect if there's no server to connect to.
+        boolean knowServerAddress = new Preferences(this).getServerAddress() != null;
+        menu_item_connect.setEnabled(knowServerAddress);
+
+        // These are all set at the same time, so one check is sufficient
+        if (menu_item_connect != null) {
+            // Set visibility and enabled state of menu items that are not player-specific.
+            menu_item_connect.setVisible(!connected);
+            menu_item_disconnect.setVisible(connected);
+
+            // Set visibility and enabled state of menu items that are player-specific and
+            // require a connection to the server.
+            menu_item_playlist.setVisible(haveConnectedPlayers);
+            menu_item_search.setEnabled(connected);
+            menu_item_search.setVisible(haveConnectedPlayers);
+            menu_item_connect.setVisible(haveConnectedPlayers);
+        }
+
+        // Don't show the item to go to CurrentPlaylistActivity if in CurrentPlaylistActivity.
+        if (this instanceof CurrentPlaylistActivity && menu_item_playlist != null) {
+            menu_item_playlist.setVisible(false);
+        }
+        // Don't show the item to go to alarms if in AlarmsActivity.
+
+        updatePowerMenuItems(canPowerOn(), canPowerOff());
+
+        return true;
+    }
+
 
 }
