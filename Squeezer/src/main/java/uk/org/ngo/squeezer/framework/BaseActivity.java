@@ -59,7 +59,6 @@ import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
-import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.context.IconicsContextWrapper;
@@ -116,6 +115,7 @@ import uk.org.ngo.squeezer.service.event.PowerStatusChanged;
 import uk.org.ngo.squeezer.util.ImageFetcher;
 import uk.org.ngo.squeezer.util.SqueezePlayer;
 import uk.org.ngo.squeezer.util.ThemeManager;
+import android.support.v7.widget.SearchView;
 
 /**
  * Common base class for all activities in Squeezer.
@@ -158,8 +158,6 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
     }
 
     protected Bundle _savedInstanceState = null;
-
-    protected MaterialSearchView searchView = (MaterialSearchView) null;
 
     /**
      * @return The squeezeservice, or null if not bound
@@ -823,21 +821,22 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
         return base_view;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == MaterialSearchView.REQUEST_VOICE && resultCode == RESULT_OK) {
-            ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            if (matches != null && matches.size() > 0) {
-                String searchWrd = matches.get(0);
-                if (!TextUtils.isEmpty(searchWrd)) {
-                    searchView.setQuery(searchWrd, false);
-                }
-            }
-
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
+//
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (requestCode == MaterialSearchView.REQUEST_VOICE && resultCode == RESULT_OK) {
+//            ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+//            if (matches != null && matches.size() > 0) {
+//                String searchWrd = matches.get(0);
+//                if (!TextUtils.isEmpty(searchWrd)) {
+//                    searchView.setQuery(searchWrd, false);
+//                }
+//            }
+//
+//            return;
+//        }
+//        super.onActivityResult(requestCode, resultCode, data);
+//    }
 
 
 
@@ -911,6 +910,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
         menu_item_poweroff = menu.findItem(R.id.menu_item_poweroff);
         menu_item_playlist = menu.findItem(R.id.menu_item_playlist);
         menu_item_search = menu.findItem(R.id.menu_item_search);
+        
 
         return true;
     }
