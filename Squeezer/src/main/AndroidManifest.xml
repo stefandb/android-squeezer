@@ -39,6 +39,12 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme.Light.DarkActionBar">
 
+        <provider android:name=".framework.Provider.RecentSuggestionsProvider"
+            android:authorities="br.com.edsilfer.content_provider.RecentSuggestionsProvider" />
+
+        <provider android:name=".framework.Provider.CustomSuggestionsProvider"
+            android:authorities="br.com.edsilfer.content_provider.CustomSuggestionsProvider" />
+
         <!-- enable the search dialog to send searches to SearchActivity -->
         <meta-data
             android:name="android.app.default_searchable"

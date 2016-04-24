@@ -90,6 +90,7 @@ import uk.org.ngo.squeezer.SettingsActivity;
 import uk.org.ngo.squeezer.VolumePanel;
 import uk.org.ngo.squeezer.dialog.AboutDialog;
 import uk.org.ngo.squeezer.dialog.TipsDialog;
+import uk.org.ngo.squeezer.framework.Override.CustomSearchManager;
 import uk.org.ngo.squeezer.itemlist.AlarmsActivity;
 import uk.org.ngo.squeezer.itemlist.AlbumListActivity;
 import uk.org.ngo.squeezer.itemlist.ApplicationListActivity;
@@ -152,6 +153,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
     //save our header or result
     protected AccountHeader navigationDrawerHeader = null;
     protected Drawer navigationDrawer = null;
+    private SearchManager mSearchManager;
 
     protected String getTag() {
         return getClass().getSimpleName();
@@ -426,12 +428,12 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
 //
 //
 //
-//        Bundle data = new Bundle();
-//        data.putString("test", "BLA");
-//        startSearch(null, false, data, false);
-//        return true;
+        Bundle data = new Bundle();
+        data.putString("test", "BLA");
+        startSearch(null, false, data, false);
+        return true;
 ////
-        return super.onSearchRequested();
+//        return super.onSearchRequested();
     }
 
     /*
