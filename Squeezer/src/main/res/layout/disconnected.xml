@@ -9,61 +9,19 @@
     android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="23dp">
+    android:layout_marginTop="23dp"
+    android:background="@color/squeezer_main">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!--app:layout_scrollFlags="scroll|enterAlways"-->
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:layout_collapseMode="pin"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-
     </android.support.design.widget.AppBarLayout>
-
-    <LinearLayout
-        android:id="@+id/search_view"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:orientation="horizontal">
-
-        <uk.org.ngo.squeezer.widget.FloatLabelLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:floatLabelTextAppearance="@style/SqueezerTextAppearance.FloatLabel"
-            app:floatLabelTrigger="focus">
-
-            <EditText
-                android:id="@+id/search_input"
-                android:hint="@string/search_text_hint"
-                android:inputType="textNoSuggestions"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"/>
-        </uk.org.ngo.squeezer.widget.FloatLabelLayout>
-
-        <ImageButton
-            android:id="@+id/search_button"
-            android:src="@drawable/icon_search"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
-
-
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="?attr/actionBarSize"
-        android:layout_centerInParent="true">
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/header_message"
@@ -71,6 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:padding="16dp"
+            android:visibility="gone"
             android:textAppearance="@style/SqueezerTextAppearance.Medium"
             android:drawableLeft="@android:drawable/ic_menu_info_details"
             android:drawablePadding="4dp"

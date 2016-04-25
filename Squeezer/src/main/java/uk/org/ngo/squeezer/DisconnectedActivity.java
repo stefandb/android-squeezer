@@ -24,7 +24,12 @@ import android.support.annotation.IntDef;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.TextView;
+
+import com.mikepenz.iconics.view.IconicsImageView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -34,6 +39,7 @@ import uk.org.ngo.squeezer.dialog.ServerAddressView;
 import uk.org.ngo.squeezer.framework.BaseActivity;
 import uk.org.ngo.squeezer.itemlist.SongListActivity;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
+import uk.org.ngo.squeezer.widget.FloatLabelLayout;
 
 /**
  * An activity for when the user is not connected to a Squeezeserver.
@@ -42,6 +48,15 @@ import uk.org.ngo.squeezer.service.event.HandshakeComplete;
  * connects.
  */
 public class DisconnectedActivity extends BaseActivity {
+
+    private IconicsImageView connectionInfo;
+    private int disconnectionReason;
+    private FloatLabelLayout mUserNameLabel;
+    private FloatLabelLayout mPasswordLabel;
+
+    public void setDisconnectionReason(int reason) {
+        disconnectionReason = reason;
+    }
 
     @IntDef({MANUAL_DISCONNECT, CONNECTION_FAILED, LOGIN_FAILED})
     @Retention(RetentionPolicy.SOURCE)
@@ -68,21 +83,28 @@ public class DisconnectedActivity extends BaseActivity {
             mDisconnectionReason = extras.getInt(EXTRA_DISCONNECTION_REASON);
         }
 
+        //Remove title bar
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.disconnected);
+
+        connectionInfo = (IconicsImageView) findViewById(R.id.infobtn);
+        mUserNameLabel = (FloatLabelLayout) findViewById(R.id.label_username);
+        mPasswordLabel = (FloatLabelLayout) findViewById(R.id.label_password);
+
+        connectionInfo.setOnClickListener(_InformationOnclickListner());
+        ToggleInformationIcon(mDisconnectionReason);
+        processDisconnection(mDisconnectionReason);
+
         findViewById(R.id.controls_container).setVisibility(View.GONE);
         serverAddressView = (ServerAddressView) findViewById(R.id.server_address_view);
         mHeaderMessage = (TextView) findViewById(R.id.header_message);
-        setHeaderMessageFromReason(mDisconnectionReason);
+
         mHeaderMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 InfoDialog.show(getSupportFragmentManager(), R.string.login_failed_info_text);
             }
         });
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(R.string.disconnected_text);
     }
 
     /**
@@ -100,7 +122,10 @@ public class DisconnectedActivity extends BaseActivity {
         // If the activity is already running then make sure the header message is appropriate
         // and stop, as there's no need to start another instance of the activity.
         if (activity instanceof DisconnectedActivity) {
-            ((DisconnectedActivity) activity).setHeaderMessageFromReason(disconnectionReason);
+
+            ((DisconnectedActivity) activity).ToggleInformationIcon(disconnectionReason);
+            ((DisconnectedActivity) activity).processDisconnection(disconnectionReason);
+            ((DisconnectedActivity) activity).setDisconnectionReason(disconnectionReason);
             return;
         }
 
@@ -113,28 +138,45 @@ public class DisconnectedActivity extends BaseActivity {
         activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
-    /**
-     * Set the text and visibility of the optional header message that's shown to the user
-     * based on the reason for the activity being shown.
-     *
-     * @param disconnectionReason The reason.
-     */
-    private void setHeaderMessageFromReason(@DisconnectionReasons int disconnectionReason) {
+    public void ToggleInformationIcon(int disconnectionReason){
+        if(mDisconnectionReason == CONNECTION_FAILED || mDisconnectionReason == LOGIN_FAILED){
+            connectionInfo.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private View.OnClickListener _InformationOnclickListner(){
+        return new IconicsImageView.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int textMessage = (R.string.connecting_text);
+                connectionInfo.setVisibility(View.VISIBLE);
+                switch (disconnectionReason) {
+                    case CONNECTION_FAILED:
+                        textMessage = (R.string.connection_failed_text);
+                        break;
+                    case LOGIN_FAILED:
+                        textMessage = (R.string.login_failed_text);
+                        break;
+                }
+                InfoDialog.show(getSupportFragmentManager(), textMessage);
+            }
+        };
+    }
+
+    public void processDisconnection(int reason){
+        disconnectionReason = reason;
+
         switch (disconnectionReason) {
-            case MANUAL_DISCONNECT:
-                mHeaderMessage.setVisibility(View.GONE);
-                return;
-
-            case CONNECTION_FAILED:
-                mHeaderMessage.setText(R.string.connection_failed_text);
-                break;
-
             case LOGIN_FAILED:
-                mHeaderMessage.setText(R.string.login_failed_text);
+                //android:id="@+id/label_username"
+                mUserNameLabel.setVisibility(View.VISIBLE);
+                mPasswordLabel.setVisibility(View.VISIBLE);
+                break;
+            default:
+                mUserNameLabel.setVisibility(View.GONE);
+                mPasswordLabel.setVisibility(View.GONE);
                 break;
         }
-
-        mHeaderMessage.setVisibility(View.VISIBLE);
     }
 
     /**

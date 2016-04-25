@@ -20,6 +20,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -89,7 +90,9 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
             // Set up the servers spinner.
             mServersAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item);
             mServersAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
             mServerName = (TextView) findViewById(R.id.server_name);
+
             mServersSpinner = (Spinner) findViewById(R.id.found_servers);
             mServersSpinner.setAdapter(mServersAdapter);
             mServersSpinner.setOnItemSelectedListener(new MyOnItemSelectedListener());
@@ -170,6 +173,12 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
         }
 
         mDiscoveredServers = serverMap;
+        mDiscoveredServers.put("dummy 1", "192.168.2.10");
+        mDiscoveredServers.put("dummy 2", "192.168.2.12");
+        mDiscoveredServers.put("dummy 3", "192.168.2.13");
+        mDiscoveredServers.put("dummy 4", "192.168.2.14");
+        mDiscoveredServers.put("dummy 5", "192.168.2.15");
+
         mScanNetworkTask = null;
 
         switch (mDiscoveredServers.size()) {
@@ -213,9 +222,26 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
         serverAddress.bssId = mBssId;
         serverAddress.address = host + ":" + port;
 
+        //TODO-stefan select the correct one in the dropdown
         mServerAddressEditText.setText(serverAddress.address);
-        mUserNameEditText.setText(mPreferences.getUserName(serverAddress));
-        mPasswordEditText.setText(mPreferences.getPassword(serverAddress));
+
+        if(mPreferences.getUserName(serverAddress) != null){
+            mUserNameEditText.setText(mPreferences.getUserName(serverAddress));
+            //LABEL
+            mUserNameEditText.setVisibility(VISIBLE);
+        }else{
+            //LABEL
+            mUserNameEditText.setVisibility(GONE);
+        }
+
+        if(mPreferences.getPassword(serverAddress) != null) {
+            mPasswordEditText.setText(mPreferences.getPassword(serverAddress));
+            //LABEL
+            mPasswordEditText.setVisibility(VISIBLE);
+        }else{
+            //LABEL
+            mPasswordEditText.setVisibility(GONE);
+        }
     }
 
     private String getServerName(String ipPort) {
