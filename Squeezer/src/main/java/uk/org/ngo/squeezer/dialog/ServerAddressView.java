@@ -17,9 +17,12 @@
 package uk.org.ngo.squeezer.dialog;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -28,8 +31,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.mikepenz.iconics.view.IconicsImageView;
+import com.mikepenz.materialdrawer.adapter.BaseDrawerAdapter;
 
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -37,7 +44,9 @@ import java.util.TreeMap;
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Util;
+import uk.org.ngo.squeezer.framework.ConnectionHelper;
 import uk.org.ngo.squeezer.util.ScanNetworkTask;
+import uk.org.ngo.squeezer.widget.FloatLabelLayout;
 
 /**
  * Scans the local network for servers, allow the user to choose one, set it as the preferred server
@@ -45,7 +54,7 @@ import uk.org.ngo.squeezer.util.ScanNetworkTask;
  * <p>
  * A new network scan can be initiated manually if desired.
  */
-public class ServerAddressView extends LinearLayout implements ScanNetworkTask.ScanNetworkCallback {
+public class ServerAddressView extends LinearLayout implements ScanNetworkTask.ScanNetworkCallback, ConnectionHelper {
     private Preferences mPreferences;
     private String mBssId;
 
@@ -63,6 +72,11 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
     private TreeMap<String, String> mDiscoveredServers;
 
     private ArrayAdapter<String> mServersAdapter;
+    private FloatLabelLayout mPasswordLabel;
+    private FloatLabelLayout mUserNameLabel;
+    private FloatLabelLayout mServerAddressLabel;
+    private IconicsImageView togglebtn;
+    private RelativeLayout toggle_view;
 
     public ServerAddressView(final Context context) {
         super(context);
@@ -82,9 +96,16 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
             mBssId = serverAddress.bssId;
 
 
+            toggle_view = (RelativeLayout) findViewById(R.id.toggle_view);
+
+
             mServerAddressEditText = (EditText) findViewById(R.id.server_address);
+            mServerAddressLabel = (FloatLabelLayout) findViewById(R.id.server_address_label);
+            mServerAddressLabel.setOnLongClickListener(new ToggleServerInput());
             mUserNameEditText = (EditText) findViewById(R.id.username);
+            mUserNameLabel = (FloatLabelLayout) findViewById(R.id.label_username);
             mPasswordEditText = (EditText) findViewById(R.id.password);
+            mPasswordLabel = (FloatLabelLayout) findViewById(R.id.label_password);
             setServerAddress(serverAddress.address);
 
             // Set up the servers spinner.
@@ -92,10 +113,14 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
             mServersAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
             mServerName = (TextView) findViewById(R.id.server_name);
+            togglebtn = (IconicsImageView) findViewById(R.id.toggle);
+            togglebtn.setOnClickListener(new ToggleServerInput());
+
 
             mServersSpinner = (Spinner) findViewById(R.id.found_servers);
             mServersSpinner.setAdapter(mServersAdapter);
             mServersSpinner.setOnItemSelectedListener(new MyOnItemSelectedListener());
+//            mServersSpinner.setOnLongClickListener(new ToggleServerInput());
 
             mScanResults = findViewById(R.id.scan_results);
             mScanProgress = findViewById(R.id.scan_progress);
@@ -178,6 +203,7 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
         mDiscoveredServers.put("dummy 3", "192.168.2.13");
         mDiscoveredServers.put("dummy 4", "192.168.2.14");
         mDiscoveredServers.put("dummy 5", "192.168.2.15");
+        mDiscoveredServers.put("Custom", "0");
 
         mScanNetworkTask = null;
 
@@ -197,8 +223,10 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
                 // Show the spinner so the user can choose a server.
                 mServersAdapter.clear();
                 for (Entry<String, String> e : mDiscoveredServers.entrySet()) {
+                    Log.d("device", e.getKey());
                     mServersAdapter.add(e.getKey());
                 }
+
                 int position = getServerPosition(mServerAddressEditText.getText().toString());
                 if (position >= 0) mServersSpinner.setSelection(position);
                 mServersSpinner.setVisibility(VISIBLE);
@@ -227,29 +255,17 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
 
         if(mPreferences.getUserName(serverAddress) != null){
             mUserNameEditText.setText(mPreferences.getUserName(serverAddress));
-            //LABEL
-            mUserNameEditText.setVisibility(VISIBLE);
+            mUserNameLabel.setVisibility(VISIBLE);
         }else{
-            //LABEL
-            mUserNameEditText.setVisibility(GONE);
+            mUserNameLabel.setVisibility(GONE);
         }
 
         if(mPreferences.getPassword(serverAddress) != null) {
             mPasswordEditText.setText(mPreferences.getPassword(serverAddress));
-            //LABEL
-            mPasswordEditText.setVisibility(VISIBLE);
+            mPasswordLabel.setVisibility(VISIBLE);
         }else{
-            //LABEL
-            mPasswordEditText.setVisibility(GONE);
+            mPasswordLabel.setVisibility(GONE);
         }
-    }
-
-    private String getServerName(String ipPort) {
-        if (mDiscoveredServers != null)
-            for (Entry<String, String> entry : mDiscoveredServers.entrySet())
-                if (ipPort.equals(entry.getValue()))
-                    return entry.getKey();
-        return null;
     }
 
     private int getServerPosition(String ipPort) {
@@ -276,6 +292,38 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
 
         public void onNothingSelected(AdapterView<?> parent) {
             // Do nothing.
+        }
+    }
+
+    private class ToggleServerInput implements OnLongClickListener, OnClickListener{
+        @Override
+        public boolean onLongClick(View v)
+        {
+            toggle(v);
+            return true;
+        }
+
+        private void toggle(View v){
+            DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+            int dp = Math.round(toggle_view.getHeight() / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+
+            Log.d("height", "NIEUW");
+            Log.d("height", String.valueOf(dp));
+            Log.d("height", String.valueOf(toggle_view.getMeasuredHeight()));
+
+            if(mServersSpinner.getVisibility() == VISIBLE){
+                mServersSpinner.setVisibility(GONE);
+                mServerAddressLabel.setVisibility(VISIBLE);
+            }else{
+                mServerAddressLabel.setVisibility(GONE);
+                mServersSpinner.setVisibility(VISIBLE);
+            }
+
+        }
+
+        @Override
+        public void onClick(View v) {
+            toggle(v);
         }
     }
 

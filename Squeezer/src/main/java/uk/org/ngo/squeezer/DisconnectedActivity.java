@@ -37,6 +37,7 @@ import java.lang.annotation.RetentionPolicy;
 import uk.org.ngo.squeezer.dialog.InfoDialog;
 import uk.org.ngo.squeezer.dialog.ServerAddressView;
 import uk.org.ngo.squeezer.framework.BaseActivity;
+import uk.org.ngo.squeezer.framework.ConnectionHelper;
 import uk.org.ngo.squeezer.itemlist.SongListActivity;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
 import uk.org.ngo.squeezer.widget.FloatLabelLayout;
@@ -47,12 +48,11 @@ import uk.org.ngo.squeezer.widget.FloatLabelLayout;
  * Provide a UI for connecting to the configured server, launch HomeActivity when the user
  * connects.
  */
-public class DisconnectedActivity extends BaseActivity {
+public class DisconnectedActivity extends BaseActivity implements ConnectionHelper {
 
     private IconicsImageView connectionInfo;
     private int disconnectionReason;
-    private FloatLabelLayout mUserNameLabel;
-    private FloatLabelLayout mPasswordLabel;
+    private Preferences mPreferences;
 
     public void setDisconnectionReason(int reason) {
         disconnectionReason = reason;
@@ -87,13 +87,7 @@ public class DisconnectedActivity extends BaseActivity {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.disconnected);
 
-        connectionInfo = (IconicsImageView) findViewById(R.id.infobtn);
-        mUserNameLabel = (FloatLabelLayout) findViewById(R.id.label_username);
-        mPasswordLabel = (FloatLabelLayout) findViewById(R.id.label_password);
-
-        connectionInfo.setOnClickListener(_InformationOnclickListner());
-        ToggleInformationIcon(mDisconnectionReason);
-        processDisconnection(mDisconnectionReason);
+        mPreferences = new Preferences(this);
 
         findViewById(R.id.controls_container).setVisibility(View.GONE);
         serverAddressView = (ServerAddressView) findViewById(R.id.server_address_view);
@@ -124,7 +118,6 @@ public class DisconnectedActivity extends BaseActivity {
         if (activity instanceof DisconnectedActivity) {
 
             ((DisconnectedActivity) activity).ToggleInformationIcon(disconnectionReason);
-            ((DisconnectedActivity) activity).processDisconnection(disconnectionReason);
             ((DisconnectedActivity) activity).setDisconnectionReason(disconnectionReason);
             return;
         }
@@ -163,22 +156,6 @@ public class DisconnectedActivity extends BaseActivity {
         };
     }
 
-    public void processDisconnection(int reason){
-        disconnectionReason = reason;
-
-        switch (disconnectionReason) {
-            case LOGIN_FAILED:
-                //android:id="@+id/label_username"
-                mUserNameLabel.setVisibility(View.VISIBLE);
-                mPasswordLabel.setVisibility(View.VISIBLE);
-                break;
-            default:
-                mUserNameLabel.setVisibility(View.GONE);
-                mPasswordLabel.setVisibility(View.GONE);
-                break;
-        }
-    }
-
     /**
      * Show this activity.
      * @see #show(android.app.Activity)
@@ -205,10 +182,30 @@ public class DisconnectedActivity extends BaseActivity {
      * @param view The view the user pressed.
      */
     public void onUserInitiatesConnect(View view) {
-        serverAddressView.savePreferences();
+        savePreferences();
         NowPlayingFragment fragment = (NowPlayingFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.now_playing_fragment);
         fragment.startVisibleConnection();
+    }
+
+    private void savePreferences(){
+        String address = "192.168.2.22";
+
+        // Append the default port if necessary.
+        if (!address.contains(":")) {
+            address += ":" + getResources().getInteger(R.integer.DefaultPort);
+        }
+
+        Preferences.ServerAddress serverAddress = mPreferences.saveServerAddress(address);
+
+        final String serverName = getServerName(address);
+        if (serverName != null) {
+            mPreferences.saveServerName(serverAddress, serverName);
+        }
+
+        final String userName = "";
+        final String password = "";
+        mPreferences.saveUserCredentials(serverAddress, userName, password);
     }
 
     public void onEventMainThread(HandshakeComplete event) {

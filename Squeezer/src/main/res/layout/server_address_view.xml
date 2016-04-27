@@ -23,65 +23,7 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <Button
-        android:id="@+id/scan_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:drawableLeft="@drawable/refresh"
-        android:layout_marginTop="16dp"
-        android:text="@string/settings_server_rescan"/>
-
-    <!--android:drawableLeft="@android:drawable/ic_menu_info_details"-->
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
-
-        <com.mikepenz.iconics.view.IconicsImageView
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:padding="10dp"
-            android:id="@+id/infobtn"
-            android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            app:iiv_color="@android:color/black"
-            app:iiv_icon="faw_question"
-            />
-
-        <Spinner
-            android:id="@+id/found_servers"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:prompt="@string/settings_server_prompt"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/infobtn"
-            android:layout_toEndOf="@+id/infobtn" />
-
-    </RelativeLayout>
-
-    <uk.org.ngo.squeezer.widget.FloatLabelLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:floatLabelTextAppearance="@style/SqueezerTextAppearance.FloatLabel"
-        app:floatLabelTrigger="text"
-        android:visibility="gone">
-
-        <EditText
-            android:id="@+id/server_address"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="40dp"
-            android:hint="@string/settings_serveraddr_hint"
-            android:inputType="textNoSuggestions"
-            android:paddingBottom="4dp"
-            android:paddingTop="4dp"/>
-    </uk.org.ngo.squeezer.widget.FloatLabelLayout>
-
+    <!--username-->
     <uk.org.ngo.squeezer.widget.FloatLabelLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -102,6 +44,7 @@
             android:paddingTop="4dp"/>
     </uk.org.ngo.squeezer.widget.FloatLabelLayout>
 
+    <!--password-->
     <uk.org.ngo.squeezer.widget.FloatLabelLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -122,51 +65,5 @@
             android:paddingTop="4dp"/>
     </uk.org.ngo.squeezer.widget.FloatLabelLayout>
 
-    <LinearLayout
-        android:id="@+id/scan_progress"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="4dp"
-        android:orientation="horizontal">
 
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:paddingLeft="8dp"
-            android:text="@string/settings_server_scan_progress"
-            />
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/scan_disabled_msg"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="4dp"
-        android:paddingTop="4dp"
-        android:text="@string/settings_server_scanning_disabled_msg"
-        android:textAppearance="@style/SqueezerTextAppearance.Medium"/>
-
-    <LinearLayout
-        android:id="@+id/scan_results"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="4dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/server_name"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:paddingLeft="8dp"
-            android:visibility="gone"
-            android:textAppearance="@style/SqueezerTextAppearance.Medium"/>
-
-    </LinearLayout>
 </LinearLayout>
