@@ -36,6 +36,7 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mikepenz.iconics.view.IconicsImageView;
 
@@ -203,6 +204,18 @@ public class DisconnectedActivity extends BaseActivity implements ScanNetworkTas
     }
 
     public void ToggleInformationIcon(int disconnectionReason){
+        int textMessage = (R.string.connecting_text);
+        switch (disconnectionReason) {
+            case CONNECTION_FAILED:
+                textMessage = (R.string.connection_failed_text);
+                break;
+            case LOGIN_FAILED:
+                textMessage = (R.string.login_failed_text);
+                break;
+        }
+
+        Toast.makeText(getApplicationContext(), textMessage, Toast.LENGTH_SHORT).show();
+
         if(mDisconnectionReason == CONNECTION_FAILED || mDisconnectionReason == LOGIN_FAILED){
             connectionInfo.setVisibility(View.VISIBLE);
         }
@@ -257,6 +270,8 @@ public class DisconnectedActivity extends BaseActivity implements ScanNetworkTas
 
         NowPlayingFragment fragment = (NowPlayingFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.now_playing_fragment);
+
+
         fragment.startVisibleConnection();
     }
 
@@ -330,6 +345,7 @@ public class DisconnectedActivity extends BaseActivity implements ScanNetworkTas
     private class MyOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
             String serverAddress = mDiscoveredServers.get(parent.getItemAtPosition(pos).toString());
+            mServerAddressEditText.setText(serverAddress);
         }
 
         public void onNothingSelected(AdapterView<?> parent) {

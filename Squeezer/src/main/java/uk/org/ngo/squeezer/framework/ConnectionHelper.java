@@ -2,6 +2,7 @@ package uk.org.ngo.squeezer.framework;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.util.Log;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -37,8 +38,18 @@ public class ConnectionHelper {
     }
 
     public void savePreferences(String address){
-        // Append the default port if necessary.
-        savePreferences(address, "", "");
+        Preferences.ServerAddress serverAddress = mPreferences.getServerAddress();
+        String username = "";
+        String password = "";
+        if(mPreferences.getUserName(serverAddress) != null){
+            username = mPreferences.getUserName(serverAddress);
+        }
+
+        if(mPreferences.getPassword(serverAddress) != null){
+            password = mPreferences.getPassword(serverAddress);
+        }
+
+        savePreferences(address, username, password);
     }
 
     public void savePreferences(String address, String userName, String password){

@@ -72,6 +72,8 @@ import java.util.Collections;
 
 import uk.org.ngo.squeezer.dialog.AboutDialog;
 import uk.org.ngo.squeezer.dialog.EnableWifiDialog;
+import uk.org.ngo.squeezer.dialog.ServerAddressDialog;
+import uk.org.ngo.squeezer.dialog.ServerAddressView;
 import uk.org.ngo.squeezer.framework.BaseActivity;
 import uk.org.ngo.squeezer.itemlist.AlarmsActivity;
 import uk.org.ngo.squeezer.itemlist.AlbumListActivity;
@@ -1056,8 +1058,18 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
         }
 
         if (event.connectionState == ConnectionState.LOGIN_FAILED) {
+            //TODO-stefan toon een popup met de account informatie
+
+            FragmentManager manager = getFragmentManager();
+            Fragment frag = manager.findFragmentByTag("fragment_edit_name");
+            if (frag != null) {
+                manager.beginTransaction().remove(frag).commit();
+            }
             dismissConnectingDialog();
-            DisconnectedActivity.showLoginFailed(mActivity);
+
+            ServerAddressDialog editNameDialog = new ServerAddressDialog();
+            editNameDialog.setData(mActivity, getResources(), getFragmentManager());
+            editNameDialog.show(manager, "fragment_edit_name");
             return;
         }
 
