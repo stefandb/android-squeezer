@@ -16,6 +16,8 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.TreeMap;
 
+import uk.org.ngo.squeezer.DisconnectedActivity;
+
 /**
  * Scans the local network for servers.
  */
@@ -24,7 +26,7 @@ public class ScanNetworkTask extends android.os.AsyncTask<Void, Void, Void> {
 
     private final Context mContext;
 
-    private final ScanNetworkCallback callback;
+    private final DisconnectedActivity callback;
 
     /**
      * Map server names to IP addresses.
@@ -41,7 +43,7 @@ public class ScanNetworkTask extends android.os.AsyncTask<Void, Void, Void> {
      */
     private static final int DISCOVERY_ATTEMPT_TIMEOUT = 1000;
 
-    public ScanNetworkTask(Context context, ScanNetworkCallback callback) {
+    public ScanNetworkTask(Context context, DisconnectedActivity callback) {
         mContext = context;
         this.callback = callback;
     }

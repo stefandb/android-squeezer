@@ -1,15 +1,34 @@
 package uk.org.ngo.squeezer.framework;
 
+import android.content.Context;
+import android.content.res.Resources;
+
 import java.util.Map;
+import java.util.TreeMap;
+
+import uk.org.ngo.squeezer.DisconnectedActivity;
+import uk.org.ngo.squeezer.Preferences;
+import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.Util;
 
 /**
  * Created by Stefan on 27-4-2016.
  */
-public interface ConnectionHelper {
-    
-    public String getServerName(String ipPort);
+public class ConnectionHelper {
 
-    public String getSewszrverName(String ipPort) {
+    private Resources resources= null;
+    private Preferences mPreferences;
+    private Context mActivity = null;
+
+    private TreeMap<String, String> mDiscoveredServers;
+
+    public ConnectionHelper(Context mActivity, Resources r) {
+        resources = r;
+        mPreferences = new Preferences(mActivity);
+        this.mActivity = mActivity;
+    }
+
+    public String getServerName(String ipPort) {
         if (mDiscoveredServers != null)
             for (Map.Entry<String, String> entry : mDiscoveredServers.entrySet())
                 if (ipPort.equals(entry.getValue()))
@@ -17,6 +36,44 @@ public interface ConnectionHelper {
         return null;
     }
 
+    public void savePreferences(String address){
+        // Append the default port if necessary.
+        savePreferences(address, "", "");
+    }
 
+    public void savePreferences(String address, String userName, String password){
+        if (!address.contains(":")) {
+            address += ":" + resources.getInteger(R.integer.DefaultPort);
+        }
 
+        Preferences.ServerAddress serverAddress = mPreferences.saveServerAddress(address);
+
+        final String serverName = getServerName(address);
+        if (serverName != null) {
+            mPreferences.saveServerName(serverAddress, serverName);
+        }
+
+        mPreferences.saveUserCredentials(serverAddress, userName, password);
+    }
+
+    private int getServerPosition(String ipPort) {
+        if (mDiscoveredServers != null) {
+            String host = Util.parseHost(ipPort);
+            int position = 0;
+            for (Map.Entry<String, String> entry : mDiscoveredServers.entrySet()) {
+                if (host.equals(entry.getValue()))
+                    return position;
+                position++;
+            }
+        }
+        return -1;
+    }
+
+    public void setmDiscoveredServers(TreeMap<String, String> mDiscoveredServers) {
+        this.mDiscoveredServers = mDiscoveredServers;
+    }
+
+    public TreeMap<String, String> getmDiscoveredServers() {
+        return mDiscoveredServers;
+    }
 }

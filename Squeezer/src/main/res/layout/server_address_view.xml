@@ -28,7 +28,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:visibility="gone"
         app:floatLabelTextAppearance="@style/SqueezerTextAppearance.FloatLabel"
         app:floatLabelTrigger="text"
         android:id="@+id/label_username">
@@ -49,7 +48,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:visibility="gone"
         app:floatLabelTextAppearance="@style/SqueezerTextAppearance.FloatLabel"
         app:floatLabelTrigger="text"
         android:id="@+id/label_password">

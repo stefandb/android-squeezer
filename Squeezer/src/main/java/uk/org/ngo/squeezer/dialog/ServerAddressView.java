@@ -54,29 +54,18 @@ import uk.org.ngo.squeezer.widget.FloatLabelLayout;
  * <p>
  * A new network scan can be initiated manually if desired.
  */
-public class ServerAddressView extends LinearLayout implements ScanNetworkTask.ScanNetworkCallback, ConnectionHelper {
+public class ServerAddressView extends LinearLayout {
     private Preferences mPreferences;
     private String mBssId;
 
-    private EditText mServerAddressEditText;
-    private TextView mServerName;
-    private Spinner mServersSpinner;
     private EditText mUserNameEditText;
     private EditText mPasswordEditText;
     private View mScanResults;
-    private View mScanProgress;
 
-    private ScanNetworkTask mScanNetworkTask;
-
-    /** Map server names to IP addresses. */
-    private TreeMap<String, String> mDiscoveredServers;
-
-    private ArrayAdapter<String> mServersAdapter;
     private FloatLabelLayout mPasswordLabel;
     private FloatLabelLayout mUserNameLabel;
-    private FloatLabelLayout mServerAddressLabel;
-    private IconicsImageView togglebtn;
-    private RelativeLayout toggle_view;
+
+    private ConnectionHelper ConnectionHelper= null;
 
     public ServerAddressView(final Context context) {
         super(context);
@@ -90,152 +79,32 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
 
     private void initialize(final Context context) {
         inflate(context, R.layout.server_address_view, this);
+
+        ConnectionHelper = (ConnectionHelper) new ConnectionHelper(context, getResources());
+
         if (!isInEditMode()) {
-            mPreferences = new Preferences(context);
-            Preferences.ServerAddress serverAddress = mPreferences.getServerAddress();
-            mBssId = serverAddress.bssId;
-
-
-            toggle_view = (RelativeLayout) findViewById(R.id.toggle_view);
-
-
-            mServerAddressEditText = (EditText) findViewById(R.id.server_address);
-            mServerAddressLabel = (FloatLabelLayout) findViewById(R.id.server_address_label);
-            mServerAddressLabel.setOnLongClickListener(new ToggleServerInput());
             mUserNameEditText = (EditText) findViewById(R.id.username);
             mUserNameLabel = (FloatLabelLayout) findViewById(R.id.label_username);
             mPasswordEditText = (EditText) findViewById(R.id.password);
             mPasswordLabel = (FloatLabelLayout) findViewById(R.id.label_password);
-            setServerAddress(serverAddress.address);
 
-            // Set up the servers spinner.
-            mServersAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item);
-            mServersAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-            mServerName = (TextView) findViewById(R.id.server_name);
-            togglebtn = (IconicsImageView) findViewById(R.id.toggle);
-            togglebtn.setOnClickListener(new ToggleServerInput());
-
-
-            mServersSpinner = (Spinner) findViewById(R.id.found_servers);
-            mServersSpinner.setAdapter(mServersAdapter);
-            mServersSpinner.setOnItemSelectedListener(new MyOnItemSelectedListener());
-//            mServersSpinner.setOnLongClickListener(new ToggleServerInput());
-
+            //TODO-stefan START
             mScanResults = findViewById(R.id.scan_results);
-            mScanProgress = findViewById(R.id.scan_progress);
-            mScanProgress.setVisibility(GONE);
-            TextView scanDisabledMessage = (TextView) findViewById(R.id.scan_disabled_msg);
+            //TODO-stefan END
 
-            // Only support network scanning on WiFi.
-            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo ni = connectivityManager.getActiveNetworkInfo();
-            boolean isWifi = ni != null && ni.getType() == ConnectivityManager.TYPE_WIFI;
-            if (isWifi) {
-                scanDisabledMessage.setVisibility(GONE);
-                startNetworkScan(context);
-                Button scanButton = (Button) findViewById(R.id.scan_button);
-                scanButton.setOnClickListener(new OnClickListener() {
-                    public void onClick(View v) {
-                        startNetworkScan(context);
-                    }
-                });
-            } else {
-                mScanResults.setVisibility(GONE);
-            }
+            //TODO-stefan START
+            mPreferences = new Preferences(context);
+            Preferences.ServerAddress serverAddress = mPreferences.getServerAddress();
+            mBssId = serverAddress.bssId;
+            setServerAddress(serverAddress.address);
+            //TODO-stefan END
         }
     }
 
-    public void savePreferences() {
-        String address = mServerAddressEditText.getText().toString();
-
-        // Append the default port if necessary.
-        if (!address.contains(":")) {
-            address += ":" + getResources().getInteger(R.integer.DefaultPort);
-        }
-
-        Preferences.ServerAddress serverAddress = mPreferences.saveServerAddress(address);
-
-        final String serverName = getServerName(address);
-        if (serverName != null) {
-            mPreferences.saveServerName(serverAddress, serverName);
-        }
-
-        final String userName = mUserNameEditText.getText().toString();
-        final String password = mPasswordEditText.getText().toString();
-        mPreferences.saveUserCredentials(serverAddress, userName, password);
-    }
-
-    public void onDismiss() {
-        // Stop scanning
-        if (mScanNetworkTask != null) {
-            mScanNetworkTask.cancel(true);
-        }
-    }
-
-    /**
-     * Starts scanning for servers.
-     */
-    void startNetworkScan(Context context) {
-        mScanResults.setVisibility(GONE);
-        mScanProgress.setVisibility(VISIBLE);
-        mScanNetworkTask = new ScanNetworkTask(context, this);
-        mScanNetworkTask.execute();
-    }
-
-    /**
-     * Called when server scanning has finished.
-     * @param serverMap Discovered servers, key is the server name, value is the IP address.
-     */
-    public void onScanFinished(TreeMap<String, String> serverMap) {
-        mScanResults.setVisibility(VISIBLE);
-        mServerName.setVisibility(GONE);
-        mServersSpinner.setVisibility(GONE);
-        mScanProgress.setVisibility(GONE);
-
-        if (mScanNetworkTask == null) {
-            return;
-        }
-
-        mDiscoveredServers = serverMap;
-        mDiscoveredServers.put("dummy 1", "192.168.2.10");
-        mDiscoveredServers.put("dummy 2", "192.168.2.12");
-        mDiscoveredServers.put("dummy 3", "192.168.2.13");
-        mDiscoveredServers.put("dummy 4", "192.168.2.14");
-        mDiscoveredServers.put("dummy 5", "192.168.2.15");
-        mDiscoveredServers.put("Custom", "0");
-
-        mScanNetworkTask = null;
-
-        switch (mDiscoveredServers.size()) {
-            case 0:
-                // Do nothing, no servers found.
-                break;
-
-            case 1:
-                // Populate the edit text widget with the address found.
-                setServerAddress(mDiscoveredServers.get(mDiscoveredServers.firstKey()));
-                mServerName.setVisibility(VISIBLE);
-                mServerName.setText(mDiscoveredServers.firstKey());
-                break;
-
-            default:
-                // Show the spinner so the user can choose a server.
-                mServersAdapter.clear();
-                for (Entry<String, String> e : mDiscoveredServers.entrySet()) {
-                    Log.d("device", e.getKey());
-                    mServersAdapter.add(e.getKey());
-                }
-
-                int position = getServerPosition(mServerAddressEditText.getText().toString());
-                if (position >= 0) mServersSpinner.setSelection(position);
-                mServersSpinner.setVisibility(VISIBLE);
-                mServersAdapter.notifyDataSetChanged();
-        }
-    }
-
+    //TODO-stefan verplaatsen naar disconnectedActivity
     private void setServerAddress(String address) {
-        String currentHostPort = mServerAddressEditText.getText().toString();
+        //TODO-stefan haal de huidige speler op voor het IP adres
+        String currentHostPort = "192.168.2.22";
         String currentHost = Util.parseHost(currentHostPort);
         int currentPort = Util.parsePort(currentHostPort);
 
@@ -249,9 +118,6 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
         Preferences.ServerAddress serverAddress = new Preferences.ServerAddress();
         serverAddress.bssId = mBssId;
         serverAddress.address = host + ":" + port;
-
-        //TODO-stefan select the correct one in the dropdown
-        mServerAddressEditText.setText(serverAddress.address);
 
         if(mPreferences.getUserName(serverAddress) != null){
             mUserNameEditText.setText(mPreferences.getUserName(serverAddress));
@@ -268,63 +134,7 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
         }
     }
 
-    private int getServerPosition(String ipPort) {
-        if (mDiscoveredServers != null) {
-            String host = Util.parseHost(ipPort);
-            int position = 0;
-            for (Entry<String, String> entry : mDiscoveredServers.entrySet()) {
-                if (host.equals(entry.getValue()))
-                    return position;
-                position++;
-            }
-        }
-        return -1;
+    public void savePreferences(){
+        ConnectionHelper.savePreferences("192.168.2.22", mUserNameEditText.getText().toString(), mPasswordEditText.getText().toString());
     }
-
-    /**
-     * Inserts the selected address in to the edit text widget.
-     */
-    private class MyOnItemSelectedListener implements OnItemSelectedListener {
-        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-            String serverAddress = mDiscoveredServers.get(parent.getItemAtPosition(pos).toString());
-            setServerAddress(serverAddress);
-        }
-
-        public void onNothingSelected(AdapterView<?> parent) {
-            // Do nothing.
-        }
-    }
-
-    private class ToggleServerInput implements OnLongClickListener, OnClickListener{
-        @Override
-        public boolean onLongClick(View v)
-        {
-            toggle(v);
-            return true;
-        }
-
-        private void toggle(View v){
-            DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
-            int dp = Math.round(toggle_view.getHeight() / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-
-            Log.d("height", "NIEUW");
-            Log.d("height", String.valueOf(dp));
-            Log.d("height", String.valueOf(toggle_view.getMeasuredHeight()));
-
-            if(mServersSpinner.getVisibility() == VISIBLE){
-                mServersSpinner.setVisibility(GONE);
-                mServerAddressLabel.setVisibility(VISIBLE);
-            }else{
-                mServerAddressLabel.setVisibility(GONE);
-                mServersSpinner.setVisibility(VISIBLE);
-            }
-
-        }
-
-        @Override
-        public void onClick(View v) {
-            toggle(v);
-        }
-    }
-
 }

@@ -45,6 +45,5 @@ public class ServerAddressPreference extends DialogPreference {
         if (positiveResult) {
             form.savePreferences();
         }
-        form.onDismiss();
     }
 }
