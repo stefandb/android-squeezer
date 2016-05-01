@@ -50,6 +50,8 @@ public class ServerAddressDialog extends DialogFragment {
 
         mUserNameEditText = (EditText) view.findViewById(R.id.username);
         mPasswordEditText = (EditText) view.findViewById(R.id.password);
+        mPasswordEditText.setHint(R.string.settings_username_hint_required);
+        mUserNameEditText.setHint(R.string.settings_password_hint_required);
 
         return new AlertDialog.Builder(getActivity())
                 .setTitle("Login Required")

@@ -37,6 +37,11 @@
     </string>
     <string name="settings_username_hint">Gebruikersnaam (optioneel)</string>
     <string name="settings_password_hint">Wachtwoord (optioneel)</string>
+    <string name="settings_username_hint_required">Gebruikersnaam</string>
+    <string name="settings_password_hint_required">Wachtwoord</string>
+
+
+
     <string name="settings_server_scan_progress">Zoeken naar servers…</string>
     <string name="settings_fadeinsecs_title">Duur fade in</string>
     <string name="settings_fadeinsecs_summary">Voer aantal seconden in voor fade in na pauzeren. Voer 0 in om fade in uit te schakelen.</string>
