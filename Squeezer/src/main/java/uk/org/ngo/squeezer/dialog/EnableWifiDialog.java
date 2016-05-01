@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import uk.org.ngo.squeezer.DisconnectedActivity;
 import uk.org.ngo.squeezer.R;
 
 public class EnableWifiDialog extends DialogFragment {
@@ -47,7 +48,12 @@ public class EnableWifiDialog extends DialogFragment {
                 }
             }
         });
-        builder.setNegativeButton(android.R.string.cancel, null);
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                DisconnectedActivity.showConnectionFailed(getActivity());
+            }
+        });
         return builder.create();
     }
 
