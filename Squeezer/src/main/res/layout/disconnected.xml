@@ -80,9 +80,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:drawableLeft="@drawable/refresh"
                 android:layout_marginTop="16dp"
-                android:text="@string/settings_server_rescan"/>
+                android:text="@string/settings_server_rescan"
+                android:background="@color/squeezer_second" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -150,7 +150,8 @@
             android:onClick="onUserInitiatesConnect"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:text="@string/menu_item_connect"/>
+            android:text="@string/menu_item_connect"
+            android:background="@color/squeezer_second" />
     </RelativeLayout>
 
 

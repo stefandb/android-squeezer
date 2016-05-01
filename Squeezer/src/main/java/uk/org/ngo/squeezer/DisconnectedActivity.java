@@ -65,6 +65,7 @@ public class DisconnectedActivity extends BaseActivity implements ScanNetworkTas
     private IconicsImageView connectionInfo;
     private int disconnectionReason;
     private Button scanButton;
+    private TextView scanDisabledMessage;
 
 
     public void setDisconnectionReason(int reason) {
@@ -128,7 +129,7 @@ public class DisconnectedActivity extends BaseActivity implements ScanNetworkTas
         mServersSpinner = (Spinner) findViewById(R.id.found_servers);
         mScanProgress = findViewById(R.id.scan_progress);
 
-        TextView scanDisabledMessage = (TextView) findViewById(R.id.scan_disabled_msg);
+        scanDisabledMessage = (TextView) findViewById(R.id.scan_disabled_msg);
         scanButton = (Button) findViewById(R.id.scan_button);
 
         // Set up the servers spinner.
@@ -140,11 +141,18 @@ public class DisconnectedActivity extends BaseActivity implements ScanNetworkTas
         mServerAddressLabel.setOnLongClickListener(new ToggleServerInput());
         togglebtn.setOnClickListener(new ToggleServerInput());
 
+        checkWifi();
+    }
+
+    private void checkWifi(){
         // Only support network scanning on WiFi.
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = connectivityManager.getActiveNetworkInfo();
         boolean isWifi = ni != null && ni.getType() == ConnectivityManager.TYPE_WIFI;
         if (isWifi) {
+            scanDisabledMessage.setVisibility(View.GONE);
+            togglebtn.setVisibility(View.VISIBLE);
+
             startNetworkScan();
             scanButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -158,10 +166,14 @@ public class DisconnectedActivity extends BaseActivity implements ScanNetworkTas
             mServerAddressLabel.setVisibility(View.VISIBLE);
             mServersSpinner.setVisibility(View.GONE);
             mServerAddressEditText.setText("");
-            //TODO-stefan in de resume dit opnieuw controleren
         }
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
 
+        checkWifi();
     }
 
     //TODO-stefan verplaatsen naar onpauze?
