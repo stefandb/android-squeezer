@@ -60,7 +60,6 @@ public class ServerAddressView extends LinearLayout {
 
     private EditText mUserNameEditText;
     private EditText mPasswordEditText;
-    private View mScanResults;
 
     private FloatLabelLayout mPasswordLabel;
     private FloatLabelLayout mUserNameLabel;
@@ -87,10 +86,6 @@ public class ServerAddressView extends LinearLayout {
             mUserNameLabel = (FloatLabelLayout) findViewById(R.id.label_username);
             mPasswordEditText = (EditText) findViewById(R.id.password);
             mPasswordLabel = (FloatLabelLayout) findViewById(R.id.label_password);
-
-            //TODO-stefan START
-            mScanResults = findViewById(R.id.scan_results);
-            //TODO-stefan END
 
             //TODO-stefan START
             mPreferences = new Preferences(context);
