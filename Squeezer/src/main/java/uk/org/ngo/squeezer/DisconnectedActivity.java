@@ -23,12 +23,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
-import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -43,9 +39,9 @@ import com.mikepenz.iconics.view.IconicsImageView;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Map;
+import java.util.Random;
 import java.util.TreeMap;
 
-import uk.org.ngo.squeezer.dialog.InfoDialog;
 import uk.org.ngo.squeezer.dialog.ServerAddressView;
 import uk.org.ngo.squeezer.framework.BaseActivity;
 import uk.org.ngo.squeezer.framework.ConnectionHelper;
@@ -55,29 +51,25 @@ import uk.org.ngo.squeezer.util.ScanNetworkTask;
 import uk.org.ngo.squeezer.widget.FloatLabelLayout;
 
 /**
- * An activity for when the user is not connected to a Squeezeserver.
+ * An activity for when the user is not connected to a SqueezeServer.
  * <p>
  * Provide a UI for connecting to the configured server, launch HomeActivity when the user
  * connects.
  */
 public class DisconnectedActivity extends BaseActivity implements ScanNetworkTask.ScanNetworkCallback{
 
-    private IconicsImageView connectionInfo;
+    private TextView connectionInfo;
     private int disconnectionReason;
     private Button scanButton;
     private TextView scanDisabledMessage;
-
-
-    public void setDisconnectionReason(int reason) {
-        disconnectionReason = reason;
-    }
+    private Button connectButton;
 
     @IntDef({MANUAL_DISCONNECT, CONNECTION_FAILED, LOGIN_FAILED})
     @Retention(RetentionPolicy.SOURCE)
     public @interface DisconnectionReasons {}
-    public static final int MANUAL_DISCONNECT = 0;
-    public static final int CONNECTION_FAILED = 1;
-    public static final int LOGIN_FAILED = 2;
+    private static final int MANUAL_DISCONNECT = 0;
+    private static final int CONNECTION_FAILED = 1;
+    private static final int LOGIN_FAILED = 2;
 
     private static final String EXTRA_DISCONNECTION_REASON = "reason";
 
@@ -100,6 +92,7 @@ public class DisconnectedActivity extends BaseActivity implements ScanNetworkTas
     /** Map server names to IP addresses. */
     private TreeMap<String, String> mDiscoveredServers;
 
+    private String currentSelectedItem = null;
 
     @DisconnectionReasons private int mDisconnectionReason = MANUAL_DISCONNECT;
 
@@ -107,7 +100,7 @@ public class DisconnectedActivity extends BaseActivity implements ScanNetworkTas
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ConnectionHelper = (ConnectionHelper) new ConnectionHelper(this, getResources());
+        ConnectionHelper = new ConnectionHelper(this, getResources());
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -121,7 +114,8 @@ public class DisconnectedActivity extends BaseActivity implements ScanNetworkTas
 
         findViewById(R.id.controls_container).setVisibility(View.GONE);
 
-        mHeaderMessage = (TextView) findViewById(R.id.header_message);
+        //TODO-stefan Melding tonen met de melding van disconnect
+        connectionInfo = (TextView) findViewById(R.id.header_message);
         toggle_view = (RelativeLayout) findViewById(R.id.toggle_view);
         mServerAddressEditText = (EditText) findViewById(R.id.server_address);
         mServerAddressLabel = (FloatLabelLayout) findViewById(R.id.server_address_label);
@@ -131,6 +125,7 @@ public class DisconnectedActivity extends BaseActivity implements ScanNetworkTas
 
         scanDisabledMessage = (TextView) findViewById(R.id.scan_disabled_msg);
         scanButton = (Button) findViewById(R.id.scan_button);
+        connectButton = (Button) findViewById(R.id.btn_connect_selected);
 
         // Set up the servers spinner.
         mServersAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
@@ -140,6 +135,16 @@ public class DisconnectedActivity extends BaseActivity implements ScanNetworkTas
         mServersSpinner.setOnItemSelectedListener(new MyOnItemSelectedListener());
         mServerAddressLabel.setOnLongClickListener(new ToggleServerInput());
         togglebtn.setOnClickListener(new ToggleServerInput());
+        connectButton.setOnClickListener(new ConnectToPlayer());
+
+        connectionInfo.setVisibility(View.GONE);
+
+        checkWifi();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
 
         checkWifi();
     }
@@ -169,21 +174,68 @@ public class DisconnectedActivity extends BaseActivity implements ScanNetworkTas
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        checkWifi();
+    private void setDisconnectionReason(int reason) {
+        disconnectionReason = reason;
     }
 
-    //TODO-stefan verplaatsen naar onpauze?
-    public void onDismiss() {
-        // Stop scanning
-        if (mScanNetworkTask != null) {
-            mScanNetworkTask.cancel(true);
+    //TODO-stefan melding tonen aan gebruiker via textview
+    private void ToggleInformationIcon(int disconnectionReason){
+        if(disconnectionReason == CONNECTION_FAILED || disconnectionReason == LOGIN_FAILED){
+            if(mServerAddressEditText.getText().toString().length() > 0) {
+                connectionInfo.setVisibility(View.VISIBLE);
+            }
         }
     }
 
+    /**
+     * Starts scanning for servers.
+     */
+    private void startNetworkScan() {
+        scanButton.setVisibility(View.GONE);
+        mScanProgress.setVisibility(View.VISIBLE);
+        mScanNetworkTask = new ScanNetworkTask(this, this);
+        mScanNetworkTask.execute();
+    }
+
+
+    /**
+     * Called when server scanning has finished.
+     * @param serverMap Discovered servers, key is the server name, value is the IP address.
+     */
+    public void onScanFinished(TreeMap<String, String> serverMap) {
+        mScanProgress.setVisibility(View.GONE);
+        scanButton.setVisibility(View.VISIBLE);
+
+        if (mScanNetworkTask == null) {
+            return;
+        }
+
+        mDiscoveredServers = serverMap;
+        ConnectionHelper.setmDiscoveredServers(mDiscoveredServers);
+
+        mScanNetworkTask = null;
+        switch (mDiscoveredServers.size()) {
+            case 0:
+                mServersSpinner.setVisibility(View.GONE);
+                mServerAddressLabel.setVisibility(View.VISIBLE);
+                mServerAddressEditText.setText("");
+                break;
+            default:
+                mServersSpinner.setVisibility(View.VISIBLE);
+                mServerAddressLabel.setVisibility(View.GONE);
+
+                mServersAdapter.clear();
+                for (Map.Entry<String, String> e : mDiscoveredServers.entrySet()) {
+                    mServersAdapter.add(e.getKey());
+                }
+
+                int position = ConnectionHelper.getServerPosition(currentSelectedItem);
+                if (position >= 0) mServersSpinner.setSelection(position);
+
+                mServersAdapter.notifyDataSetChanged();
+                break;
+        }
+    }
 
     /**
      * Show this activity.
@@ -215,43 +267,6 @@ public class DisconnectedActivity extends BaseActivity implements ScanNetworkTas
         activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
-    public void ToggleInformationIcon(int disconnectionReason){
-        int textMessage = (R.string.connecting_text);
-        switch (disconnectionReason) {
-            case CONNECTION_FAILED:
-                textMessage = (R.string.connection_failed_text);
-                break;
-            case LOGIN_FAILED:
-                textMessage = (R.string.login_failed_text);
-                break;
-        }
-
-        Toast.makeText(getApplicationContext(), textMessage, Toast.LENGTH_SHORT).show();
-
-        if(mDisconnectionReason == CONNECTION_FAILED || mDisconnectionReason == LOGIN_FAILED){
-            connectionInfo.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private View.OnClickListener _InformationOnclickListner(){
-        return new IconicsImageView.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int textMessage = (R.string.connecting_text);
-                connectionInfo.setVisibility(View.VISIBLE);
-                switch (disconnectionReason) {
-                    case CONNECTION_FAILED:
-                        textMessage = (R.string.connection_failed_text);
-                        break;
-                    case LOGIN_FAILED:
-                        textMessage = (R.string.login_failed_text);
-                        break;
-                }
-                InfoDialog.show(getSupportFragmentManager(), textMessage);
-            }
-        };
-    }
-
     /**
      * Show this activity.
      * @see #show(android.app.Activity)
@@ -272,21 +287,6 @@ public class DisconnectedActivity extends BaseActivity implements ScanNetworkTas
         show(activity, CONNECTION_FAILED);
     }
 
-    /**
-     * Act on the user requesting a server connection through the activity's UI.
-     *
-     * @param view The view the user pressed.
-     */
-    public void onUserInitiatesConnect(View view) {
-        ConnectionHelper.savePreferences(mServerAddressEditText.getText().toString());
-
-        NowPlayingFragment fragment = (NowPlayingFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.now_playing_fragment);
-
-
-        fragment.startVisibleConnection();
-    }
-
     public void onEventMainThread(HandshakeComplete event) {
         // The user requested a connection to the server, which succeeded.  There's
         // no prior activity to go to, so launch HomeActivity, with flags to
@@ -299,65 +299,13 @@ public class DisconnectedActivity extends BaseActivity implements ScanNetworkTas
     }
 
     /**
-     * Starts scanning for servers.
-     */
-    void startNetworkScan() {
-        scanButton.setVisibility(View.GONE);
-        mScanProgress.setVisibility(View.VISIBLE);
-        mScanNetworkTask = new ScanNetworkTask(this, this);
-        mScanNetworkTask.execute();
-    }
-
-
-    /**
-     * Called when server scanning has finished.
-     * @param serverMap Discovered servers, key is the server name, value is the IP address.
-     */
-    public void onScanFinished(TreeMap<String, String> serverMap) {
-        mScanProgress.setVisibility(View.GONE);
-        scanButton.setVisibility(View.VISIBLE);
-
-        if (mScanNetworkTask == null) {
-            return;
-        }
-
-        mDiscoveredServers = serverMap;
-
-        ConnectionHelper.setmDiscoveredServers(mDiscoveredServers);
-
-        mScanNetworkTask = null;
-
-        switch (mDiscoveredServers.size()) {
-            case 0:
-                mServersSpinner.setVisibility(View.GONE);
-                mServerAddressLabel.setVisibility(View.VISIBLE);
-                mServerAddressEditText.setText("");
-                break;
-            default:
-                mServersSpinner.setVisibility(View.VISIBLE);
-                mServerAddressLabel.setVisibility(View.GONE);
-
-                // Show the spinner so the user can choose a server.
-                mServersAdapter.clear();
-                for (Map.Entry<String, String> e : mDiscoveredServers.entrySet()) {
-                    mServersAdapter.add(e.getKey());
-                }
-
-                //TODO-stefan selecteer het laatst geselecteerde item
-//                int position = getServerPosition(mServerAddressEditText.getText().toString());
-//                if (position >= 0) mServersSpinner.setSelection(position);
-                mServersAdapter.notifyDataSetChanged();
-            break;
-        }
-    }
-
-    /**
      * Inserts the selected address in to the edit text widget.
      */
     private class MyOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
             String serverAddress = mDiscoveredServers.get(parent.getItemAtPosition(pos).toString());
             mServerAddressEditText.setText(serverAddress);
+            currentSelectedItem = serverAddress;
         }
 
         public void onNothingSelected(AdapterView<?> parent) {
@@ -374,13 +322,6 @@ public class DisconnectedActivity extends BaseActivity implements ScanNetworkTas
         }
 
         private void toggle(View v){
-            DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-            int dp = Math.round(toggle_view.getHeight() / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-
-            Log.d("height", "NIEUW");
-            Log.d("height", String.valueOf(dp));
-            Log.d("height", String.valueOf(toggle_view.getMeasuredHeight()));
-
             if(mServersSpinner.getVisibility() == View.VISIBLE){
                 mServersSpinner.setVisibility(View.GONE);
                 mServerAddressLabel.setVisibility(View.VISIBLE);
@@ -393,6 +334,27 @@ public class DisconnectedActivity extends BaseActivity implements ScanNetworkTas
         @Override
         public void onClick(View v) {
             toggle(v);
+        }
+    }
+
+    private class ConnectToPlayer implements View.OnLongClickListener, View.OnClickListener {
+        @Override
+        public boolean onLongClick(View v)
+        {
+            return true;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if(mServerAddressEditText.getText().toString().length() > 0){
+                ConnectionHelper.savePreferences(mServerAddressEditText.getText().toString());
+                connectionInfo.setVisibility(View.GONE);
+
+                NowPlayingFragment fragment = (NowPlayingFragment) getSupportFragmentManager()
+                        .findFragmentById(R.id.now_playing_fragment);
+
+                fragment.startVisibleConnection();
+            }
         }
     }
 

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -25,15 +24,15 @@
 
         <TextView
             android:id="@+id/header_message"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:padding="16dp"
             android:visibility="gone"
             android:textAppearance="@style/SqueezerTextAppearance.Medium"
             android:drawableLeft="@android:drawable/ic_menu_info_details"
             android:drawablePadding="4dp"
-            android:text="@string/login_failed_text"/>
+            android:text="@string/connection_failed_text"
+            android:layout_below="@+id/btn_connect_selected" />
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -147,7 +146,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/server_address_view"
-            android:onClick="onUserInitiatesConnect"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:text="@string/menu_item_connect"

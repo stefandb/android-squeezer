@@ -67,7 +67,7 @@ public class ConnectionHelper {
         mPreferences.saveUserCredentials(serverAddress, userName, password);
     }
 
-    private int getServerPosition(String ipPort) {
+    public int getServerPosition(String ipPort) {
         if (mDiscoveredServers != null) {
             String host = Util.parseHost(ipPort);
             int position = 0;

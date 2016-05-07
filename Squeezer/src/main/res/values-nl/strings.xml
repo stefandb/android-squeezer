@@ -80,7 +80,7 @@
     <string name="connecting_text">Verbinden</string>
     <string name="connect_to_text">Verbind met %s</string>
     <string name="connecting_to_text">Verbinden met SqueezeBox CLI met %s</string>
-    <string name="connection_failed_text">Verbinden mislukt. Bekijk settings.</string>
+    <string name="connection_failed_text">Verbinden mislukt. Bekijk de configuratie.</string>
     <string name="not_connected">Squeezer is niet verbonden met enige Squeezeserver</string>
     <string name="disconnected_text">Contact verbroken.</string>
     <string name="wifi_disabled_text">Wi-Fi is uitgeschakeld</string>
