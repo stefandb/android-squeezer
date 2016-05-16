@@ -122,8 +122,6 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
 
     private TextView totalTime;
 
-    private MenuItem menu_item_connect;
-
     private MenuItem menu_item_disconnect;
 
     private MenuItem menu_item_poweron;
@@ -879,13 +877,10 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
         MenuInflater i = mActivity.getMenuInflater();
         i.inflate(R.menu.now_playing_fragment, menu);
 
-        menu_item_connect = menu.findItem(R.id.menu_item_connect);
         menu_item_disconnect = menu.findItem(R.id.menu_item_disconnect);
         menu_item_poweron = menu.findItem(R.id.menu_item_poweron);
         menu_item_poweroff = menu.findItem(R.id.menu_item_poweroff);
-//        menu_item_players = menu.findItem(R.id.menu_item_players);
         menu_item_playlist = menu.findItem(R.id.menu_item_playlist);
-//        menu_item_alarm = menu.findItem(R.id.menu_item_alarm);
         menu_item_search = menu.findItem(R.id.menu_item_search);
     }
 
@@ -899,28 +894,19 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
 
         // Don't show an option to connect if there's no server to connect to.
         boolean knowServerAddress = new Preferences(mActivity).getServerAddress() != null;
-        menu_item_connect.setEnabled(knowServerAddress);
 
         // These are all set at the same time, so one check is sufficient
-        if (menu_item_connect != null) {
-            // Set visibility and enabled state of menu items that are not player-specific.
-            menu_item_connect.setVisible(!connected);
+        if (connected) {
             menu_item_disconnect.setVisible(connected);
-
             // Set visibility and enabled state of menu items that are player-specific and
             // require a connection to the server.
             boolean haveConnectedPlayers = connected && mService != null
                     && !mService.getConnectedPlayers().isEmpty();
 
-//            menu_item_players.setVisible(haveConnectedPlayers);
             menu_item_playlist.setVisible(haveConnectedPlayers);
-//            menu_item_alarm.setVisible(haveConnectedPlayers);
-//            if (connected)
-//                menu_item_alarm.setTitle(ServerString.ALARM.getLocalizedString());
+
             menu_item_search.setEnabled(connected);
             menu_item_search.setVisible(haveConnectedPlayers);
-            menu_item_connect.setVisible(haveConnectedPlayers);
-//            }
         }
 
         // Don't show the item to go to CurrentPlaylistActivity if in CurrentPlaylistActivity.
@@ -943,9 +929,6 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
 //                return true;
             case R.id.menu_item_search:
                 mActivity.onSearchRequested();
-                return true;
-            case R.id.menu_item_connect:
-                onUserInitiatesConnect();
                 return true;
             case R.id.menu_item_disconnect:
                 mService.disconnect();
