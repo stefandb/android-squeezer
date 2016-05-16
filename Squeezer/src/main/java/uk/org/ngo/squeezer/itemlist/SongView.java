@@ -113,7 +113,7 @@ public class SongView extends PlaylistItemView<Song> {
                 (mDetails & DETAILS_YEAR) > 0 ? item.getYear() : null
         ));
 
-        if(!isSwipable()){
+        if(!isSwipable() && viewHolder.getHandleView() != null){
             viewHolder.getHandleView().setVisibility(View.GONE);
         }
     }

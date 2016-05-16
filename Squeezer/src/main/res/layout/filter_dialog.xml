@@ -22,20 +22,21 @@
     android:layout_height="fill_parent">
 
     <LinearLayout android:id="@+id/filterview"
-        android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingBottom="4dp"
-        android:paddingTop="4dp">
+        android:paddingTop="4dp"
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/track_view"
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:layout_weight="1">
 
             <TextView
                 android:layout_width="fill_parent"
@@ -59,7 +60,8 @@
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:layout_weight="1">
 
             <TextView
                 android:layout_width="fill_parent"
@@ -82,7 +84,8 @@
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:layout_weight="1">
 
             <TextView
                 android:layout_width="fill_parent"
@@ -112,10 +115,11 @@
 
         <uk.org.ngo.squeezer.widget.FloatLabelLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginTop="16dp"
             app:floatLabelTextAppearance="@style/SqueezerTextAppearance.FloatLabel"
-            app:floatLabelTrigger="text">
+            app:floatLabelTrigger="text"
+            android:layout_weight="1">
 
             <EditText
                 android:id="@+id/search_string"
@@ -130,9 +134,10 @@
         <LinearLayout
             android:id="@+id/genre_view"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:gravity="bottom"
-            android:minHeight="48dp">
+            android:minHeight="48dp"
+            android:layout_weight="1">
 
             <TextView
                 android:id="@+id/genre_hint"
@@ -153,9 +158,10 @@
         <LinearLayout
             android:id="@+id/year_view"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:gravity="bottom"
-            android:minHeight="48dp">
+            android:minHeight="48dp"
+            android:layout_weight="1">
 
             <TextView
                 android:id="@+id/year_hint"

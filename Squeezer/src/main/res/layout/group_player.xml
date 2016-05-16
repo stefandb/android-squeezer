@@ -32,7 +32,9 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:textAppearance="@style/SqueezerTextAppearance.ListItem.Primary"
-        tools:text="Group name" />
+        tools:text="Group name"
+        android:layout_toLeftOf="@+id/parent_list_item_expand_arrow"
+        android:layout_toStartOf="@+id/parent_list_item_expand_arrow" />
 
     <TextView
         android:id="@+id/text2"
@@ -41,7 +43,9 @@
         android:layout_below="@id/text1"
         android:gravity="center_vertical"
         android:textAppearance="@style/SqueezerTextAppearance.ListItem.Secondary"
-        tools:text="Song name" />
+        tools:text="Song name"
+        android:layout_toLeftOf="@+id/parent_list_item_expand_arrow"
+        android:layout_toStartOf="@+id/parent_list_item_expand_arrow" />
 
     <com.mikepenz.iconics.view.IconicsImageView
         android:id="@+id/parent_list_item_expand_arrow"
@@ -57,5 +61,6 @@
         android:gravity="end"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_marginLeft="16dp" />
 </RelativeLayout>

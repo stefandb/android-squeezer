@@ -76,6 +76,8 @@ public class PlayerView extends BaseItemView<Player> {
         PlayerState playerState = activity.getPlayerState(item.getId());
 
         viewHolder.getText1().setText(item.getName());
+        Log.d("player-icon", item.getModel());
+
         viewHolder.getIcon().setImageResource(getModelIcon(item.getModel()));
 
         if (viewHolder.getVolumeBar() == null) {
@@ -233,6 +235,7 @@ public class PlayerView extends BaseItemView<Player> {
         modelIcons.put("softsqueeze", R.drawable.ic_softsqueeze);
         modelIcons.put("squeezeplay", R.drawable.ic_squeezeplay);
         modelIcons.put("transporter", R.drawable.ic_transporter);
+        modelIcons.put("squeezelite", R.drawable.ic_transporter);
         modelIcons.put("squeezeplayer", R.drawable.ic_squeezeplayer);
         return modelIcons;
     }

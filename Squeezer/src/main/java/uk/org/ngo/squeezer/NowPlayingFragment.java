@@ -72,6 +72,8 @@ import java.util.Collections;
 
 import uk.org.ngo.squeezer.dialog.AboutDialog;
 import uk.org.ngo.squeezer.dialog.EnableWifiDialog;
+import uk.org.ngo.squeezer.dialog.ServerAddressDialog;
+import uk.org.ngo.squeezer.dialog.ServerAddressView;
 import uk.org.ngo.squeezer.framework.BaseActivity;
 import uk.org.ngo.squeezer.itemlist.AlarmsActivity;
 import uk.org.ngo.squeezer.itemlist.AlbumListActivity;
@@ -119,6 +121,20 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
     private TextView currentTime;
 
     private TextView totalTime;
+
+    private MenuItem menu_item_disconnect;
+
+    private MenuItem menu_item_poweron;
+
+    private MenuItem menu_item_poweroff;
+
+//    private MenuItem menu_item_players;
+
+    private MenuItem menu_item_playlist;
+
+//    private MenuItem menu_item_alarm;
+
+    private MenuItem menu_item_search;
 
     private ImageButton playPauseButton;
 
@@ -449,6 +465,38 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
         }
     }
 
+    @UiThread
+    private void updatePowerMenuItems(boolean canPowerOn, boolean canPowerOff) {
+        boolean connected = isConnected();
+
+        // The fragment may no longer be attached to the parent activity.  If so, do nothing.
+        if (!isAdded()) {
+            return;
+        }
+
+        if (menu_item_poweron != null) {
+            if (canPowerOn && connected) {
+                Player player = getActivePlayer();
+                String playerName = player != null ? player.getName() : "";
+                menu_item_poweron.setTitle(getString(R.string.menu_item_poweron, playerName));
+                menu_item_poweron.setVisible(true);
+            } else {
+                menu_item_poweron.setVisible(false);
+            }
+        }
+
+        if (menu_item_poweroff != null) {
+            if (canPowerOff && connected) {
+                Player player = getActivePlayer();
+                String playerName = player != null ? player.getName() : "";
+                menu_item_poweroff.setTitle(getString(R.string.menu_item_poweroff, playerName));
+                menu_item_poweroff.setVisible(true);
+            } else {
+                menu_item_poweroff.setVisible(false);
+            }
+        }
+    }
+
     /**
      * Manages the list of connected players in the action bar.
      *
@@ -610,7 +658,7 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
         updatePlayPauseIcon(playerState.getPlayStatus());
         updateShuffleStatus(playerState.getShuffleStatus());
         updateRepeatStatus(playerState.getRepeatStatus());
-        mActivity.updatePowerMenuItems(canPowerOn(), canPowerOff());
+        updatePowerMenuItems(canPowerOn(), canPowerOff());
     }
 
     /**
@@ -823,28 +871,77 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
      */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        MenuInflater i = mActivity.getMenuInflater();
-//        i.inflate(R.menu.now_playing_fragment, menu);
-//
-//        menu_item_connect = menu.findItem(R.id.menu_item_connect);
-//        menu_item_disconnect = menu.findItem(R.id.menu_item_disconnect);
-//        menu_item_poweron = menu.findItem(R.id.menu_item_poweron);
-//        menu_item_poweroff = menu.findItem(R.id.menu_item_poweroff);
-//        menu_item_playlist = menu.findItem(R.id.menu_item_playlist);
-//        menu_item_search = menu.findItem(R.id.menu_item_search);
-//
-//        mActivity.setSearchMenuItem(menu.findItem(R.id.menu_item_search));
+        // I confess that I don't understand why using the inflater passed as
+        // an argument here doesn't work -- but if you do it crashes without
+        // a stracktrace on API 7.
+        MenuInflater i = mActivity.getMenuInflater();
+        i.inflate(R.menu.now_playing_fragment, menu);
+
+        menu_item_disconnect = menu.findItem(R.id.menu_item_disconnect);
+        menu_item_poweron = menu.findItem(R.id.menu_item_poweron);
+        menu_item_poweroff = menu.findItem(R.id.menu_item_poweroff);
+        menu_item_playlist = menu.findItem(R.id.menu_item_playlist);
+        menu_item_search = menu.findItem(R.id.menu_item_search);
+    }
+
+    /**
+     * Sets the state of assorted option menu items based on whether or not there is a connection to
+     * the server, and if so, whether any players are connected.
+     */
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        boolean connected = isConnected();
+
+        // Don't show an option to connect if there's no server to connect to.
+        boolean knowServerAddress = new Preferences(mActivity).getServerAddress() != null;
+
+        // These are all set at the same time, so one check is sufficient
+        if (connected) {
+            menu_item_disconnect.setVisible(connected);
+            // Set visibility and enabled state of menu items that are player-specific and
+            // require a connection to the server.
+            boolean haveConnectedPlayers = connected && mService != null
+                    && !mService.getConnectedPlayers().isEmpty();
+
+            menu_item_playlist.setVisible(haveConnectedPlayers);
+
+            menu_item_search.setEnabled(connected);
+            menu_item_search.setVisible(haveConnectedPlayers);
+        }
+
+        // Don't show the item to go to CurrentPlaylistActivity if in CurrentPlaylistActivity.
+        if (mActivity instanceof CurrentPlaylistActivity && menu_item_playlist != null) {
+            menu_item_playlist.setVisible(false);
+        }
+        // Don't show the item to go to alarms if in AlarmsActivity.
+//        if (mActivity instanceof AlarmsActivity && menu_item_alarm != null) {
+//            menu_item_alarm.setVisible(false);
+//        }
+
+        updatePowerMenuItems(canPowerOn(), canPowerOff());
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_item_connect:
-                onUserInitiatesConnect();
-                return true;
 //            case R.id.menu_item_settings:
 //                SettingsActivity.show(mActivity);
 //                return true;
+            case R.id.menu_item_search:
+                mActivity.onSearchRequested();
+                return true;
+            case R.id.menu_item_disconnect:
+                mService.disconnect();
+                return true;
+            case R.id.menu_item_poweron:
+                mService.powerOn();
+                return true;
+            case R.id.menu_item_poweroff:
+                mService.powerOff();
+                return true;
+            case R.id.menu_item_playlist:
+                CurrentPlaylistActivity.show(mActivity);
+                break;
 //            case R.id.menu_item_players:
 //                PlayerListActivity.show(mActivity);
 //                return true;
@@ -855,6 +952,7 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
 //                new AboutDialog().show(getFragmentManager(), "AboutDialog");
 //                return true;
         }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -943,8 +1041,18 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
         }
 
         if (event.connectionState == ConnectionState.LOGIN_FAILED) {
+            //TODO-stefan toon een popup met de account informatie
+
+            FragmentManager manager = getFragmentManager();
+            Fragment frag = manager.findFragmentByTag("fragment_edit_name");
+            if (frag != null) {
+                manager.beginTransaction().remove(frag).commit();
+            }
             dismissConnectingDialog();
-            DisconnectedActivity.showLoginFailed(mActivity);
+
+            ServerAddressDialog editNameDialog = new ServerAddressDialog();
+            editNameDialog.setData(mActivity, getResources(), getFragmentManager());
+            editNameDialog.show(manager, "fragment_edit_name");
             return;
         }
 
@@ -1047,6 +1155,13 @@ public class NowPlayingFragment extends Fragment implements View.OnCreateContext
     @MainThread
     public void onEventMainThread(PlayStatusChanged event) {
         updatePlayPauseIcon(event.playStatus);
+    }
+
+    @MainThread
+    public void onEventMainThread(PowerStatusChanged event) {
+        if (event.player.equals(mService.getActivePlayer())) {
+            updatePowerMenuItems(event.canPowerOn, event.canPowerOff);
+        }
     }
 
     @MainThread

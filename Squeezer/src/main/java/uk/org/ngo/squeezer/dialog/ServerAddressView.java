@@ -17,9 +17,13 @@
 package uk.org.ngo.squeezer.dialog;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -27,8 +31,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.mikepenz.iconics.view.IconicsImageView;
+import com.mikepenz.materialdrawer.adapter.BaseDrawerAdapter;
 
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -36,7 +44,9 @@ import java.util.TreeMap;
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Util;
+import uk.org.ngo.squeezer.framework.ConnectionHelper;
 import uk.org.ngo.squeezer.util.ScanNetworkTask;
+import uk.org.ngo.squeezer.widget.FloatLabelLayout;
 
 /**
  * Scans the local network for servers, allow the user to choose one, set it as the preferred server
@@ -44,24 +54,17 @@ import uk.org.ngo.squeezer.util.ScanNetworkTask;
  * <p>
  * A new network scan can be initiated manually if desired.
  */
-public class ServerAddressView extends LinearLayout implements ScanNetworkTask.ScanNetworkCallback {
+public class ServerAddressView extends LinearLayout {
     private Preferences mPreferences;
     private String mBssId;
 
-    private EditText mServerAddressEditText;
-    private TextView mServerName;
-    private Spinner mServersSpinner;
     private EditText mUserNameEditText;
     private EditText mPasswordEditText;
-    private View mScanResults;
-    private View mScanProgress;
 
-    private ScanNetworkTask mScanNetworkTask;
+    private FloatLabelLayout mPasswordLabel;
+    private FloatLabelLayout mUserNameLabel;
 
-    /** Map server names to IP addresses. */
-    private TreeMap<String, String> mDiscoveredServers;
-
-    private ArrayAdapter<String> mServersAdapter;
+    private ConnectionHelper ConnectionHelper= null;
 
     public ServerAddressView(final Context context) {
         super(context);
@@ -75,130 +78,28 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
 
     private void initialize(final Context context) {
         inflate(context, R.layout.server_address_view, this);
+
+        ConnectionHelper = (ConnectionHelper) new ConnectionHelper(context, getResources());
+
         if (!isInEditMode()) {
+            mUserNameEditText = (EditText) findViewById(R.id.username);
+            mUserNameLabel = (FloatLabelLayout) findViewById(R.id.label_username);
+            mPasswordEditText = (EditText) findViewById(R.id.password);
+            mPasswordLabel = (FloatLabelLayout) findViewById(R.id.label_password);
+
+            //TODO-stefan START
             mPreferences = new Preferences(context);
             Preferences.ServerAddress serverAddress = mPreferences.getServerAddress();
             mBssId = serverAddress.bssId;
-
-
-            mServerAddressEditText = (EditText) findViewById(R.id.server_address);
-            mUserNameEditText = (EditText) findViewById(R.id.username);
-            mPasswordEditText = (EditText) findViewById(R.id.password);
             setServerAddress(serverAddress.address);
-
-            // Set up the servers spinner.
-            mServersAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item);
-            mServersAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            mServerName = (TextView) findViewById(R.id.server_name);
-            mServersSpinner = (Spinner) findViewById(R.id.found_servers);
-            mServersSpinner.setAdapter(mServersAdapter);
-            mServersSpinner.setOnItemSelectedListener(new MyOnItemSelectedListener());
-
-            mScanResults = findViewById(R.id.scan_results);
-            mScanProgress = findViewById(R.id.scan_progress);
-            mScanProgress.setVisibility(GONE);
-            TextView scanDisabledMessage = (TextView) findViewById(R.id.scan_disabled_msg);
-
-            // Only support network scanning on WiFi.
-            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo ni = connectivityManager.getActiveNetworkInfo();
-            boolean isWifi = ni != null && ni.getType() == ConnectivityManager.TYPE_WIFI;
-            if (isWifi) {
-                scanDisabledMessage.setVisibility(GONE);
-                startNetworkScan(context);
-                Button scanButton = (Button) findViewById(R.id.scan_button);
-                scanButton.setOnClickListener(new OnClickListener() {
-                    public void onClick(View v) {
-                        startNetworkScan(context);
-                    }
-                });
-            } else {
-                mScanResults.setVisibility(GONE);
-            }
+            //TODO-stefan END
         }
     }
 
-    public void savePreferences() {
-        String address = mServerAddressEditText.getText().toString();
-
-        // Append the default port if necessary.
-        if (!address.contains(":")) {
-            address += ":" + getResources().getInteger(R.integer.DefaultPort);
-        }
-
-        Preferences.ServerAddress serverAddress = mPreferences.saveServerAddress(address);
-
-        final String serverName = getServerName(address);
-        if (serverName != null) {
-            mPreferences.saveServerName(serverAddress, serverName);
-        }
-
-        final String userName = mUserNameEditText.getText().toString();
-        final String password = mPasswordEditText.getText().toString();
-        mPreferences.saveUserCredentials(serverAddress, userName, password);
-    }
-
-    public void onDismiss() {
-        // Stop scanning
-        if (mScanNetworkTask != null) {
-            mScanNetworkTask.cancel(true);
-        }
-    }
-
-    /**
-     * Starts scanning for servers.
-     */
-    void startNetworkScan(Context context) {
-        mScanResults.setVisibility(GONE);
-        mScanProgress.setVisibility(VISIBLE);
-        mScanNetworkTask = new ScanNetworkTask(context, this);
-        mScanNetworkTask.execute();
-    }
-
-    /**
-     * Called when server scanning has finished.
-     * @param serverMap Discovered servers, key is the server name, value is the IP address.
-     */
-    public void onScanFinished(TreeMap<String, String> serverMap) {
-        mScanResults.setVisibility(VISIBLE);
-        mServerName.setVisibility(GONE);
-        mServersSpinner.setVisibility(GONE);
-        mScanProgress.setVisibility(GONE);
-
-        if (mScanNetworkTask == null) {
-            return;
-        }
-
-        mDiscoveredServers = serverMap;
-        mScanNetworkTask = null;
-
-        switch (mDiscoveredServers.size()) {
-            case 0:
-                // Do nothing, no servers found.
-                break;
-
-            case 1:
-                // Populate the edit text widget with the address found.
-                setServerAddress(mDiscoveredServers.get(mDiscoveredServers.firstKey()));
-                mServerName.setVisibility(VISIBLE);
-                mServerName.setText(mDiscoveredServers.firstKey());
-                break;
-
-            default:
-                // Show the spinner so the user can choose a server.
-                mServersAdapter.clear();
-                for (Entry<String, String> e : mDiscoveredServers.entrySet()) {
-                    mServersAdapter.add(e.getKey());
-                }
-                int position = getServerPosition(mServerAddressEditText.getText().toString());
-                if (position >= 0) mServersSpinner.setSelection(position);
-                mServersSpinner.setVisibility(VISIBLE);
-                mServersAdapter.notifyDataSetChanged();
-        }
-    }
-
+    //TODO-stefan verplaatsen naar disconnectedActivity
     private void setServerAddress(String address) {
-        String currentHostPort = mServerAddressEditText.getText().toString();
+        //TODO-stefan haal de huidige speler op voor het IP adres
+        String currentHostPort = "192.168.2.22";
         String currentHost = Util.parseHost(currentHostPort);
         int currentPort = Util.parsePort(currentHostPort);
 
@@ -213,44 +114,22 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
         serverAddress.bssId = mBssId;
         serverAddress.address = host + ":" + port;
 
-        mServerAddressEditText.setText(serverAddress.address);
-        mUserNameEditText.setText(mPreferences.getUserName(serverAddress));
-        mPasswordEditText.setText(mPreferences.getPassword(serverAddress));
-    }
-
-    private String getServerName(String ipPort) {
-        if (mDiscoveredServers != null)
-            for (Entry<String, String> entry : mDiscoveredServers.entrySet())
-                if (ipPort.equals(entry.getValue()))
-                    return entry.getKey();
-        return null;
-    }
-
-    private int getServerPosition(String ipPort) {
-        if (mDiscoveredServers != null) {
-            String host = Util.parseHost(ipPort);
-            int position = 0;
-            for (Entry<String, String> entry : mDiscoveredServers.entrySet()) {
-                if (host.equals(entry.getValue()))
-                    return position;
-                position++;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * Inserts the selected address in to the edit text widget.
-     */
-    private class MyOnItemSelectedListener implements OnItemSelectedListener {
-        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-            String serverAddress = mDiscoveredServers.get(parent.getItemAtPosition(pos).toString());
-            setServerAddress(serverAddress);
+        if(mPreferences.getUserName(serverAddress) != null){
+            mUserNameEditText.setText(mPreferences.getUserName(serverAddress));
+            mUserNameLabel.setVisibility(VISIBLE);
+        }else{
+            mUserNameLabel.setVisibility(GONE);
         }
 
-        public void onNothingSelected(AdapterView<?> parent) {
-            // Do nothing.
+        if(mPreferences.getPassword(serverAddress) != null) {
+            mPasswordEditText.setText(mPreferences.getPassword(serverAddress));
+            mPasswordLabel.setVisibility(VISIBLE);
+        }else{
+            mPasswordLabel.setVisibility(GONE);
         }
     }
 
+    public void savePreferences(){
+        ConnectionHelper.savePreferences("192.168.2.22", mUserNameEditText.getText().toString(), mPasswordEditText.getText().toString());
+    }
 }

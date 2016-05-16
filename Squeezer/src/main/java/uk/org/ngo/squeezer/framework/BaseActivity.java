@@ -31,13 +31,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.speech.RecognizerIntent;
 import android.support.annotation.CallSuper;
-import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
-import android.support.annotation.UiThread;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
@@ -46,7 +43,6 @@ import android.support.v7.widget.Toolbar;
 //import android.support.v7.app.AppCompatActivity;
 //import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -54,11 +50,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
+import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.context.IconicsContextWrapper;
@@ -90,12 +86,10 @@ import uk.org.ngo.squeezer.SettingsActivity;
 import uk.org.ngo.squeezer.VolumePanel;
 import uk.org.ngo.squeezer.dialog.AboutDialog;
 import uk.org.ngo.squeezer.dialog.TipsDialog;
-import uk.org.ngo.squeezer.framework.Override.CustomSearchManager;
 import uk.org.ngo.squeezer.itemlist.AlarmsActivity;
 import uk.org.ngo.squeezer.itemlist.AlbumListActivity;
 import uk.org.ngo.squeezer.itemlist.ApplicationListActivity;
 import uk.org.ngo.squeezer.itemlist.ArtistListActivity;
-import uk.org.ngo.squeezer.itemlist.CurrentPlaylistActivity;
 import uk.org.ngo.squeezer.itemlist.FavoriteListActivity;
 import uk.org.ngo.squeezer.itemlist.GenreListActivity;
 import uk.org.ngo.squeezer.itemlist.MusicFolderListActivity;
@@ -112,11 +106,9 @@ import uk.org.ngo.squeezer.service.ServerString;
 import uk.org.ngo.squeezer.service.SqueezeService;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
 import uk.org.ngo.squeezer.service.event.PlayerVolume;
-import uk.org.ngo.squeezer.service.event.PowerStatusChanged;
 import uk.org.ngo.squeezer.util.ImageFetcher;
 import uk.org.ngo.squeezer.util.SqueezePlayer;
 import uk.org.ngo.squeezer.util.ThemeManager;
-import android.support.v7.widget.SearchView;
 
 /**
  * Common base class for all activities in Squeezer.
@@ -153,7 +145,6 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
     //save our header or result
     protected AccountHeader navigationDrawerHeader = null;
     protected Drawer navigationDrawer = null;
-    private SearchManager mSearchManager;
 
     protected String getTag() {
         return getClass().getSimpleName();
@@ -214,19 +205,12 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
     protected void onCreate(android.os.Bundle savedInstanceState) {
         _savedInstanceState = savedInstanceState;
         super.onCreate(savedInstanceState);
-
         mTheme.onCreate(this);
 
-
-
         createPlayerHeader();
-//        ActionBar actionBar = getSupportActionBar();
-
-//        actionBar.setIcon(R.drawable.ic_launcher);
         bindService(new Intent(this, SqueezeService.class), serviceConnection,
                 Context.BIND_AUTO_CREATE);
         Log.d(getTag(), "did bindService; serviceStub = " + getService());
-
     }
 
     @Override
@@ -364,6 +348,24 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.base_activity, menu);
+        mMenuItemVolume = menu.findItem(R.id.menu_item_volume);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        boolean haveConnectedPlayers = isConnected() && mService != null
+                && !mService.getConnectedPlayers().isEmpty();
+        if (mMenuItemVolume != null) {
+            mMenuItemVolume.setVisible(haveConnectedPlayers);
+        }
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -394,21 +396,6 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
 
                     return true;
                 }
-            case R.id.menu_item_search:
-                this.onSearchRequested();
-                return true;
-            case R.id.menu_item_disconnect:
-                mService.disconnect();
-                return true;
-            case R.id.menu_item_poweron:
-                mService.powerOn();
-                return true;
-            case R.id.menu_item_poweroff:
-                mService.powerOff();
-                return true;
-            case R.id.menu_item_playlist:
-                CurrentPlaylistActivity.show(this);
-                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -423,17 +410,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
         if (!isConnected()) {
             return false;
         }
-        Log.d("ZOEKEN", "onSearchRequested");
-
-//
-//
-//
-        Bundle data = new Bundle();
-        data.putString("test", "BLA");
-        startSearch(null, false, data, false);
-        return true;
-////
-//        return super.onSearchRequested();
+        return super.onSearchRequested();
     }
 
     /*
@@ -488,8 +465,6 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
     public void setIgnoreVolumeChange(boolean ignoreVolumeChange) {
         mIgnoreVolumeChange = ignoreVolumeChange;
     }
-
-    // Safe accessors
 
     public boolean canDownload() {
         return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD);
@@ -586,66 +561,9 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
                         new DividerDrawerItem(),
                         new PrimaryDrawerItem().withName(ServerString.ALARM.getLocalizedString()).withIcon(FontAwesome.Icon.faw_clock_o).withIdentifier(20).withSelectable(false),
                         new PrimaryDrawerItem().withName(R.string.menu_item_settings_label).withIcon(FontAwesome.Icon.faw_cog).withIdentifier(21).withSelectable(false),
-                        new PrimaryDrawerItem().withName(R.string.menu_item_about_label).withIcon(FontAwesome.Icon.faw_cog).withIdentifier(22).withSelectable(false)
-
-//                        new SwitchDrawerItem().withName("Switch").withIcon(Octicons.Icon.oct_tools).withChecked(true).withOnCheckedChangeListener(onCheckedChangeListener),
-//                        new SwitchDrawerItem().withName("Switch2").withIcon(Octicons.Icon.oct_tools).withChecked(true).withOnCheckedChangeListener(onCheckedChangeListener),
-//                        new ToggleDrawerItem().withName("Toggle").withIcon(Octicons.Icon.oct_tools).withChecked(true).withOnCheckedChangeListener(onCheckedChangeListener)
+                        new PrimaryDrawerItem().withName(R.string.menu_item_about_label).withIcon(FontAwesome.Icon.faw_github).withIdentifier(22).withSelectable(false)
                 ) // add the items we want to use with our Drawer
-                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                    @Override
-                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        //check if the drawerItem is set.
-                        //there are different reasons for the drawerItem to be null
-                        //--> click on the header
-                        //--> click on the footer
-                        //those items don't contain a drawerItem
-
-                        if (drawerItem != null) {
-                            Intent intent = null;
-                            if (drawerItem.getIdentifier() == 1) {
-                                intent = new Intent(BaseActivity.this, SongListActivity.class);
-                            } else if (drawerItem.getIdentifier() == 2) {
-                                intent = new Intent(BaseActivity.this, ArtistListActivity.class);
-                            } else if (drawerItem.getIdentifier() == 3) {
-                                intent = new Intent(BaseActivity.this, AlbumListActivity.class);
-                            } else if (drawerItem.getIdentifier() == 4) {
-                                intent = new Intent(BaseActivity.this, GenreListActivity.class);
-                            } else if (drawerItem.getIdentifier() == 5) {
-                                intent = new Intent(BaseActivity.this, YearListActivity.class);
-                            } else if (drawerItem.getIdentifier() == 6) {
-//                                intent = new Intent(BaseActivity.this, AlbumListActivity.class);
-//                                intent.putExtra(AlbumViewDialog.AlbumsSortOrder.class.getName(), AlbumViewDialog.AlbumsSortOrder.__new.name());
-
-                                AlbumListActivity.show(BaseActivity.this,AlbumViewDialog.AlbumsSortOrder.__new);
-                            } else if (drawerItem.getIdentifier() == 7) {
-                                intent = new Intent(BaseActivity.this, RandomplayActivity.class);
-                            } else if (drawerItem.getIdentifier() == 8) {
-                                intent = new Intent(BaseActivity.this, PlaylistsActivity.class);
-                            } else if (drawerItem.getIdentifier() == 9) {
-                                intent = new Intent(BaseActivity.this, MusicFolderListActivity.class);
-                            } else if (drawerItem.getIdentifier() == 10) {
-                                intent = new Intent(BaseActivity.this, RadioListActivity.class);
-                            } else if (drawerItem.getIdentifier() == 11) {
-                                FavoriteListActivity.show(BaseActivity.this);
-                            } else if (drawerItem.getIdentifier() == 12) {
-                                intent = new Intent(BaseActivity.this, ApplicationListActivity.class);
-                            } else if (drawerItem.getIdentifier() == 20) {
-                                intent = new Intent(BaseActivity.this, AlarmsActivity.class);
-                            } else if (drawerItem.getIdentifier() == 21) {
-                                intent = new Intent(BaseActivity.this, SettingsActivity.class);
-                            } else if (drawerItem.getIdentifier() == 22) {
-                                intent = new Intent(BaseActivity.this, AboutActiviy.class);
-                            }
-
-                            if (intent != null) {
-                                BaseActivity.this.startActivity(intent);
-                            }
-                        }
-
-                        return false;
-                    }
-                })
+                .withOnDrawerItemClickListener(DrawerItemClickListener)
                 .withOnDrawerNavigationListener(new Drawer.OnDrawerNavigationListener() {
                     @Override
                     public boolean onNavigationClickListener(View clickedView) {
@@ -660,19 +578,67 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
                 .withShowDrawerOnFirstLaunch(true)
                 .build();
 
-
-        //only set the active selection or active profile if we do not recreate the activity
-//        if (savedInstanceState == null) {
-//             set the selection to the item with the identifier 11
-//            navigationDrawer.setSelection(21, false);
-//
-//            set the active profile
-//            headerResult.setActiveProfile(profile3);
-//        }
-
         //navigationDrawer.updateBadge(4, new StringHolder(10 + ""));
-
     }
+
+    private Drawer.OnDrawerItemClickListener DrawerItemClickListener = new Drawer.OnDrawerItemClickListener() {
+        @Override
+        public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+            if (drawerItem != null) {
+                Intent intent = null;
+                if (drawerItem.getIdentifier() == 1) {
+                    intent = new Intent(BaseActivity.this, SongListActivity.class);
+                } else if (drawerItem.getIdentifier() == 2) {
+                    intent = new Intent(BaseActivity.this, ArtistListActivity.class);
+                } else if (drawerItem.getIdentifier() == 3) {
+                    intent = new Intent(BaseActivity.this, AlbumListActivity.class);
+                } else if (drawerItem.getIdentifier() == 4) {
+                    intent = new Intent(BaseActivity.this, GenreListActivity.class);
+                } else if (drawerItem.getIdentifier() == 5) {
+                    intent = new Intent(BaseActivity.this, YearListActivity.class);
+                } else if (drawerItem.getIdentifier() == 6) {
+                    AlbumListActivity.show(BaseActivity.this,AlbumViewDialog.AlbumsSortOrder.__new);
+                } else if (drawerItem.getIdentifier() == 7) {
+                    intent = new Intent(BaseActivity.this, RandomplayActivity.class);
+                } else if (drawerItem.getIdentifier() == 8) {
+                    intent = new Intent(BaseActivity.this, PlaylistsActivity.class);
+                } else if (drawerItem.getIdentifier() == 9) {
+                    intent = new Intent(BaseActivity.this, MusicFolderListActivity.class);
+                } else if (drawerItem.getIdentifier() == 10) {
+                    intent = new Intent(BaseActivity.this, RadioListActivity.class);
+                } else if (drawerItem.getIdentifier() == 11) {
+                    FavoriteListActivity.show(BaseActivity.this);
+                } else if (drawerItem.getIdentifier() == 12) {
+                    intent = new Intent(BaseActivity.this, ApplicationListActivity.class);
+                } else if (drawerItem.getIdentifier() == 20) {
+                    intent = new Intent(BaseActivity.this, AlarmsActivity.class);
+                } else if (drawerItem.getIdentifier() == 21) {
+                    intent = new Intent(BaseActivity.this, SettingsActivity.class);
+                } else if (drawerItem.getIdentifier() == 22) {
+
+                    AboutActiviy AboutActivity = new AboutActiviy();
+
+                    new LibsBuilder()
+                            .withLibraries("crouton, actionbarsherlock", "showcaseview")
+                            .withAutoDetect(true)
+                            .withLicenseShown(true)
+                            .withVersionShown(true)
+                            .withActivityTitle(getResources().getString(R.string.menu_item_about_label))
+                            .withActivityTheme(getThemeId())
+                            .withListener(AboutActivity.getLibsListener())
+                            .withLibTaskCallback(AboutActivity.getLibTaskCallback())
+                            .withUiListener(AboutActivity.getLibsUIListener())
+                            .start(BaseActivity.this);
+                }
+
+                if (intent != null) {
+                    BaseActivity.this.startActivity(intent);
+                }
+            }
+
+            return false;
+        }
+    };
 
     private OnCheckedChangeListener onCheckedChangeListener = new OnCheckedChangeListener() {
         @Override
@@ -684,51 +650,36 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
     };
 
     public void onEventMainThread(HandshakeComplete event) {
-        /**
-        int[] icons = new int[]{
-                R.drawable.ic_artists,
-                R.drawable.ic_albums, R.drawable.ic_songs,
-                R.drawable.ic_genres, R.drawable.ic_years, R.drawable.ic_new_music,
-                R.drawable.ic_music_folder, R.drawable.ic_random,
-                R.drawable.ic_playlists, R.drawable.ic_internet_radio,
-                R.drawable.ic_favorites, R.drawable.ic_my_apps
-        };
-
-        String[] items = getResources().getStringArray(R.array.home_items);
-
         if (getService() != null) {
+            Log.d("debug-enabled", "1");
             mCanFavorites = event.canFavourites;
             mCanMusicfolder = event.canMusicFolders;
             mCanMyApps = event.canMyApps;
             mCanRandomplay = event.canRandomPlay;
+
+            Log.d("debug-enabled", String.valueOf(event.canRandomPlay));
+            PrimaryDrawerItem random = (PrimaryDrawerItem) navigationDrawer.getDrawerItem(7);
+            random.withSelectable(event.canRandomPlay).withEnabled(event.canRandomPlay);
+
+            Log.d("debug-enabled", String.valueOf(event.canMusicFolders));
+            PrimaryDrawerItem folder = (PrimaryDrawerItem) navigationDrawer.getDrawerItem(9);
+            folder.withSelectable(event.canMusicFolders).withEnabled(event.canMusicFolders);
+
+            Log.d("debug-enabled", String.valueOf(event.canFavourites));
+            PrimaryDrawerItem favorite = (PrimaryDrawerItem) navigationDrawer.getDrawerItem(11);
+            favorite.withSelectable(event.canFavourites).withEnabled(event.canFavourites);
+
+            Log.d("debug-enabled", String.valueOf(event.canMyApps));
+            PrimaryDrawerItem apps = (PrimaryDrawerItem) navigationDrawer.getDrawerItem(12);
+            apps.withSelectable(event.canMyApps).withEnabled(event.canMyApps);
+
+        }else{
+            Log.d("debug-enabled", "2");
         }
 
-        List<IconRowAdapter.IconRow> rows = new ArrayList<IconRowAdapter.IconRow>(MY_APPS + 1);
-        for (int i = ARTISTS; i <= MY_APPS; i++) {
-            if (i == MUSIC_FOLDER && !mCanMusicfolder) {
-                continue;
-            }
 
-            if (i == RANDOM_MIX && !mCanRandomplay) {
-                continue;
-            }
-
-            if (i == FAVORITES && !mCanFavorites) {
-                continue;
-            }
-
-            if (i == MY_APPS && !mCanMyApps) {
-                continue;
-            }
-
-            rows.add(new IconRowAdapter.IconRow(i, items[i], icons[i]));
-        }
-
-        listView.setAdapter(new IconRowAdapter(this, rows));
-        listView.setOnItemClickListener(onHomeItemClick);
-
-        // Show a tip about volume controls, if this is the first time this app
-        // has run. TODO: Add more robust and general 'tips' functionality.
+        /**
+         * TODO-stefan dit ombouwen naar een losse functie
         PackageInfo pInfo;
         try {
             final SharedPreferences preferences = getSharedPreferences(Preferences.NAME,
@@ -753,21 +704,15 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.header)
                 .addProfiles(
-//                        profile5,
                         new ProfileSettingDrawerItem().withName("Manage Players").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(200)
                 )
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
                     public boolean onProfileChanged(View view, IProfile profile, boolean current) {
-
-                        //sample usage of the onProfileChanged listener
-                        //if the clicked item has the identifier 1 add a new profile ;)
                         if (profile instanceof IDrawerItem && ((IDrawerItem) profile).getIdentifier() == 200) {
                             Intent intent = new Intent(BaseActivity.this, PlayerListActivity.class);
                             BaseActivity.this.startActivity(intent);
                         } else {
-                            Log.d("profile-click", String.valueOf(profile.getIdentifier()));
-
                             List<Player> players = getService().getPlayers();
                             for (int i = 0; i < players.size(); i++) {
                                 if ((int) players.get(i).getIdAsLong() == profile.getIdentifier() && (int) getService().getActivePlayer().getIdAsLong() != profile.getIdentifier()) {
@@ -775,7 +720,6 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
                                 }
                             }
                         }
-                        //false if you have not consumed the event and it should close the drawer
                         return false;
                     }
                 })
@@ -793,8 +737,8 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
 
                  TextDrawable image = TextDrawable.builder()
                          .beginConfig()
-                         .width(380)  // width in px
-                            .height(380) // height in px
+                         .width(380)
+                         .height(380)
                          .endConfig()
                          .buildRound(String.valueOf(name.charAt(0)), R.color.squeezer_main);
 
@@ -806,7 +750,6 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
                          .withIdentifier((int) players.get(i).getIdAsLong());
 
                  if (navigationDrawerHeader.getProfiles() != null) {
-                    //we know that there are 2 setting elements. set the new profile above them ;)
                     navigationDrawerHeader.addProfile(newProfile, navigationDrawerHeader.getProfiles().size() - 1);
                  } else {
                     navigationDrawerHeader.addProfiles(newProfile);
@@ -822,142 +765,5 @@ public abstract class BaseActivity extends AppCompatActivity implements HasUiThr
     public View getBaseView(){
         return base_view;
     }
-
-//
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == MaterialSearchView.REQUEST_VOICE && resultCode == RESULT_OK) {
-//            ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-//            if (matches != null && matches.size() > 0) {
-//                String searchWrd = matches.get(0);
-//                if (!TextUtils.isEmpty(searchWrd)) {
-//                    searchView.setQuery(searchWrd, false);
-//                }
-//            }
-//
-//            return;
-//        }
-//        super.onActivityResult(requestCode, resultCode, data);
-//    }
-
-
-
-    private MenuItem menu_item_connect;
-    private MenuItem menu_item_disconnect;
-    private MenuItem menu_item_poweron;
-    private MenuItem menu_item_poweroff;
-    private MenuItem menu_item_playlist;
-    private MenuItem menu_item_search;
-
-    @MainThread
-    public void onEventMainThread(PowerStatusChanged event) {
-        if (event.player.equals(mService.getActivePlayer())) {
-            updatePowerMenuItems(event.canPowerOn, event.canPowerOff);
-        }
-    }
-
-    private Player getActivePlayer() {
-        if (mService == null) {
-            return null;
-        }
-        return mService.getActivePlayer();
-    }
-
-    private boolean canPowerOn() {
-        return mService != null && mService.canPowerOn();
-    }
-
-    private boolean canPowerOff() {
-        return mService != null && mService.canPowerOff();
-    }
-
-    @UiThread
-    public void updatePowerMenuItems(boolean canPowerOn, boolean canPowerOff) {
-        boolean connected = isConnected();
-
-        if (menu_item_poweron != null) {
-            if (canPowerOn && connected) {
-                Player player = getActivePlayer();
-                String playerName = player != null ? player.getName() : "";
-                menu_item_poweron.setTitle(getString(R.string.menu_item_poweron, playerName));
-                menu_item_poweron.setVisible(true);
-            } else {
-                menu_item_poweron.setVisible(false);
-            }
-        }
-
-        if (menu_item_poweroff != null) {
-            if (canPowerOff && connected) {
-                Player player = getActivePlayer();
-                String playerName = player != null ? player.getName() : "";
-                menu_item_poweroff.setTitle(getString(R.string.menu_item_poweroff, playerName));
-                menu_item_poweroff.setVisible(true);
-            } else {
-                menu_item_poweroff.setVisible(false);
-            }
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.base_activity, menu);
-        mMenuItemVolume = menu.findItem(R.id.menu_item_volume);
-
-        inflater.inflate(R.menu.now_playing_fragment, menu);
-
-        menu_item_connect = menu.findItem(R.id.menu_item_connect);
-        menu_item_disconnect = menu.findItem(R.id.menu_item_disconnect);
-        menu_item_poweron = menu.findItem(R.id.menu_item_poweron);
-        menu_item_poweroff = menu.findItem(R.id.menu_item_poweroff);
-        menu_item_playlist = menu.findItem(R.id.menu_item_playlist);
-        menu_item_search = menu.findItem(R.id.menu_item_search);
-        
-
-        return true;
-    }
-
-    /**
-     * Sets the state of assorted option menu items based on whether or not there is a connection to
-     * the server, and if so, whether any players are connected.
-     */
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean haveConnectedPlayers = isConnected() && mService != null
-                && !mService.getConnectedPlayers().isEmpty();
-        if (mMenuItemVolume != null) {
-            mMenuItemVolume.setVisible(haveConnectedPlayers);
-        }
-        boolean connected = isConnected();
-
-        // Don't show an option to connect if there's no server to connect to.
-        boolean knowServerAddress = new Preferences(this).getServerAddress() != null;
-        menu_item_connect.setEnabled(knowServerAddress);
-
-        // These are all set at the same time, so one check is sufficient
-        if (menu_item_connect != null) {
-            // Set visibility and enabled state of menu items that are not player-specific.
-            menu_item_connect.setVisible(!connected);
-            menu_item_disconnect.setVisible(connected);
-
-            // Set visibility and enabled state of menu items that are player-specific and
-            // require a connection to the server.
-            menu_item_playlist.setVisible(haveConnectedPlayers);
-            menu_item_search.setEnabled(connected);
-            menu_item_search.setVisible(haveConnectedPlayers);
-            menu_item_connect.setVisible(haveConnectedPlayers);
-        }
-
-        // Don't show the item to go to CurrentPlaylistActivity if in CurrentPlaylistActivity.
-        if (this instanceof CurrentPlaylistActivity && menu_item_playlist != null) {
-            menu_item_playlist.setVisible(false);
-        }
-        // Don't show the item to go to alarms if in AlarmsActivity.
-
-        updatePowerMenuItems(canPowerOn(), canPowerOff());
-
-        return true;
-    }
-
 
 }

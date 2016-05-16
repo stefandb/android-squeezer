@@ -52,6 +52,20 @@
         <item name="ic_delete">@drawable/ic_delete</item>
 
         <item name="floatLabelColor">@color/float_label_dark</item>
+
+
+
+
+        <!-- AboutLibraries specific values -->
+        <item name="about_libraries_window_background">@color/about_libraries_window_background</item>
+        <item name="about_libraries_card">@color/about_libraries_card</item>
+        <item name="about_libraries_title_openSource">@color/about_libraries_title_openSource</item>
+        <item name="about_libraries_text_openSource">@color/about_libraries_text_openSource</item>
+        <item name="about_libraries_special_button_openSource">@color/about_libraries_special_button_openSource</item>
+        <item name="about_libraries_dividerDark_openSource">@color/about_libraries_dividerDark_openSource</item>
+        <item name="about_libraries_dividerLight_openSource">@color/about_libraries_dividerLight_openSource</item>
+
+        <item name="material_drawer_selected_text">@color/squeezer_second</item>
     </style>
 
     <style name="AppTheme.Light.DarkActionBar" parent="MaterialDrawerTheme.Light.TranslucentStatus">
@@ -89,6 +103,19 @@
         <item name="ic_delete">@drawable/ic_delete_light</item>
 
         <item name="floatLabelColor">@color/float_label_light</item>
+
+
+
+        <!-- AboutLibraries specific values -->
+        <item name="about_libraries_window_background">@color/about_libraries_window_background</item>
+        <item name="about_libraries_card">@color/about_libraries_card</item>
+        <item name="about_libraries_title_openSource">@color/about_libraries_title_openSource</item>
+        <item name="about_libraries_text_openSource">@color/about_libraries_text_openSource</item>
+        <item name="about_libraries_special_button_openSource">@color/about_libraries_special_button_openSource</item>
+        <item name="about_libraries_dividerDark_openSource">@color/about_libraries_dividerDark_openSource</item>
+        <item name="about_libraries_dividerLight_openSource">@color/about_libraries_dividerLight_openSource</item>
+
+        <item name="material_drawer_selected_text">@color/squeezer_second</item>
     </style>
 
     <!-- Text Styles. Apply these to the android:textAppearance attribute of the views. -->

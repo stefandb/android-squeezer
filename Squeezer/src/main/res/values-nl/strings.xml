@@ -37,6 +37,11 @@
     </string>
     <string name="settings_username_hint">Gebruikersnaam (optioneel)</string>
     <string name="settings_password_hint">Wachtwoord (optioneel)</string>
+    <string name="settings_username_hint_required">Gebruikersnaam</string>
+    <string name="settings_password_hint_required">Wachtwoord</string>
+
+
+
     <string name="settings_server_scan_progress">Zoeken naar servers…</string>
     <string name="settings_fadeinsecs_title">Duur fade in</string>
     <string name="settings_fadeinsecs_summary">Voer aantal seconden in voor fade in na pauzeren. Voer 0 in om fade in uit te schakelen.</string>
@@ -75,7 +80,7 @@
     <string name="connecting_text">Verbinden</string>
     <string name="connect_to_text">Verbind met %s</string>
     <string name="connecting_to_text">Verbinden met SqueezeBox CLI met %s</string>
-    <string name="connection_failed_text">Verbinden mislukt. Bekijk settings.</string>
+    <string name="connection_failed_text">Verbinden mislukt. Bekijk de configuratie.</string>
     <string name="not_connected">Squeezer is niet verbonden met enige Squeezeserver</string>
     <string name="disconnected_text">Contact verbroken.</string>
     <string name="wifi_disabled_text">Wi-Fi is uitgeschakeld</string>
@@ -230,4 +235,17 @@
     <string name="settings_album_selectaction">Selecteer album actie</string>
     <string name="settings_song_selectaction">Selecteer nummer actie</string>
     <string name="confirm_cancel_downloads">Downloaden afbreken?</string>
+
+    <string name="aboutLibraries_description_special1_name">alle functies</string>
+    <string name="aboutLibraries_description_special1_text">
+        <![CDATA[<ul>
+<li><p>Now playing, artwork, seeking within tracks, volume control.</p></li>
+<li><p>Browse the library by artist, album, song title, genre, year, or playlist.</p></li>
+<li><p>Browse the music folders (if supported by the server).</p></li>
+<li><p>Full library search.</p></li>
+<li><p>Manage players (names, synchronisation groups, sleep, alarms)</p></li>
+<li><p>Internet radio support (browse, staff picks, search).</p></li>
+<li><p>Scan the local network for compatible Squeezeservers.</p></li>
+</ul>]]>
+    </string>
 </resources>

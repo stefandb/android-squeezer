@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -9,57 +8,148 @@
     android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="23dp">
+    android:layout_marginTop="23dp"
+    android:background="@color/squeezer_main">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-        <!--app:layout_scrollFlags="scroll|enterAlways"-->
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:layout_collapseMode="pin"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     </android.support.design.widget.AppBarLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="?attr/actionBarSize"
-        android:layout_centerInParent="true">
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/header_message"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:padding="16dp"
+            android:visibility="gone"
             android:textAppearance="@style/SqueezerTextAppearance.Medium"
             android:drawableLeft="@android:drawable/ic_menu_info_details"
             android:drawablePadding="4dp"
-            android:text="@string/login_failed_text"/>
+            android:text="@string/connection_failed_text"
+            android:layout_below="@+id/btn_connect_selected" />
 
-        <uk.org.ngo.squeezer.dialog.ServerAddressView
-            android:id="@+id/server_address_view"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/header_message"
-            />
+            android:orientation="vertical"
+            android:id="@+id/server_address_view"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/scan_disabled_msg"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="4dp"
+                android:visibility="gone"
+                android:paddingTop="4dp"
+                android:text="@string/settings_server_scanning_disabled_msg"
+                android:textAppearance="@style/SqueezerTextAppearance.Medium"/>
+
+            <LinearLayout
+                android:id="@+id/scan_progress"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="4dp"
+                android:visibility="gone"
+                android:orientation="horizontal">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="8dp"
+                    android:text="@string/settings_server_scan_progress"
+                    />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/scan_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:text="@string/settings_server_rescan"
+                android:background="@color/squeezer_second" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="73dp"
+                android:id="@+id/toggle_view">
+
+                <Spinner
+                    android:id="@+id/found_servers"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_centerVertical="true"
+                    android:visibility="visible"
+                    android:prompt="@string/settings_server_prompt"
+                    android:layout_toLeftOf="@+id/toggle"
+                    android:layout_toStartOf="@+id/toggle" />
+
+                <uk.org.ngo.squeezer.widget.FloatLabelLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:floatLabelTextAppearance="@style/SqueezerTextAppearance.FloatLabel"
+                    app:floatLabelTrigger="text"
+                    android:visibility="gone"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/server_address_label"
+                    android:layout_toLeftOf="@+id/toggle"
+                    android:layout_toStartOf="@+id/toggle">
+
+                    <EditText
+                        android:id="@+id/server_address"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="40dp"
+                        android:hint="@string/settings_serveraddr_hint"
+                        android:inputType="textNoSuggestions"
+                        android:paddingBottom="4dp"
+                        android:paddingTop="4dp"
+                        android:layout_toLeftOf="@+id/toggle"
+                        android:layout_toStartOf="@+id/toggle" />
+
+                </uk.org.ngo.squeezer.widget.FloatLabelLayout>
+
+                <com.mikepenz.iconics.view.IconicsImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:padding="10dp"
+                    android:id="@+id/toggle"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    app:iiv_color="@android:color/black"
+                    app:iiv_icon="faw_repeat"
+                    />
+
+            </RelativeLayout>
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/btn_connect_selected"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/server_address_view"
-            android:onClick="onUserInitiatesConnect"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:text="@string/menu_item_connect"/>
+            android:text="@string/menu_item_connect"
+            android:background="@color/squeezer_second" />
     </RelativeLayout>
 
 
