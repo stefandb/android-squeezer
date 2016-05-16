@@ -88,6 +88,7 @@ public class PlayerListAdapter<Child extends Item, K extends BaseItemView> exten
         View view = mInflater.inflate(R.layout.list_item_player, viewGroup, false);
 
         RecyclerItemViewHolder viewHolderInstance = new RecyclerItemViewHolder(view, this);
+        viewHolderInstance.setItemView(mItemView);
         return viewHolderInstance;
     }
 

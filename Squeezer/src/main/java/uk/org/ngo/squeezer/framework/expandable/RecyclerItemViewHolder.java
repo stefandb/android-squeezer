@@ -1,6 +1,7 @@
 package uk.org.ngo.squeezer.framework.expandable;
 
 import android.graphics.Color;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -319,10 +320,10 @@ public class RecyclerItemViewHolder<T extends Item, K extends BaseItemView> exte
     }
 
     private ItemView getItemView(T Item){
+
         if(mItemViews == null){
             return mItemView;
         }else {
-//            Log.d("debug-class-name-itemview", Item.getClass().getSimpleName());
             return mItemViews.get(Item.getClass().getSimpleName());
         }
     }
