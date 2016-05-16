@@ -65,9 +65,7 @@
         <item name="about_libraries_dividerDark_openSource">@color/about_libraries_dividerDark_openSource</item>
         <item name="about_libraries_dividerLight_openSource">@color/about_libraries_dividerLight_openSource</item>
 
-        <!--<item name="about_libraries_primary">@color/about_libraries_card</item>-->
-        <!--<item name="about_libraries_primary_dark">@color/squeezer_main_dark</item>-->
-        <!--<item name="about_libraries_accent">@color/squeezer_second</item>-->
+        <item name="material_drawer_selected_text">@color/squeezer_second</item>
     </style>
 
     <style name="AppTheme.Light.DarkActionBar" parent="MaterialDrawerTheme.Light.TranslucentStatus">
@@ -117,13 +115,7 @@
         <item name="about_libraries_dividerDark_openSource">@color/about_libraries_dividerDark_openSource</item>
         <item name="about_libraries_dividerLight_openSource">@color/about_libraries_dividerLight_openSource</item>
 
-        <!--<color name="theme_default_primary">@color/squeezer_main</color>-->
-        <!--<color name="theme_default_primary_dark">@color/squeezer_main_dark</color>-->
-        <!--<color name="theme_accent">@color/squeezer_second</color>-->
-        <!--<color name="about_libraries_primary">@color/squeezer_main</color>-->
-        <!--<color name="about_libraries_primary_dark">@color/squeezer_main_dark</color>-->
-        <!--<color name="about_libraries_accent">@color/squeezer_second</color>-->
-
+        <item name="material_drawer_selected_text">@color/squeezer_second</item>
     </style>
 
     <!-- Text Styles. Apply these to the android:textAppearance attribute of the views. -->
