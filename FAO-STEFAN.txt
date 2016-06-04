@@ -1,0 +1,15 @@
+Hi Stefan,
+
+Couldn't figure out another way of contacting you (no e-mail address in your github profile,
+there's an info@ address in your whois record which didn't work), hence this:
+
+Your branch is very impressive work, and it looks like you've done a bunch of things that
+were on our informal roadmap.
+
+Have you given any thought to getting this merged into the code we release from? I haven't
+looked in depth yet, but I expect your changes are a mix of bug and UI changes, and I'd like
+to figure out a good way to get the bug fixes in, and see what ordering makes sense for the
+UI changes (maybe it's a big-bang style "And now Squeezer is Material", or maybe some of
+the changes should come in as incremental improvements -- I'm not sure).
+
+Best, Nik (nik@ngo.org.uk)
